@@ -13,3 +13,4 @@ tushare
 chinesecalendar
 my-fake-useragent
 django-mptt
+django-simpleui
