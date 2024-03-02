@@ -139,3 +139,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/img')
 MEDIA_URL = 'static/img/'
+
+SIMPLEUI_HOME_INFO = False
+SIMPLEUI_STATIC_OFFLINE = True
+
+SIMPLEUI_DEFAULT_THEME = 'layui.css'

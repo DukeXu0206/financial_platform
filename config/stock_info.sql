@@ -1,23 +1,4 @@
-
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
-
-DROP TABLE IF EXISTS `stock_info`;
-CREATE TABLE `stock_info`  (
-  `stock_id` varchar(6) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `stock_name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `issuance_time` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `closing_price_y` double NULL DEFAULT NULL,
-  `open_price_t` double NULL DEFAULT NULL,
-  `stock_type` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `block` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `change_extent` double NULL DEFAULT NULL,
-  PRIMARY KEY (`stock_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
-
+use financial_platform;
 INSERT INTO `stock_info` VALUES ('000001', '平安银行', '19910403', 17.01, 17.18, '深证', '主板', -0.6403);
 INSERT INTO `stock_info` VALUES ('000002', '万科A', '19910129', 31.75, 32.05, '深证', '主板', -1.6849);
 INSERT INTO `stock_info` VALUES ('000004', '国农科技', '19910114', 22.2, 22.35, '深证', '主板', -2.6846);
