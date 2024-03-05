@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'financialSystem',
+    'financial_system',
     'mptt',
 ]
 
@@ -85,7 +85,7 @@ DATABASES = {
         'HOST': 'localhost',
         'POST': 3306,
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': 'rootroot',
         'OPTIONS': {
             "init_command": "SET foreign_key_checks = 0;",
         }
@@ -137,8 +137,10 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/img')
-MEDIA_URL = 'static/img/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+# MEDIA_URL = 'static/img/'
+MEDIA_URL = '/media/'
+
 
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_STATIC_OFFLINE = True

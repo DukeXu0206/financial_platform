@@ -1,5 +1,6 @@
 django==2.1.15
 pymysql
+pillow
 pytest
 numpy
 pandas

@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 
-from financialSystem.models import UserTable, StockInfo, News
+from financial_system.models import User, StockInfo, News
 
 
 def adm_base(request):
     return render(request, 'adm_base.html')
 
 def adm_user(request):
-    all_user = UserTable.objects.all()
+    all_user = User.objects.all()
     context = {
         'all_user': all_user,
     }
@@ -52,13 +52,13 @@ def adm_add_news(request):
             content=content,
         )
         news.save()
-    return redirect('financialSystem:adm_news')
+    return redirect('financial_system:adm_news')
 
 def adm_delete_news(request, news_id):
     news = News.objects.get(news_id=news_id)
     print(news, "被删除了")
     news.delete()
-    return redirect('financialSystem:adm_news')
+    return redirect('financial_system:adm_news')
 
 
 def adm_edit_news(request):
@@ -70,5 +70,5 @@ def adm_edit_news(request):
         news.title = news_title
         news.content = news_content
         news.save()
-        return redirect('financialSystem:adm_news_detail', news_id=int(news_id))
-    return redirect('financialSystem:adm_news')
+        return redirect('financial_system:adm_news_detail', news_id=int(news_id))
+    return redirect('financial_system:adm_news')

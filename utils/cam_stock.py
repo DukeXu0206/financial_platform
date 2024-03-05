@@ -1,5 +1,5 @@
 import tushare as ts
-from financialSystem.models import StockInfo
+from financial_system.models import StockInfo
 from random import randint, random, choice
 
 my_token = '6f6ee0533e28c2bde19102cccfc95de79fe56fc16633f5267fa0985c'

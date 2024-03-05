@@ -1,17 +1,17 @@
 from django.contrib import admin
 
 
-from financialSystem.models import StockInfo, UserTable, HistoryTradeTable, News, StockComment, CommentReply
+from financial_system.models import StockInfo, User, HistoryTrade, News, StockComment, CommentReply
 
 admin.site.site_header = 'Financial backend system'  # header
 admin.site.site_title = 'Financial backend system'   # title
 admin.site.index_title = 'Financial backend system'
 # Register your models here.
 
-admin.site.register(UserTable)
-admin.site.register(HistoryTradeTable);
-admin.site.register(StockComment);
-admin.site.register(CommentReply);
+admin.site.register(User)
+admin.site.register(HistoryTrade)
+admin.site.register(StockComment)
+admin.site.register(CommentReply)
 
 @admin.register(StockInfo)
 class AuthorAdmin(admin.ModelAdmin):

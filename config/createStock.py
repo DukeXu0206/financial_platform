@@ -1,4 +1,4 @@
-from financialSystem.models import StockInfo
+from financial_system.models import StockInfo
 from random import randint, choice
 from hashlib import sha256
 

@@ -1,4 +1,4 @@
-from financialSystem.models import News
+from financial_system.models import News
 from my_fake_useragent import UserAgent
 from urllib import request
 

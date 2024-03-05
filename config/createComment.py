@@ -1,4 +1,4 @@
-from financialSystem.models import StockInfo, UserTable,StockComment, CommentReply
+from financial_system.models import StockInfo, UserTable,StockComment, CommentReply
 from random import choice
 
 

@@ -2,7 +2,7 @@ from my_fake_useragent import UserAgent
 import re
 from urllib import request
 
-from financialSystem.models import News
+from financial_system.models import News
 
 
 # from tradingSystem.models import News

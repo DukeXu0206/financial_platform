@@ -10,7 +10,7 @@ CREATE TABLE `user_table` (
   `id_no` varchar(18) NOT NULL,
   `user_name` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
-  `user_sex` varchar(5) NOT NULL,
+  `user_gender` varchar(5) NOT NULL,
   `phone_number` varchar(45) NOT NULL,
   `user_email` varchar(254) NOT NULL,
   `photo_url` varchar(45) NOT NULL,
