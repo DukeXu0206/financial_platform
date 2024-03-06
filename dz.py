@@ -3,7 +3,6 @@ folder_name = "financial"
 
 dz_array = {
         "public":{
-            "favicon":f"{folder_name}/images/favicon.png",
             "description":"financialSystem",
             "og_title":"financialSystem",
             "og_description":"financialSystem financialSystem",
