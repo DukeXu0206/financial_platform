@@ -14,9 +14,8 @@ urlpatterns = [
 
     path('watchlist/', views.user_watchlist_view, name='user_watchlist_view'),
 
+
     path('stocks/', views.stock_list_view, name='stock_list'),
-
-
     path('stock/<int:stock_id>/', views.stock_detail_view, name='stock_detail'),
 
     path('trade/', views.trade, name='trade'),

@@ -275,7 +275,8 @@ def stock_list_view(request):
     stock_list = stock_list[0:100]
 
     context = {
-        "stocks": stock_list
+        "stocks": stock_list,
+        "numbers":  range(1, 13)
     }
 
     return render(request, 'stock_list.html', context)

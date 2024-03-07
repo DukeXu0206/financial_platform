@@ -34,7 +34,13 @@ dz_array = {
                         "user_watchlist_view": [
                             f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.css",
                         ],
+                        "stock_detail_view":[
+                            f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.css",
+                        ],
                         "news_view":[
+                            f"{folder_name}/vendor/swiper/css/swiper-bundle.min.css",
+                        ],
+                        "stock_list_view":[
                             f"{folder_name}/vendor/swiper/css/swiper-bundle.min.css",
                         ],
                         "page_empty": [
@@ -42,6 +48,14 @@ dz_array = {
                     },
                     "js":{
                         "user_watchlist_view": [
+                            f"{folder_name}/vendor/chart-js/chart.bundle.min.js",
+                            f"{folder_name}/vendor/apexchart/apexchart.js",
+                            f"{folder_name}/vendor/peity/jquery.peity.min.js",
+                            f"{folder_name}/js/dashboard/coin.js",
+                            f"{folder_name}/vendor/bootstrap-datetimepicker/js/moment.js",
+                            f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.js",
+                        ],
+                        "stock_detail_view":[
                             f"{folder_name}/vendor/chart-js/chart.bundle.min.js",
                             f"{folder_name}/vendor/apexchart/apexchart.js",
                             f"{folder_name}/vendor/peity/jquery.peity.min.js",
@@ -57,6 +71,9 @@ dz_array = {
                             f"{folder_name}/vendor/peity/jquery.peity.min.js",
                             f"{folder_name}/vendor/swiper/js/swiper-bundle.min.js",
                             f"{folder_name}/js/dashboard/dashboard-1.js",
+                        ],
+                        "stock_list_view": [
+                            f"{folder_name}/vendor/swiper/js/swiper-bundle.min.js",
                         ],
                     },
                 }
