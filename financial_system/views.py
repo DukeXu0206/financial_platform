@@ -32,7 +32,6 @@ def register_action(request):
     user_gender = request.POST.get('user_gender')
     user_email = request.POST.get('user_email')
     password = request.POST.get('password')
-
     try:
         user = User.objects.create(
             user_name=user_name,
@@ -42,18 +41,20 @@ def register_action(request):
             password=password,
             phone_number=phone_number
         )
+
         user.save()
         print("Success register user")
         print(user)
 
         message = "Registration successful!"
 
-    except Exception:
-        print(Exception)
+    except Exception as e:
+        print("An exception occurred:", e)
         message = "Registration failed, please check and try again later!"  # Including the message in the context
+        return render(request, 'sign_up.html', {"message": message})
 
-    return render(request, 'sign_up.html', {"message": message})
-
+    #跳转到登录
+    return redirect('financial_system:login')
 
 def login_view(request):
     return render(request, 'login.html')
@@ -246,7 +247,8 @@ def user_watchlist_view(request):
             'open_positions': open_positions,
             'closed_positions': closed_positions,
             'pnl_per_stock': pnl_per_stock,
-            'gross_pnl': gross_pnl
+            'gross_pnl': gross_pnl,
+            "page_title":"user watchlist"
         }
 
         return render(request, 'user_watchlist.html', context)

@@ -25,7 +25,7 @@ class User(models.Model):
     # 用户密码
     password = models.CharField(max_length=45)
     # 用户性别
-    user_gender = models.CharField(max_length=5)
+    user_gender = models.CharField(max_length=10)
     # 用户电话号码，用于注册，联系
     phone_number = models.CharField(max_length=45)
     # 用户邮箱

@@ -52,10 +52,11 @@
             <div class="authincation-content style-2">
                 <div class="row no-gutters">
                     <div class="col-xl-12 tab-content">
-                        <div id="sign-up" class="auth-form tab-pane fade show active  form-validation">
-                            <form action="{% url 'financial_system:register_action' %}" method="post">
-                                {% csrf_token %}
+                        <div id="sign-up" class="auth-form tab-pane fade show active form-validation">
 
+                            <form action="{% url 'financial_system:register_action' %}" method="post">
+
+                                {% csrf_token %}
 
                                 <div class="text-center mb-4">
                                     <h3 class="text-center mb-2 text-dark">Sign up</h3>
@@ -70,7 +71,7 @@
                                     </div>
                                 </div>
                                 <div class="sepertor">
-                                    <span class="d-block mb-4 fs-13"> with Phone Number </span>
+                                    <span class="d-block mb-4 fs-13"> With Phone Number </span>
                                 </div>
 
 
@@ -99,7 +100,7 @@
                                 <div class="mb-3">
                                     <label for="phone_number" class="form-label required">Phone Number</label>
                                     <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                           placeholder="phone_number">
+                                           placeholder="phone number">
                                 </div>
                                 <div class="mb-3">
                                     <label for="user_gender" class="form-label required">Gender</label>
@@ -117,7 +118,7 @@
                                 </div>
                                 <div class="mb-3 position-relative">
                                     <label class="form-label required">Password</label>
-                                    <input type="password" id="dlab-password" class="form-control" value="123456">
+                                    <input type="password" id="password" class="form-control" value="" name="password">
                                     <span class="show-pass eye">
 											<i class="fa fa-eye-slash"></i>
 											<i class="fa fa-eye"></i>
@@ -135,9 +136,7 @@
                             </div>
                         </div>
                         <div class="d-flex align-items-center justify-content-center">
-                            <a href="javascript:void(0);" class="text-primary">Terms</a>
-                            <a href="javascript:void(0);" class="text-primary mx-5">Plans</a>
-                            <a href="javascript:void(0);" class="text-primary">Contact Us</a>
+
                         </div>
                     </div>
                 </div>

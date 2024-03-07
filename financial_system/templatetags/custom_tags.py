@@ -18,7 +18,7 @@ def getdata(json_data, args):
             logger.debug("Module Name:> {} ",myfunc.__module__,feature="f-strings")
             logger.debug("URL_Path:> {} ",args,feature="f-strings")
             func_name=myfunc.__name__
-            print()
+            print(func_name)
             logger.success("*"*50)
     except Resolver404:
         logger.debug("something went wrong",feature="f-strings")

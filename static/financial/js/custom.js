@@ -617,7 +617,7 @@
 				  var sticky = $('.header'),
 					  scroll = $(window).scrollTop();
 
-				  if (scroll >=50){ sticky.addClass('is-fixed');
+				  if (scroll >=0){ sticky.addClass('is-fixed');
 									}else {sticky.removeClass('is-fixed');}
 				});				
 			}
