@@ -2399,8 +2399,8 @@
 
           
           speed: 1500,
-          slidesPerView: 4,
-          spaceBetween: 40,
+          slidesPerView: 3,
+          spaceBetween: 30,
           rtl: true,
           parallax: true,
           loop: false,

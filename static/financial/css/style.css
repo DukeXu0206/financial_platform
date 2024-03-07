@@ -10615,7 +10615,7 @@ h1, .h1, .h1, h2, .h2, .h2, h3, .h3, .h3, h4, .h4, .h4, h5, .h5, .h5, h6, .h6, .
     width: calc(100% - 16.2rem); }
     @media only screen and (max-width: 100rem) {
       .header .header-content {
-        height: 70.5px; } }
+        height: 82px; } }
     @media only screen and (max-width: 87.5rem) {
       .header .header-content {
         padding-left: 8rem;

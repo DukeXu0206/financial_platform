@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ news_item.title }}{% endblock %}
+
+{% block content %}
+<div class="news-detail-container">
+    <h1>{{ news_item.title }}</h1>
+    {% if news_item.source %}
+        <p>Source: <a href="{{ news_item.source }}" target="_blank" rel="noopener noreferrer">{{ news_item.source }}</a></p>
+    {% endif %}
+    <p class="news-date">Date: {{ news_item.news_dataTime|date:"Y-m-d" }}</p>
+    <div class="news-content">
+        {{ news_item.content|linebreaks }}
+    </div>
+</div>
+{% endblock %}

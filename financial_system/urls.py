@@ -18,6 +18,8 @@ urlpatterns = [
 
 
     path('stock/<int:stock_id>/', views.stock_detail_view, name='stock_detail'),
+
+    path('trade/', views.trade, name='trade'),
     path('buy_stock/', views.buy_stock, name='buy_stock'),
     path('sell_stock/', views.sell_stock, name='sell_stock'),
     path('stock/<int:stock_id>/add_comment/', views.add_comment, name='add_comment'),

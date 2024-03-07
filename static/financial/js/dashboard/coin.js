@@ -1143,7 +1143,7 @@
 			load:function(){
 			   dashChart();
 			   ethChart();
-			   bitcoinhChart();
+			   //bitcoinhChart();
 			   litcoinChart();
 			},
 			

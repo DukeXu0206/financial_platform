@@ -7,7 +7,7 @@ dz_array = {
             "og_title":"financialSystem",
             "og_description":"financialSystem financialSystem",
             "og_image":"/social-image.png",
-            "title":"financial_platform",
+            "title":"financial platform",
         },
         "global":{
             "css":[
@@ -34,6 +34,9 @@ dz_array = {
                         "user_watchlist_view": [
                             f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.css",
                         ],
+                        "news_view":[
+                            f"{folder_name}/vendor/swiper/css/swiper-bundle.min.css",
+                        ],
                         "page_empty": [
                         ],
                     },
@@ -45,6 +48,15 @@ dz_array = {
                             f"{folder_name}/js/dashboard/coin.js",
                             f"{folder_name}/vendor/bootstrap-datetimepicker/js/moment.js",
                             f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.js",
+                        ],
+                        "news_view": [
+                            f"{folder_name}/vendor/apexchart/apexchart.js",
+                            f"{folder_name}/vendor/chart-js/chart.bundle.min.js",
+                            f"{folder_name}/vendor/counter/counter.min.js",
+                            f"{folder_name}/vendor/counter/waypoint.min.js",
+                            f"{folder_name}/vendor/peity/jquery.peity.min.js",
+                            f"{folder_name}/vendor/swiper/js/swiper-bundle.min.js",
+                            f"{folder_name}/js/dashboard/dashboard-1.js",
                         ],
                     },
                 }

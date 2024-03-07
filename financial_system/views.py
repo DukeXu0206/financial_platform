@@ -286,6 +286,8 @@ def stock_detail_view(request, stock_id):
     comments = StockComment.objects.filter(stock_id=stock_id).order_by('-comment_time')
     return render(request, 'stock_detail.html', {'stock': stock, 'comments': comments})
 
+def trade(request):
+    return render(request, 'trade.html', {})
 
 def buy_stock(request):
     if request.method == "POST":
