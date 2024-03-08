@@ -11,13 +11,16 @@
         <meta name="format-detection" content="telephone=no">
 
         <!-- PAGE TITLE HERE -->
-        <title>{{ dz_array.public.title }}</title>
+        {% block title %}
+            <title>{{ dz_array.public.title }}</title>
+        {% endblock %}
+
 
         {% for cssurl in dz_array.pagelevel.financial.financial_views.css|getdata:request.path %}
-        <link rel="stylesheet" href="{% static cssurl %}" >
+            <link rel="stylesheet" href="{% static cssurl %}" >
         {% endfor %}
         {% for cssurl in dz_array.global.css %}
-        <link rel="stylesheet" href="{% static cssurl %}">
+            <link rel="stylesheet" href="{% static cssurl %}">
         {% endfor %}
         {% block additional_css %}
         {% endblock %}

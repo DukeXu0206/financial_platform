@@ -760,10 +760,14 @@
                 }],
                 chart: {
                     type: 'candlestick',
-                    height: 300,
+                    height: 350,
                     toolbar: {
-                        show: false,
-                    }
+                        autoSelected: 'pan',
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                   }
                 },
                 grid: {
                     show: false,
