@@ -40,7 +40,7 @@
 
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{% url 'financial_system:user_watchlist_view' %}" class="nav-link market"
+                                    <a href="{% url 'financial_system:stock_list' %}" class="nav-link market"
                                        id="nav-market-tab" type="button">
                                         Market
                                     </a>
@@ -73,121 +73,36 @@
                             <div class="row">
                                 <!-- 左右滑动列表 -->
                                 <div class="swiper mySwiper-counter position-relative overflow-hidden">
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-button-next"></div>
                                     <div class="swiper-wrapper">
-                                        <div class="swiper-slide">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="profile-news">
-                                                        <div class="media pt-3 pb-3">
-                                                            <img src="{% static 'financial/images/profile/5.jpg' %}"
-                                                                 alt="image"
-                                                                 class="me-3 rounded" width="75">
-                                                            <div class="media-body">
-                                                                <h5 class="m-b-5"><a
-                                                                        href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                                        class="text-dark">Check crypto news
-                                                                    websites regularly.</a></h5>
-                                                                <p class="mb-0">I shared this on my fb wall a few months
-                                                                    back,
-                                                                    and I thought.</p>
+                                        <!-- 循环输出顶部news -->
+                                        {% for stock_data in numbers %}
+                                            <div class="swiper-slide">
+                                                <div class="card pb-0">
+                                                    <div class="pe-2 ps-2">
+                                                        <div class="profile-news">
+                                                            <div class="media pt-2 pb-2">
+                                                                <img src="{% static 'financial/images/profile/1.webp' %}"
+                                                                     alt="image"
+                                                                     class="me-3 rounded" width="150">
+                                                                <div class="media-body">
+                                                                    <h5 class="m-b-5"><a
+                                                                            href="{% url 'financial_system:news_detail'  news_id=1 %}"
+                                                                            class="text-dark">Check crypto news
+                                                                        websites regularly.</a></h5>
+                                                                    <p class="mb-0">I shared this on my fb wall a few
+                                                                        months
+                                                                        back,
+                                                                        and I thought.</p>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        {% endfor %}
 
-                                        <div class="swiper-slide">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="profile-news">
-                                                        <div class="media pt-3 pb-3">
-                                                            <img src="{% static 'financial/images/profile/5.jpg' %}"
-                                                                 alt="image"
-                                                                 class="me-3 rounded" width="75">
-                                                            <div class="media-body">
-                                                                <h5 class="m-b-5"><a
-                                                                        href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                                        class="text-dark">Check crypto news
-                                                                    websites regularly.</a></h5>
-                                                                <p class="mb-0">I shared this on my fb wall a few months
-                                                                    back,
-                                                                    and I thought.</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="swiper-slide">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="profile-news">
-                                                        <div class="media pt-3 pb-3">
-                                                            <img src="{% static 'financial/images/profile/5.jpg' %}"
-                                                                 alt="image"
-                                                                 class="me-3 rounded" width="75">
-                                                            <div class="media-body">
-                                                                <h5 class="m-b-5"><a
-                                                                        href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                                        class="text-dark">Check crypto news
-                                                                    websites regularly.</a></h5>
-                                                                <p class="mb-0">I shared this on my fb wall a few months
-                                                                    back,
-                                                                    and I thought.</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="swiper-slide">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="profile-news">
-                                                        <div class="media pt-3 pb-3">
-                                                            <img src="{% static 'financial/images/profile/5.jpg' %}"
-                                                                 alt="image"
-                                                                 class="me-3 rounded" width="75">
-                                                            <div class="media-body">
-                                                                <h5 class="m-b-5"><a
-                                                                        href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                                        class="text-dark">Check crypto news
-                                                                    websites regularly.</a></h5>
-                                                                <p class="mb-0">I shared this on my fb wall a few months
-                                                                    back,
-                                                                    and I thought.</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="swiper-slide">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="profile-news">
-                                                        <div class="media pt-3 pb-3">
-                                                            <img src="{% static 'financial/images/profile/5.jpg' %}"
-                                                                 alt="image"
-                                                                 class="me-3 rounded" width="75">
-                                                            <div class="media-body">
-                                                                <h5 class="m-b-5"><a
-                                                                        href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                                        class="text-dark">Check crypto news
-                                                                    websites regularly.</a></h5>
-                                                                <p class="mb-0">I shared this on my fb wall a few months
-                                                                    back,
-                                                                    and I thought.</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -235,53 +150,38 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="my-post-content pt-3">
+                                                <!-- 循环输出news  tab1-->
+                                                {% for stock_data in numbers %}
+                                                    <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">
+                                                        <a class="me-3"
+                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}"
+                                                           style="height: 20rem;">
+                                                            <img src="{% static 'financial/images/profile/1.webp' %}"
+                                                                 alt="" style="height: 20rem;"
+                                                                 class="img-fluid  rounded ">
+                                                        </a>
 
-                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5">
-                                                    <a class="media-body  me-3" href="{% url 'financial_system:news_detail'  news_id=1 %}">
-                                                        <img src="{% static 'financial/images/profile/1.webp' %}" alt=""
-                                                             class="img-fluid  rounded ">
-                                                    </a>
+                                                        <div class="media-body">
+                                                            <a class="post-title"
+                                                               href="{% url 'financial_system:news_detail'  news_id=1 %}">
+                                                                <h3 class="text-dark">Use crypto news
+                                                                    sources
+                                                                    daily.</h3></a>
+                                                            <p>A wonderful serenity has take possession of my entire
+                                                                soul
+                                                                like
+                                                                these
+                                                                sweet
+                                                                morning of spare which enjoy whole heart.A wonderful
+                                                                serenity
+                                                                has
+                                                                take
+                                                                possession of my entire soul like these sweet morning
+                                                                of spare which enjoy whole heart.</p>
+                                                        </div>
 
-                                                    <div class="media-body">
-                                                         <a class="post-title" href="{% url 'financial_system:news_detail'  news_id=1 %}"><h3 class="text-dark">Use crypto news
-                                                        sources
-                                                        daily.</h3></a>
-                                                    <p>A wonderful serenity has take possession of my entire soul like
-                                                        these
-                                                        sweet
-                                                        morning of spare which enjoy whole heart.A wonderful serenity
-                                                        has
-                                                        take
-                                                        possession of my entire soul like these sweet morning
-                                                        of spare which enjoy whole heart.</p>
                                                     </div>
-
-                                                </div>
-
-
-                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5">
-                                                    <a class="media-body  me-3" href="{% url 'financial_system:news_detail'  news_id=1 %}">
-                                                        <img src="{% static 'financial/images/profile/1.webp' %}" alt=""
-                                                             class="img-fluid  rounded ">
-                                                    </a>
-
-                                                    <div class="media-body">
-                                                         <a class="post-title" href="{% url 'financial_system:news_detail'  news_id=1 %}"><h3 class="text-dark">Use crypto news
-                                                        sources
-                                                        daily.</h3></a>
-                                                    <p>A wonderful serenity has take possession of my entire soul like
-                                                        these
-                                                        sweet
-                                                        morning of spare which enjoy whole heart.A wonderful serenity
-                                                        has
-                                                        take
-                                                        possession of my entire soul like these sweet morning
-                                                        of spare which enjoy whole heart.</p>
-                                                    </div>
-
-
-                                                </div>
-
+                                                {% endfor %}
 
                                             </div>
                                         </div>
@@ -295,13 +195,90 @@
                         <div class="tab-pane fade show" id="nav-newest" role="tabpanel">
                             <div class="row">
 
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="my-post-content pt-3">
+                                            <!-- 循环输出news  tab2-->
+                                            {% for stock_data in numbers %}
+                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">
+                                                    <a class="me-3"
+                                                       href="{% url 'financial_system:news_detail'  news_id=1 %}"
+                                                       style="height: 20rem;">
+                                                        <img src="{% static 'financial/images/profile/1.webp' %}"
+                                                             alt="" style="height: 20rem;"
+                                                             class="img-fluid  rounded ">
+                                                    </a>
+
+                                                    <div class="media-body">
+                                                        <a class="post-title"
+                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}">
+                                                            <h3 class="text-dark">Use crypto news
+                                                                sources
+                                                                daily.</h3></a>
+                                                        <p>A wonderful serenity has take possession of my entire
+                                                            soul
+                                                            like
+                                                            these
+                                                            sweet
+                                                            morning of spare which enjoy whole heart.A wonderful
+                                                            serenity
+                                                            has
+                                                            take
+                                                            possession of my entire soul like these sweet morning
+                                                            of spare which enjoy whole heart.</p>
+                                                    </div>
+
+                                                </div>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
                         <div class="tab-pane fade show" id="nav-hottest" role="tabpanel">
                             <div class="row">
 
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="my-post-content pt-3">
+                                            <!-- 循环输出news  tab3-->
+                                            {% for stock_data in numbers %}
+                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">
+                                                    <a class="me-3"
+                                                       href="{% url 'financial_system:news_detail'  news_id=1 %}"
+                                                       style="height: 20rem;">
+                                                        <img src="{% static 'financial/images/profile/1.webp' %}"
+                                                             alt="" style="height: 20rem;"
+                                                             class="img-fluid  rounded ">
+                                                    </a>
 
+                                                    <div class="media-body">
+                                                        <a class="post-title"
+                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}">
+                                                            <h3 class="text-dark">Use crypto news
+                                                                sources
+                                                                daily.</h3></a>
+                                                        <p>A wonderful serenity has take possession of my entire
+                                                            soul
+                                                            like
+                                                            these
+                                                            sweet
+                                                            morning of spare which enjoy whole heart.A wonderful
+                                                            serenity
+                                                            has
+                                                            take
+                                                            possession of my entire soul like these sweet morning
+                                                            of spare which enjoy whole heart.</p>
+                                                    </div>
+
+                                                </div>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -317,6 +294,64 @@
 
 {% endblock %}
 
-{% block additional_js %}
 
+{% block additional_js %}
+    <script>
+        var swipercard = function () {
+
+            function carouselDir() {
+                if ($('body').attr('direction') == "rtl") {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            if (jQuery(".mySwiper-counter").length > 0) {
+                var swiper = new Swiper('.mySwiper-counter', {
+
+
+                    speed: 1500,
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                    rtl: true,
+                    parallax: true,
+                    loop: false,
+                    autoplay: {
+                        delay: 5000,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    breakpoints: {
+
+                        300: {
+                            slidesPerView: 1,
+                            spaceBetween: 30,
+                        },
+                        480: {
+                            slidesPerView: 2,
+                            spaceBetween: 30,
+                        },
+                        768: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                        991: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                        1200: {
+                            slidesPerView: 4,
+                            spaceBetween: 30,
+                        },
+
+                    },
+                });
+            }
+        }
+
+        swipercard();
+    </script>
 {% endblock %}

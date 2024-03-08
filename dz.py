@@ -64,13 +64,7 @@ dz_array = {
                             f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.js",
                         ],
                         "news_view": [
-                            f"{folder_name}/vendor/apexchart/apexchart.js",
-                            f"{folder_name}/vendor/chart-js/chart.bundle.min.js",
-                            f"{folder_name}/vendor/counter/counter.min.js",
-                            f"{folder_name}/vendor/counter/waypoint.min.js",
-                            f"{folder_name}/vendor/peity/jquery.peity.min.js",
                             f"{folder_name}/vendor/swiper/js/swiper-bundle.min.js",
-                            f"{folder_name}/js/dashboard/dashboard-1.js",
                         ],
                         "stock_list_view": [
                             f"{folder_name}/vendor/swiper/js/swiper-bundle.min.js",

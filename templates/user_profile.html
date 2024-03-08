@@ -12,65 +12,124 @@
     <div class="content-body">
         <!-- row -->
         <div class="container-fluid">
-          <div class="row">
-                 <h2>User Profile</h2>
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="coin-warpper d-flex align-items-center justify-content-between flex-wrap">
+                        <div>
+                            <ul class="nav nav-pills">
+                                <li class="nav-item">
+                                    <a href="{% url 'financial_system:user_watchlist_view' %}"
+                                       class="nav-link  ms-0" id="nav-trading-tab" type="button">
+                                        Trading
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'financial_system:news' %}" class="nav-link news"
+                                       id="nav-news-tab"
+                                       type="button">
+                                        News
+                                    </a>
 
-            {% if user %}
-                <form method="post" enctype="multipart/form-data"
-                      action="{% url 'financial_system:edit_profile_action' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="photo">Profile Picture:</label>
-                        <input type="file" id="photo" name="photo" class="form-control">
-                        <img src="{{ user.photo.url }}" alt="User Photo"
-                             style="width: 100px; height: auto; border-radius: 50%;">
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'financial_system:user_profile' %}" class="nav-link active account"
+                                       id="nav-account-tab" type="button">
+                                        Account
+                                    </a>
+
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'financial_system:stock_list' %}" class="nav-link market"
+                                       id="nav-market-tab" type="button">
+                                        Market
+                                    </a>
+
+                                </li>
+
+
+                            </ul>
+                        </div>
+                        <div class="input-group search-area w-auto coin-tab-search mt-xl-0 mt-2">
+                            <input type="text" class="form-control" placeholder="">
+                            <span class="input-group-text"><a href="javascript:void(0)">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                 width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <rect x="0" y="0" width="24" height="24"/>
+                                    <path d="M14.2928932,16.7071068 C13.9023689,16.3165825 13.9023689,15.6834175 14.2928932,15.2928932 C14.6834175,14.9023689 15.3165825,14.9023689 15.7071068,15.2928932 L19.7071068,19.2928932 C20.0976311,19.6834175 20.0976311,20.3165825 19.7071068,20.7071068 C19.3165825,21.0976311 18.6834175,21.0976311 18.2928932,20.7071068 L14.2928932,16.7071068 Z"
+                                          fill="var(--text-dark)" fill-rule="nonzero" opacity="0.3"/>
+                                    <path d="M11,16 C13.7614237,16 16,13.7614237 16,11 C16,8.23857625 13.7614237,6 11,6 C8.23857625,6 6,8.23857625 6,11 C6,13.7614237 8.23857625,16 11,16 Z M11,18 C7.13400675,18 4,14.8659932 4,11 C4,7.13400675 7.13400675,4 11,4 C14.8659932,4 18,7.13400675 18,11 C18,14.8659932 14.8659932,18 11,18 Z"
+                                          fill="var(--text-dark)" fill-rule="nonzero"/>
+                                </g>
+                            </svg>
+                        </a></span>
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <h2>User Profile</h2>
 
-                    <div class="form-group">
-                        <label for="user_name">Name:</label>
-                        <input class="form-control" type="text" id="user_name" name="user_name" value="{{ user.user_name }}" required>
-                    </div>
+                {% if user %}
+                    <form method="post" enctype="multipart/form-data"
+                          action="{% url 'financial_system:edit_profile_action' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="photo">Profile Picture:</label>
+                            <input type="file" id="photo" name="photo" class="form-control">
+                            <img src="{{ user.photo.url }}" alt="User Photo"
+                                 style="width: 100px; height: auto; border-radius: 50%;">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="user_gender">Gender:</label>
-                        <select  class="form-control" id="user_gender" name="user_gender" required>
-                            <option value="Male" {% if user.user_gender == "Male" %} selected {% endif %}>Male</option>
-                            <option value="Female" {% if user.user_gender == "Female" %}selected{% endif %}>Female
-                            </option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <label for="user_name">Name:</label>
+                            <input class="form-control" type="text" id="user_name" name="user_name"
+                                   value="{{ user.user_name }}" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="phone_number">Phone Number:</label>
-                        <input  class="form-control" type="text" id="phone_number" name="phone_number" value="{{ user.phone_number }}"
-                               required>
-                    </div>
+                        <div class="form-group">
+                            <label for="user_gender">Gender:</label>
+                            <select class="form-control" id="user_gender" name="user_gender" required>
+                                <option value="Male" {% if user.user_gender == "Male" %} selected {% endif %}>Male
+                                </option>
+                                <option value="Female" {% if user.user_gender == "Female" %}selected{% endif %}>Female
+                                </option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="user_email">Email:</label>
-                        <input  class="form-control" type="email" id="user_email" name="user_email" value="{{ user.user_email }}" required>
-                    </div>
+                        <div class="form-group">
+                            <label for="phone_number">Phone Number:</label>
+                            <input class="form-control" type="text" id="phone_number" name="phone_number"
+                                   value="{{ user.phone_number }}"
+                                   required>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input  class="form-control" type="password" id="password" name="password">
-                    </div>
+                        <div class="form-group">
+                            <label for="user_email">Email:</label>
+                            <input class="form-control" type="email" id="user_email" name="user_email"
+                                   value="{{ user.user_email }}" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm Password:</label>
-                        <input  class="form-control" type="password" id="confirm_password" name="confirm_password">
-                    </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input class="form-control" type="password" id="password" name="password">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm Password:</label>
+                            <input class="form-control" type="password" id="confirm_password" name="confirm_password">
+                        </div>
 
 
-                    <div class="form-group">
-                        <button class="btn btn-primary " type="submit">Save Changes</button>
-                    </div>
-                </form>
-            {% else %}
-                <p>{{ message }}</p>
-            {% endif %}
+                        <div class="form-group">
+                            <button class="btn btn-primary " type="submit">Save Changes</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <p>{{ message }}</p>
+                {% endif %}
 
-          </div>
+            </div>
 
         </div>
     </div>

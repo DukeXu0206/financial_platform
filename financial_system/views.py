@@ -248,7 +248,8 @@ def user_watchlist_view(request):
             'closed_positions': closed_positions,
             'pnl_per_stock': pnl_per_stock,
             'gross_pnl': gross_pnl,
-            "page_title":"user watchlist"
+            "page_title":"user watchlist",
+            "numbers": range(1, 13)
         }
 
         return render(request, 'user_watchlist.html', context)
@@ -261,7 +262,7 @@ def user_watchlist_view(request):
 def news_view(request):
     news = News.objects.all().order_by('-news_dataTime')
 
-    context = {'news': news}
+    context = {'news': news ,  "numbers":  range(1, 13) }
     return render(request, 'news.html', context)
 
 
@@ -272,7 +273,7 @@ def news_detail_view(request, news_id):
 
 def stock_list_view(request):
     stock_list = models.StockInfo.objects.all()
-    stock_list = stock_list[0:100]
+    stock_list = stock_list[0:20]
 
     context = {
         "stocks": stock_list,
