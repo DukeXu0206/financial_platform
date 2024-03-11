@@ -57,8 +57,9 @@ def register_action(request):
         message = "Registration failed, please check and try again later!"  # Including the message in the context
         return render(request, 'sign_up.html', {"message": message})
 
-    #跳转到登录
+    # 跳转到登录
     return redirect('financial_system:login')
+
 
 def login_view(request):
     return render(request, 'login.html')
@@ -190,13 +191,19 @@ def edit_user_profile_action(request):
         return render(request, 'login.html', context)
 
 
-def deposit_funds(request, amount):
+def deposit_funds(request):
     user = User.objects.get(user_id=request.session.get('user_id'))
+    amount = request.POST.get('amount')
     user.balance += amount
     user.save()
+    user = User.objects.get(user_id=request.session.get('user_id'))
+    context = {
+        'user': user,
+    }
+    return render(request, 'balance.html', context)
 
-
-def withdraw_funds(request, amount):
+def withdraw_funds(request):
+    amount = request.POST.get('amount')
     user = User.objects.get(user_id=request.session.get('user_id'))
     if user.balance >= amount:
         user.balance -= amount
@@ -204,6 +211,28 @@ def withdraw_funds(request, amount):
         messages.success(request, "Successful Withdraw")
     else:
         messages.error(request, "Insufficient balance, unsuccessful withdraw.")
+    user = User.objects.get(user_id=request.session.get('user_id'))
+    context = {
+        'user': user,
+    }
+    return render(request, 'balance.html', context)
+
+def balance(request):
+    try:
+
+        user = User.objects.get(user_id=request.session.get('user_id'))
+        context = {
+            'user': user,
+        }
+        return render(request, 'balance.html', context)
+    except ObjectDoesNotExist:
+        context = {"message": "User not recognized, please login."}
+        # 根据后端意思，继续渲染到user_watchlist ，但是显示未登录界面
+        context = {
+            'user': None,
+            'tips': "User not recognized, please login.",
+        }
+        return render(request, 'user_watchlist.html', context)
 
 
 def calculate_pnl(trades):
@@ -223,16 +252,16 @@ def calculate_pnl(trades):
     return pnl_per_stock, gross_pnl
 
 
-def user_watchlist_view(request,stock_id=None):
+def user_watchlist_view(request, stock_id=None):
     try:
         user = User.objects.get(user_id=request.session.get('user_id'))
         stocks_in_watchlist = StockInfo.objects.filter(
             stock_id__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_id', flat=True)
         )
         # all_trades = HistoryTrade.objects.filter(user_id=user).order_by('-trade_dateTime')
-        #获取某个stockid，如果没有就选其一
-        if stock_id :
-            current_watch_stock = StockInfo.objects.get(stock_id = stock_id)
+        # 获取某个stockid，如果没有就选其一
+        if stock_id:
+            current_watch_stock = StockInfo.objects.get(stock_id=stock_id)
         else:
             current_watch_stock = stocks_in_watchlist[0] if stocks_in_watchlist else None
 
@@ -261,17 +290,17 @@ def user_watchlist_view(request,stock_id=None):
             'closed_positions': closed_positions,
             'pnl_per_stock': pnl_per_stock,
             'gross_pnl': gross_pnl,
-            "page_title":"user watchlist",
+            "page_title": "user watchlist",
         }
 
         return render(request, 'user_watchlist.html', context)
 
     except ObjectDoesNotExist:
         context = {"message": "User not recognized, please login."}
-        #根据后端意思，继续渲染到user_watchlist ，但是显示未登录界面
+        # 根据后端意思，继续渲染到user_watchlist ，但是显示未登录界面
         context = {
             'user': None,
-            'tips':"User not recognized, please login.",
+            'tips': "User not recognized, please login.",
         }
         return render(request, 'user_watchlist.html', context)
 
@@ -279,7 +308,7 @@ def user_watchlist_view(request,stock_id=None):
 def news_view(request):
     news = News.objects.all().order_by('-news_dataTime')
 
-    context = {'news': news ,  "numbers":  range(1, 13) }
+    context = {'news': news, }
     return render(request, 'news.html', context)
 
 
@@ -304,9 +333,11 @@ def stock_detail_view(request, stock_id):
     comments = StockComment.objects.filter(stock_id=stock_id).order_by('-comment_time')
     return render(request, 'stock_detail.html', {'stock': stock, 'comments': comments})
 
-def trade(request,stock_id):
+
+def trade(request, stock_id):
     stock = get_object_or_404(StockInfo, stock_id=stock_id)
-    return render(request, 'trade.html', {'stock':stock})
+    return render(request, 'trade.html', {'stock': stock})
+
 
 def buy_stock(request):
     if request.method == "POST":

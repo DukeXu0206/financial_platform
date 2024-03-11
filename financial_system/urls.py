@@ -27,6 +27,10 @@ urlpatterns = [
 
     path('notifications/', views.user_notification_view, name='user_notification'),
 
+    path('balance/', views.balance, name='balance'),
+    path('deposit_funds/', views.deposit_funds, name='deposit_funds'),
+    path('withdraw_funds/', views.withdraw_funds, name='withdraw_funds'),
+
     path('news/', views.news_view, name='news'),
     path('news/<int:news_id>/', views.news_detail_view, name='news_detail'),
 

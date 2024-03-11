@@ -1,23 +1,63 @@
-{% extends "base.html" %}
-
-{% block title %}Submit Feedback{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}<title>Submit Feedback</title>{% endblock %}
+{% block additional_css %}
+{% endblock %}
 
 {% block content %}
-<h1>Submit Feedback</h1>
-<form method="post" action="{% url 'financial_system:submit_feedback' %}">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    <div class="content-body">
+        <!-- row -->
+        <div class="container-fluid">
+            <div class="row">
+               {% include 'elements/nav-tool.html' %}
+            </div>
+            <div class="row">
+                <h2>Submit Feedback</h2>
+
+                {% if user %}
+                    <form method="post"
+                          action="{% url 'financial_system:submit_feedback' %}">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="user_name">Email:</label>
+                            <input class="form-control" type="email"  id="email" name="email" required>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="user_email">Title:</label>
+                            <input class="form-control" type="text" id="title" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user_email">Content:</label>
+                             <textarea class="form-control" type="text"  id="content" name="content" rows="5" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary " type="submit">Submit</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <p>{{ message }}</p>
+                {% endif %}
+
+            </div>
+
+        </div>
     </div>
-    <div class="form-group">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required>
-    </div>
-    <div class="form-group">
-        <label for="content">Content:</label>
-        <textarea id="content" name="content" rows="5" required></textarea>
-    </div>
-    <button type="submit">Submit</button>
-</form>
+    <!--**********************************
+        Content body end
+    ***********************************-->
+
 {% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}
+
+

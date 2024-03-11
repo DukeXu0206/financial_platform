@@ -1,23 +1,63 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Notifications{% endblock %}
+{% block additional_css %}
+{% endblock %}
 
 {% block content %}
-<h1>Notifications</h1>
 
-{% if notifications %}
-    <ul>
-        {% for notification in notifications %}
-        <li style="margin-bottom: 20px; {% if not notification.read %}background-color: #f0f0f0;{% endif %}">
-            <strong>Title:</strong> {{ notification.title }}<br>
-            <strong>Message:</strong> {{ notification.message|linebreaks }}<br>
-            <strong>Date:</strong> {{ notification.created_at|date:"Y-m-d H:i:s" }}<br>
-            <strong>Status:</strong> {% if notification.read %}Read{% else %}Unread{% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>You have no notifications.</p>
-{% endif %}
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    <div class="content-body">
+        <!-- row -->
+        <div class="container-fluid">
+
+            <div class="row">
+                {% include 'elements/nav-tool.html' %}
+
+            </div>
+
+            <!-- notice-->
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="profile-news">
+                                <h5 class="text-primary d-inline">Latest Notifications</h5>
+                                {% for notification in notifications %}
+                                    <div class="media pt-3 pb-3">
+                                        <div class="media-body">
+                                            <h5 class="m-b-5"><a href="#"
+                                                                 class="text-primary">Title: {{ notification.title }}</a>
+                                            </h5>
+                                            <p class="mb-0">Message:{{ notification.message|linebreaks }}</p>
+                                            <small> Date: {{ notification.created_at|date:"Y-m-d H:i:s" }} </small>
+                                            <strong>Status:</strong> {% if notification.read %}Read{% else %}
+                                            Unread{% endif %}
+
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                {% empty %}
+                                    <h4>You have no notifications.</h4>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- notice end-->
+
+        </div>
+    </div>
+    <!--**********************************
+        Content body end
+    ***********************************-->
+
+{% endblock %}
+
+{% block additional_js %}
 
 {% endblock %}

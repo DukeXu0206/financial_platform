@@ -1,5 +1,5 @@
 from dz import dz_array
-from financial_system.models import User
+from financial_system.models import User, UserNotification
 
 '''
 A context processor is a function that accepts an argument and returns a dictionary as its output.
@@ -18,7 +18,8 @@ def current_user(request):
     user_id = request.session.get('user_id')
     if user_id:
         user = User.objects.get(user_id=user_id)
-        return {'current_user': user}
+        notifications = UserNotification.objects.filter(user_id=user_id)
+        return {'current_user': user ,  "cur_notifications": notifications}
     else:
         return {'current_user': None}
 
