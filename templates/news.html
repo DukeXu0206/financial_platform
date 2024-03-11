@@ -14,6 +14,7 @@
         <div class="container-fluid">
             <!-- Row -->
             <div class="row">
+
                 <div class="col-xl-12">
                     <div class="coin-warpper d-flex align-items-center justify-content-between flex-wrap">
                         <div>
@@ -67,80 +68,80 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-12">
-                    <div class="tab-content" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
-                            <div class="row">
-                                <!-- 左右滑动列表 -->
-                                <div class="swiper mySwiper-counter position-relative overflow-hidden">
-                                    <div class="swiper-button-prev"></div>
-                                    <div class="swiper-button-next"></div>
-                                    <div class="swiper-wrapper">
-                                        <!-- 循环输出顶部news -->
-                                        {% for stock_data in numbers %}
-                                            <div class="swiper-slide">
-                                                <div class="card pb-0">
-                                                    <div class="pe-2 ps-2">
-                                                        <div class="profile-news">
-                                                            <div class="media pt-2 pb-2">
-                                                                <img src="{% static 'financial/images/profile/1.webp' %}"
-                                                                     alt="image"
-                                                                     class="me-3 rounded" width="150">
-                                                                <div class="media-body">
-                                                                    <h5 class="m-b-5"><a
-                                                                            href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                                            class="text-dark">Check crypto news
-                                                                        websites regularly.</a></h5>
-                                                                    <p class="mb-0">I shared this on my fb wall a few
-                                                                        months
-                                                                        back,
-                                                                        and I thought.</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+{#                <div class="col-xl-12">#}
+{#                    <div class="tab-content" id="nav-tabContent">#}
+{#                        <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">#}
+{#                            <div class="row">#}
+{#                                <!-- 左右滑动列表 -->#}
+{#                                <div class="swiper mySwiper-counter position-relative overflow-hidden">#}
+{#                                    <div class="swiper-button-prev"></div>#}
+{#                                    <div class="swiper-button-next"></div>#}
+{#                                    <div class="swiper-wrapper">#}
+{#                                        <!-- 循环输出顶部news -->#}
+{#                                        {% for stock_data in numbers %}#}
+{#                                            <div class="swiper-slide">#}
+{#                                                <div class="card pb-0">#}
+{#                                                    <div class="pe-2 ps-2">#}
+{#                                                        <div class="profile-news">#}
+{#                                                            <div class="media pt-2 pb-2">#}
+{#                                                                <img src="{% static 'financial/images/profile/1.webp' %}"#}
+{#                                                                     alt="image"#}
+{#                                                                     class="me-3 rounded" width="150">#}
+{#                                                                <div class="media-body">#}
+{#                                                                    <h5 class="m-b-5"><a#}
+{#                                                                            href="{% url 'financial_system:news_detail'  news_id=1 %}"#}
+{#                                                                            class="text-dark">Check crypto news#}
+{#                                                                        websites regularly.</a></h5>#}
+{#                                                                    <p class="mb-0">I shared this on my fb wall a few#}
+{#                                                                        months#}
+{#                                                                        back,#}
+{#                                                                        and I thought.</p>#}
+{#                                                                </div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                        {% endfor %}#}
+{##}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
 
                 <!-- 新闻列表 -->
-                <div class="col-xl-12">
-                    <div class="coin-warpper d-flex align-items-center justify-content-between flex-wrap">
-                        <div>
-                            <ul class="nav nav-pills">
-                                <li class="nav-item">
-                                    <button class="nav-link active litcoin" id="nav-recommend-tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav-recommend" type="button">
-                                        recommend
-                                    </button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link litcoin" id="nav-newest-tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav-newest" type="button">
-                                        newest
-                                    </button>
-
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link litcoin" id="nav-hottest-tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav-hottest" type="button">
-                                        Hottest
-                                    </button>
-
-                                </li>
-
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
+{#                <div class="col-xl-12">#}
+{#                    <div class="coin-warpper d-flex align-items-center justify-content-between flex-wrap">#}
+{#                        <div>#}
+{#                            <ul class="nav nav-pills">#}
+{#                                <li class="nav-item">#}
+{#                                    <button class="nav-link active litcoin" id="nav-recommend-tab" data-bs-toggle="tab"#}
+{#                                            data-bs-target="#nav-recommend" type="button">#}
+{#                                        recommend#}
+{#                                    </button>#}
+{#                                </li>#}
+{#                                <li class="nav-item">#}
+{#                                    <button class="nav-link litcoin" id="nav-newest-tab" data-bs-toggle="tab"#}
+{#                                            data-bs-target="#nav-newest" type="button">#}
+{#                                        newest#}
+{#                                    </button>#}
+{##}
+{#                                </li>#}
+{#                                <li class="nav-item">#}
+{#                                    <button class="nav-link litcoin" id="nav-hottest-tab" data-bs-toggle="tab"#}
+{#                                            data-bs-target="#nav-hottest" type="button">#}
+{#                                        Hottest#}
+{#                                    </button>#}
+{##}
+{#                                </li>#}
+{##}
+{#                            </ul>#}
+{#                        </div>#}
+{##}
+{#                    </div>#}
+{#                </div>#}
                 <div class="col-xl-12">
                     <div class="tab-content" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-recommend" role="tabpanel">
@@ -151,10 +152,10 @@
                                         <div class="card-body">
                                             <div class="my-post-content pt-3">
                                                 <!-- 循环输出news  tab1-->
-                                                {% for stock_data in numbers %}
+                                                {% for item in news %}
                                                     <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">
                                                         <a class="me-3"
-                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}"
+                                                           href="{% url 'financial_system:news_detail'  news_id=item.news_id %}"
                                                            style="height: 20rem;">
                                                             <img src="{% static 'financial/images/profile/1.webp' %}"
                                                                  alt="" style="height: 20rem;"
@@ -163,21 +164,10 @@
 
                                                         <div class="media-body">
                                                             <a class="post-title"
-                                                               href="{% url 'financial_system:news_detail'  news_id=1 %}">
-                                                                <h3 class="text-dark">Use crypto news
-                                                                    sources
-                                                                    daily.</h3></a>
-                                                            <p>A wonderful serenity has take possession of my entire
-                                                                soul
-                                                                like
-                                                                these
-                                                                sweet
-                                                                morning of spare which enjoy whole heart.A wonderful
-                                                                serenity
-                                                                has
-                                                                take
-                                                                possession of my entire soul like these sweet morning
-                                                                of spare which enjoy whole heart.</p>
+                                                               href="{% url 'financial_system:news_detail'  news_id=item.news_id %}">
+                                                                <h3 class="text-dark">{{ item.source }}-{{ item.title }}</h3></a>
+                                                            <h3>Posted on: {{ item.news_dataTime|date:"Y-m-d" }}</h3>
+                                                            <p>{{ item.content|linebreaks }}</p>
                                                         </div>
 
                                                     </div>
@@ -192,95 +182,95 @@
 
                             </div>
                         </div>
-                        <div class="tab-pane fade show" id="nav-newest" role="tabpanel">
-                            <div class="row">
-
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="my-post-content pt-3">
-                                            <!-- 循环输出news  tab2-->
-                                            {% for stock_data in numbers %}
-                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">
-                                                    <a class="me-3"
-                                                       href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                       style="height: 20rem;">
-                                                        <img src="{% static 'financial/images/profile/1.webp' %}"
-                                                             alt="" style="height: 20rem;"
-                                                             class="img-fluid  rounded ">
-                                                    </a>
-
-                                                    <div class="media-body">
-                                                        <a class="post-title"
-                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}">
-                                                            <h3 class="text-dark">Use crypto news
-                                                                sources
-                                                                daily.</h3></a>
-                                                        <p>A wonderful serenity has take possession of my entire
-                                                            soul
-                                                            like
-                                                            these
-                                                            sweet
-                                                            morning of spare which enjoy whole heart.A wonderful
-                                                            serenity
-                                                            has
-                                                            take
-                                                            possession of my entire soul like these sweet morning
-                                                            of spare which enjoy whole heart.</p>
-                                                    </div>
-
-                                                </div>
-                                            {% endfor %}
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="tab-pane fade show" id="nav-hottest" role="tabpanel">
-                            <div class="row">
-
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="my-post-content pt-3">
-                                            <!-- 循环输出news  tab3-->
-                                            {% for stock_data in numbers %}
-                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">
-                                                    <a class="me-3"
-                                                       href="{% url 'financial_system:news_detail'  news_id=1 %}"
-                                                       style="height: 20rem;">
-                                                        <img src="{% static 'financial/images/profile/1.webp' %}"
-                                                             alt="" style="height: 20rem;"
-                                                             class="img-fluid  rounded ">
-                                                    </a>
-
-                                                    <div class="media-body">
-                                                        <a class="post-title"
-                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}">
-                                                            <h3 class="text-dark">Use crypto news
-                                                                sources
-                                                                daily.</h3></a>
-                                                        <p>A wonderful serenity has take possession of my entire
-                                                            soul
-                                                            like
-                                                            these
-                                                            sweet
-                                                            morning of spare which enjoy whole heart.A wonderful
-                                                            serenity
-                                                            has
-                                                            take
-                                                            possession of my entire soul like these sweet morning
-                                                            of spare which enjoy whole heart.</p>
-                                                    </div>
-
-                                                </div>
-                                            {% endfor %}
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+{#                        <div class="tab-pane fade show" id="nav-newest" role="tabpanel">#}
+{#                            <div class="row">#}
+{##}
+{#                                <div class="card">#}
+{#                                    <div class="card-body">#}
+{#                                        <div class="my-post-content pt-3">#}
+{#                                            <!-- 循环输出news  tab2-->#}
+{#                                            {% for stock_data in numbers %}#}
+{#                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">#}
+{#                                                    <a class="me-3"#}
+{#                                                       href="{% url 'financial_system:news_detail'  news_id=1 %}"#}
+{#                                                       style="height: 20rem;">#}
+{#                                                        <img src="{% static 'financial/images/profile/1.webp' %}"#}
+{#                                                             alt="" style="height: 20rem;"#}
+{#                                                             class="img-fluid  rounded ">#}
+{#                                                    </a>#}
+{##}
+{#                                                    <div class="media-body">#}
+{#                                                        <a class="post-title"#}
+{#                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}">#}
+{#                                                            <h3 class="text-dark">Use crypto news#}
+{#                                                                sources#}
+{#                                                                daily.</h3></a>#}
+{#                                                        <p>A wonderful serenity has take possession of my entire#}
+{#                                                            soul#}
+{#                                                            like#}
+{#                                                            these#}
+{#                                                            sweet#}
+{#                                                            morning of spare which enjoy whole heart.A wonderful#}
+{#                                                            serenity#}
+{#                                                            has#}
+{#                                                            take#}
+{#                                                            possession of my entire soul like these sweet morning#}
+{#                                                            of spare which enjoy whole heart.</p>#}
+{#                                                    </div>#}
+{##}
+{#                                                </div>#}
+{#                                            {% endfor %}#}
+{##}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{##}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="tab-pane fade show" id="nav-hottest" role="tabpanel">#}
+{#                            <div class="row">#}
+{##}
+{#                                <div class="card">#}
+{#                                    <div class="card-body">#}
+{#                                        <div class="my-post-content pt-3">#}
+{#                                            <!-- 循环输出news  tab3-->#}
+{#                                            {% for stock_data in numbers %}#}
+{#                                                <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">#}
+{#                                                    <a class="me-3"#}
+{#                                                       href="{% url 'financial_system:news_detail'  news_id=1 %}"#}
+{#                                                       style="height: 20rem;">#}
+{#                                                        <img src="{% static 'financial/images/profile/1.webp' %}"#}
+{#                                                             alt="" style="height: 20rem;"#}
+{#                                                             class="img-fluid  rounded ">#}
+{#                                                    </a>#}
+{##}
+{#                                                    <div class="media-body">#}
+{#                                                        <a class="post-title"#}
+{#                                                           href="{% url 'financial_system:news_detail'  news_id=1 %}">#}
+{#                                                            <h3 class="text-dark">Use crypto news#}
+{#                                                                sources#}
+{#                                                                daily.</h3></a>#}
+{#                                                        <p>A wonderful serenity has take possession of my entire#}
+{#                                                            soul#}
+{#                                                            like#}
+{#                                                            these#}
+{#                                                            sweet#}
+{#                                                            morning of spare which enjoy whole heart.A wonderful#}
+{#                                                            serenity#}
+{#                                                            has#}
+{#                                                            take#}
+{#                                                            possession of my entire soul like these sweet morning#}
+{#                                                            of spare which enjoy whole heart.</p>#}
+{#                                                    </div>#}
+{##}
+{#                                                </div>#}
+{#                                            {% endfor %}#}
+{##}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
                     </div>
 
 

@@ -1,4 +1,4 @@
-use financial_platform
+use financial_platform;
 INSERT INTO `history_trade_table` VALUES (1, 17.08, 10, '2024-02-27', '000001', '19959008351');
 INSERT INTO `history_trade_table` VALUES (2, 17.08, 25, '2024-02-27', '000001', '19959008351');
 INSERT INTO `history_trade_table` VALUES (3, 31.54, 10, '2024-02-27', '000002', '19959008351');

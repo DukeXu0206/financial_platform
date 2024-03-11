@@ -8,17 +8,17 @@ urlpatterns = [
     path('register_action/', views.register_action, name='register_action'),
     path('login/', views.login_view, name='login'),
     path('login_action/', views.login_action, name='login_action'),
-    path('logout/', views.logout, name='logout'),
+    path('logout/', views.log_out, name='logout'),
     path('profile/', views.user_profile_view, name='user_profile'),
     path('edit_profile_action/', views.edit_user_profile_action, name='edit_profile_action'),
 
     path('watchlist/', views.user_watchlist_view, name='user_watchlist_view'),
-
+    path('watchlist/<int:stock_id>', views.user_watchlist_view, name='user_watchlist_id_view'),
 
     path('stocks/', views.stock_list_view, name='stock_list'),
-    path('stock/<int:stock_id>/', views.stock_detail_view, name='stock_detail'),
+    path('stock/<int:stock_id>', views.stock_detail_view, name='stock_detail'),
 
-    path('trade/', views.trade, name='trade'),
+    path('trade/<int:stock_id>', views.trade, name='trade'),
     path('buy_stock/', views.buy_stock, name='buy_stock'),
     path('sell_stock/', views.sell_stock, name='sell_stock'),
     path('stock/<int:stock_id>/add_comment/', views.add_comment, name='add_comment'),

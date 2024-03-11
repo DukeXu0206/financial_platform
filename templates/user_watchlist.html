@@ -4,52 +4,57 @@
 {% block additional_css %}
 {% endblock %}
 
+{% block title %}
+    <title> {{ page_title }}</title>
+{% endblock %}
+
 {% block content %}
+    {% if current_user %}
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <!-- Row -->
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="coin-warpper d-flex align-items-center justify-content-between flex-wrap">
+                            <div>
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a href="{% url 'financial_system:user_watchlist_view' %}"
+                                           class="nav-link active ms-0" id="nav-trading-tab" type="button">
+                                            Trading
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'financial_system:news' %}" class="nav-link news"
+                                           id="nav-news-tab"
+                                           type="button">
+                                            News
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'financial_system:user_profile' %}" class="nav-link account"
+                                           id="nav-account-tab" type="button">
+                                            Account
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'financial_system:stock_list' %}" class="nav-link market"
+                                           id="nav-market-tab" type="button">
+                                            Market
+                                        </a>
 
-    <!--**********************************
-        Content body start
-    ***********************************-->
-    <div class="content-body">
-        <!-- row -->
-        <div class="container-fluid">
-            <!-- Row -->
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="coin-warpper d-flex align-items-center justify-content-between flex-wrap">
-                        <div>
-                            <ul class="nav nav-pills">
-                                <li class="nav-item">
-                                    <a href="{% url 'financial_system:user_watchlist_view' %}"
-                                       class="nav-link active ms-0" id="nav-trading-tab" type="button">
-                                        Trading
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{% url 'financial_system:news' %}" class="nav-link news" id="nav-news-tab"
-                                       type="button">
-                                        News
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{% url 'financial_system:user_profile' %}" class="nav-link account"
-                                       id="nav-account-tab" type="button">
-                                        Account
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{% url 'financial_system:stock_list' %}" class="nav-link market"
-                                       id="nav-market-tab" type="button">
-                                        Market
-                                    </a>
-
-                                </li>
+                                    </li>
 
 
-                            </ul>
-                        </div>
-                        <div class="input-group search-area w-auto coin-tab-search mt-xl-0 mt-2">
-                            <input type="text" class="form-control" placeholder="">
-                            <span class="input-group-text"><a href="javascript:void(0)">
+                                </ul>
+                            </div>
+                            <div class="input-group search-area w-auto coin-tab-search mt-xl-0 mt-2">
+                                <input type="text" class="form-control" placeholder="">
+                                <span class="input-group-text"><a href="javascript:void(0)">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                  width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -61,414 +66,337 @@
                                 </g>
                             </svg>
                         </a></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-12">
-                    <div class="tab-content" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
-                            <div class="row">
-                                <!-- 图表 -->
-                                <div class="col-xl-9">
-                                    <div class="card coin-content">
-                                        <div class="card-header border-0 flex-wrap pb-0">
-                                            <div class="mb-xl-0 mb-2">
-                                                <h4 class="card-title">Stock Trading</h4>
-                                                <span class="fs-12">{{ user.user_name }}'s Watchlist</span>
-                                            </div>
-                                            <div class="guest-calendar d-flex align-items-center">
-                                            <span>
-                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                                     xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd"
-                                                          d="M14 2V1C14 0.448 14.448 0 15 0C15.552 0 16 0.448 16 1V2H17C17.796 2 18.559 2.316 19.121 2.879C19.684 3.441 20 4.204 20 5V17C20 17.796 19.684 18.559 19.121 19.121C18.559 19.684 17.796 20 17 20C13.537 20 6.463 20 3 20C2.204 20 1.441 19.684 0.878998 19.121C0.315998 18.559 0 17.796 0 17C0 13.926 0 8.074 0 5C0 4.204 0.315998 3.441 0.878998 2.879C1.441 2.316 2.204 2 3 2H4V1C4 0.448 4.448 0 5 0C5.552 0 6 0.448 6 1V2H14ZM18 8H2V17C2 17.265 2.105 17.52 2.293 17.707C2.48 17.895 2.735 18 3 18H17C17.265 18 17.52 17.895 17.707 17.707C17.895 17.52 18 17.265 18 17V8ZM8 16H15C15.552 16 16 15.552 16 15C16 14.448 15.552 14 15 14H8C7.448 14 7 14.448 7 15C7 15.552 7.448 16 8 16ZM5 12H12C12.552 12 13 11.552 13 11C13 10.448 12.552 10 12 10H5C4.448 10 4 10.448 4 11C4 11.552 4.448 12 5 12ZM17 4H3C2.735 4 2.48 4.105 2.293 4.293C2.105 4.48 2 4.735 2 5V6H18V5C18 4.735 17.895 4.48 17.707 4.293C17.52 4.105 17.265 4 17 4Z"
-                                                          fill="var(--text-dark)"/>
-                                                </svg>
-                                            </span>
-                                                <div id="reportrange" class="pull-right reportrange"
-                                                     style="width: 100%">
-                                                    <span></span><b class="caret"></b>
-                                                    <i class="fas fa-chevron-down ms-sm-3 ms-0"></i>
+
+                    <div class="col-xl-12">
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
+                                <div class="row">
+                                    <!-- 图表 -->
+                                    <div class="col-xl-9">
+                                        <div class="card coin-content">
+                                            <div class="card-header border-0 flex-wrap pb-0">
+                                                <div class="mb-xl-0 mb-2">
+                                                    <h4 class="card-title">Stock Trading
+                                                        - {{ current_watch_stock.stock_name }} - {{ current_watch_stock.stock_type }}</h4>
                                                 </div>
                                             </div>
+                                            <div class="card-body">
 
 
+                                                {% if current_watch_stock %}
+
+                                                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                                        <div class="d-flex align-items-end justify-content-between flex-wrap">
+                                                            <div class="price-content">
+                                                                <span class="d-block mb-2">Price</span>
+                                                                <h4 class="fs-20 font-w600 mb-0">{{ current_watch_stock.closing_price_y }}</h4>
+                                                            </div>
+                                                            <div class="price-content">
+                                                                <span class="fs-14 d-block mb-2">24h change</span>
+                                                                {% if current_watch_stock.change_extent > 0 %}
+                                                                    <h4 class="font-w600 text-success mb-0">
+                                                                    {{ current_watch_stock.change_extent }}%
+                                                                    <i class="fa-solid fa-caret-up ms-1 text-success"></i>
+                                                                {% else %}
+                                                                    <h4 class="font-w600 text-danger mb-0">
+                                                                    {{ current_watch_stock.change_extent }}%
+                                                                    <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                                                                {% endif %}
+                                                                </h4>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <a href="{% url 'financial_system:trade' stock_id=current_watch_stock.stock_id%}"
+                                                               class="me-4 font-w600 mb-0 btn btn-outline-success fs-18"
+                                                            ><span class="me-2">BUY</span>{{ current_watch_stock.open_price_t }}</a>
+                                                            <a href="{% url 'financial_system:trade' stock_id=current_watch_stock.stock_id%}"
+                                                               class="font-w600 mb-0 btn btn-outline-danger fs-18"><span
+                                                                    class="me-2">SELL</span>{{ current_watch_stock.closing_price_y }}</a>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="stockhChart"></div>
+
+                                                    <div class="col-xs-12">
+                                                        <ul class="nav nav-pills">
+                                                            <li class=" nav-item">
+                                                                <a href="#navpills-1" class="nav-link active"
+                                                                   data-bs-toggle="tab" aria-expanded="false">1D</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a href="#navpills-2" class="nav-link "
+                                                                   data-bs-toggle="tab"
+                                                                   aria-expanded="false">5D</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a href="#navpills-3" class="nav-link"
+                                                                   data-bs-toggle="tab"
+                                                                   aria-expanded="true">1M</a>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <a href="#navpills-5" class="nav-link"
+                                                                   data-bs-toggle="tab"
+                                                                   aria-expanded="true">5M</a>
+                                                            </li>
+
+                                                        </ul>
+                                                    </div>
+                                                {% else %}
+                                                    <h2>No Watch Stock</h2>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center justify-content-between flex-wrap">
-                                                <div class="d-flex align-items-end justify-content-between flex-wrap">
-                                                    <div class="price-content">
-                                                        <span class="d-block mb-2">Price</span>
-                                                        <h4 class="fs-20 font-w600 mb-0">$9,542.39</h4>
-                                                    </div>
-                                                    <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">24h% change</span>
-                                                        <h4 class="font-w600 text-success mb-0">1.64%<i
-                                                                class="fa-solid fa-caret-up ms-1 text-success"></i></h4>
-                                                    </div>
-                                                    <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">Volume (24h)</span>
-                                                        <h4 class="font-w600 mb-0">$47.22B</h4>
-                                                    </div>
-                                                    <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">Market Cap</span>
-                                                        <h4 class="font-w600 mb-0">$219.24B</h4>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-center">
-                                                    <a href="{% url 'financial_system:trade' %}"
-                                                       class="me-4 font-w600 mb-0 btn btn-outline-success fs-18"
-                                                    ><span
-                                                            class="me-2">BUY</span>
-                                                        $5,673</a>
-                                                    <a href="{% url 'financial_system:trade' %}"
-                                                       class="font-w600 mb-0 btn btn-outline-danger fs-18"><span
-                                                            class="me-2">SELL</span>
-                                                        $5,982</a>
+                                    </div>
+
+
+                                    <!--监控列表start-->
+                                    <div class="col-xl-3 col-sm-12">
+                                        <div class="card price-list-1 mb-0">
+                                            <div class="card-header border-0 pb-2 px-3">
+                                                <h4 class="text-primary card-title mb-2">Stock List</h4>
+                                            </div>
+                                            <div class="card-body p-3 py-0 height370 dlab-scroll">
+                                                <div class="table-responsive">
+                                                    <table class="table text-center bg-primary-hover tr-rounded order-tbl mt-2 ">
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="border-bottom">
+
+                                                            </th>
+                                                            <th class="text-start border-bottom">Stock Name</th>
+                                                            <th class="text-center border-bottom">Closing Price</th>
+                                                            <th class="text-end border-bottom">Stock Type</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for stock in stocks_in_watchlist %}
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="radio me-0 align-self-center">
+                                                                        <div class="custom-control custom-radio ">
+                                                                            <input type="radio"
+                                                                                   class="form-check-input stock-watch"
+                                                                                   id="stock-{{ stock.stock_id }}"
+                                                                                   stock_id="{{ stock.stock_id }}"
+                                                                                   required=""
+                                                                                    {% if stock.stock_id == current_watch_stock.stock_id %}
+                                                                                   checked="checked" {% endif %}>
+                                                                            <label class="custom-control-label"
+                                                                                   for="check8"></label>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td >
+                                                                    <a href="{% url 'financial_system:stock_detail' stock_id=stock.stock_id %}" class="text-info">
+                                                                        {{ stock.stock_name }}
+                                                                    </a>
+                                                                </td>
+                                                                <td>{{ stock.closing_price_y }}</td>
+                                                                <td class="text-end text-success">{{ stock.stock_type }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
+                                            <div class="card-footer text-center py-2">
 
-                                            <div id="stockhChart"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--监控列表end-->
 
-                                            <div class="col-xs-12">
-                                                <ul class="nav nav-pills">
-                                                    <li class=" nav-item">
-                                                        <a href="#navpills-1" class="nav-link active"
-                                                           data-bs-toggle="tab" aria-expanded="false">1D</a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="#navpills-2" class="nav-link " data-bs-toggle="tab"
-                                                           aria-expanded="false">5D</a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="#navpills-3" class="nav-link" data-bs-toggle="tab"
-                                                           aria-expanded="true">1M</a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="#navpills-5" class="nav-link" data-bs-toggle="tab"
-                                                           aria-expanded="true">5M</a>
+                                    <!-- 交易表格 -->
+                                    <div class="col-xl-6 col-sm-12">
+                                        <div class="card">
+                                            <div class="card-header flex-wrap border-0">
+                                                <h4 class="card-title mb-lg-0 mb-2">Trading Market List</h4>
+                                                <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
+                                                    <li class="nav-item my-1" role="presentation">
+                                                        <button class="nav-link active" id="pills-crypto-tab"
+                                                                data-bs-toggle="pill"
+                                                                data-bs-target="#pills-crypto" type="button" role="tab"
+                                                                aria-controls="pills-crypto" aria-selected="true">
+                                                            All Trades
+
+                                                        </button>
                                                     </li>
 
+                                                    <li class="nav-item my-1" role="presentation">
+                                                        <button class="nav-link" id="pills-future-tab"
+                                                                data-bs-toggle="pill"
+                                                                data-bs-target="#pills-future" type="button" role="tab"
+                                                                aria-controls="pills-future" aria-selected="false">
+                                                            Open Positions
+
+                                                        </button>
+                                                    </li>
+                                                    <li class="nav-item my-1" role="presentation">
+                                                        <button class="nav-link me-0" id="pills-listing-tab"
+                                                                data-bs-toggle="pill"
+                                                                data-bs-target="#pills-listing" type="button" role="tab"
+                                                                aria-controls="pills-listing" aria-selected="false">
+                                                            Closed Positions
+
+                                                        </button>
+                                                    </li>
                                                 </ul>
                                             </div>
+                                            <div class="card-body pt-0">
+                                                <div class="tab-content" id="pills-tabContent">
+                                                    <div class="tab-pane fade show active" id="pills-crypto"
+                                                         role="tabpanel"
+                                                         aria-labelledby="pills-crypto-tab">
+                                                        <div class="table-responsive dataTabletrade">
+                                                            <table id="example-history"
+                                                                   class="table shadow-hover display  orderbookTable"
+                                                                   style="min-width:845px">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Stock Name</th>
+                                                                    <th>Bought</th>
+                                                                    <th>Sold</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% if all_trades %}
+                                                                    {% for trade in all_trades %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a class="market-title d-flex align-items-center"
+                                                                                   href="javascript:void(0)">
+                                                                                    <h5 class="mb-0 ms-2">{{ trade.stock_name }}</h5>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>{{ trade.total_bought }}</td>
+                                                                            <td class="text-success">{{ trade.total_sold }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td colspan="3"
+                                                                            class="text-success text-center">No trade
+                                                                            history available.
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="tab-pane fade" id="pills-future" role="tabpanel"
+                                                         aria-labelledby="pills-future-tab">
+                                                        <div class="table-responsive dataTabletrade">
+                                                            <table id="example-history-2"
+                                                                   class="table shadow-hover display  orderbookTable"
+                                                                   style="min-width:845px">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Stock Name</th>
+                                                                    <th>Bought</th>
+                                                                    <th>Sold</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% if open_positions %}
+                                                                    {% for position in open_positions %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a class="market-title d-flex align-items-center"
+                                                                                   href="javascript:void(0)">
+                                                                                    <h5 class="mb-0 ms-2">{{ position.stock_name }}</h5>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>{{ position.total_bought }}</td>
+                                                                            <td class="text-success">{{ position.total_sold }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td colspan="3"
+                                                                            class="text-success text-center">No open
+                                                                            positions.
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="pills-listing" role="tabpanel"
+                                                         aria-labelledby="pills-listing-tab">
+                                                        <div class="table-responsive dataTabletrade">
+                                                            <table id="example-history-3"
+                                                                   class="table shadow-hover centered display  orderbookTable"
+                                                                   style="min-width:845px">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Stock Name</th>
+                                                                    <th>Bought</th>
+                                                                    <th>Sold</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% if closed_positions %}
+                                                                    {% for position in closed_positions %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a class="market-title d-flex align-items-center"
+                                                                                   href="javascript:void(0)">
+                                                                                    <h5 class="mb-0 ms-2">{{ position.stock_name }}</h5>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>{{ position.total_bought }}</td>
+                                                                            <td class="text-success">{{ position.total_sold }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-center">No closed
+                                                                            positions.
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
 
-                                <!--监控列表start-->
-                                <div class="col-xl-3 col-sm-12">
-                                    <div class="card price-list-1 mb-0">
-                                        <div class="card-header border-0 pb-2 px-3">
-                                            <h4 class="text-primary card-title mb-2">Stock List</h4>
-                                        </div>
-                                        <div class="card-body p-3 py-0 height370 dlab-scroll">
-                                            <div class="table-responsive">
-                                                <table class="table text-center bg-primary-hover tr-rounded order-tbl mt-2 ">
-                                                    <thead>
-                                                    <tr>
-                                                        <th class="border-bottom">
-                                                            <input type="checkbox" class="form-check-input"
-                                                                   id="checkAll" required="">
-                                                        </th>
-                                                        <th class="text-start border-bottom">Instrument</th>
-                                                        <th class="text-center border-bottom">Last</th>
-                                                        <th class="text-end border-bottom">Chg</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {% for i in numbers %}
-                                                        <tr>
-                                                            <td>
-                                                                <div class="checkbox me-0 align-self-center">
-                                                                    <div class="custom-control custom-checkbox ">
-                                                                        <input type="checkbox" class="form-check-input"
-                                                                               id="check8" required="">
-                                                                        <label class="custom-control-label"
-                                                                               for="check8"></label>
-                                                                    </div>
+                                    <!--详细信息-->
+                                    <div class="col-xl-6 col-sm-12">
+                                        <div class="card overflow-hidden h-auto">
+                                            <div class="card-body pb-4">
+                                                <div class="row">
+                                                    <div class="col-xl-12 col-md-12">
+                                                        <h4 class="card-title mb-0 center">Profit and Loss</h4>
+                                                        <h2 class="font-w600 mb-0">By Stock</h2>
+                                                        <h3 class="font-w500 mb-0">Overall Gross
+                                                            P&L: {{ gross_pnl }}</h3>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="market-coin flex-wrap">
+                                                            {% for trade in pnl_per_stock %}
+                                                                <div class="mb-1">
+                                                                    <span class="fs-14 font-w400">{{ trade.stock_id }}</span>
+                                                                    <h5 class="font-w600 m-0 text-danger">{{ trade.pnl }}</h5>
                                                                 </div>
-                                                            </td>
-                                                            <td class="text-start">82.3</td>
-                                                            <td>0.15</td>
-                                                            <td class="text-end">$134,12</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer text-center py-2">
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--监控列表end-->
-
-                                <!-- 交易表格 -->
-                                <div class="col-xl-9 col-sm-12">
-                                    <div class="card">
-                                        <div class="card-header flex-wrap border-0">
-                                            <h4 class="card-title mb-lg-0 mb-2">Trading Market List</h4>
-                                            <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
-                                                <li class="nav-item my-1" role="presentation">
-                                                    <button class="nav-link active" id="pills-crypto-tab"
-                                                            data-bs-toggle="pill"
-                                                            data-bs-target="#pills-crypto" type="button" role="tab"
-                                                            aria-controls="pills-crypto" aria-selected="true">Open
-                                                        Trades(2)
-
-                                                    </button>
-                                                </li>
-                                                <li class="nav-item my-1" role="presentation">
-                                                    <button class="nav-link" id="pills-spot-tab" data-bs-toggle="pill"
-                                                            data-bs-target="#pills-spot" type="button" role="tab"
-                                                            aria-controls="pills-spot" aria-selected="false">Close
-                                                        Trades
-
-                                                    </button>
-                                                </li>
-                                                <li class="nav-item my-1" role="presentation">
-                                                    <button class="nav-link" id="pills-future-tab" data-bs-toggle="pill"
-                                                            data-bs-target="#pills-future" type="button" role="tab"
-                                                            aria-controls="pills-future" aria-selected="false">Pending
-                                                        Orders
-
-                                                    </button>
-                                                </li>
-                                                <li class="nav-item my-1" role="presentation">
-                                                    <button class="nav-link me-0" id="pills-listing-tab"
-                                                            data-bs-toggle="pill"
-                                                            data-bs-target="#pills-listing" type="button" role="tab"
-                                                            aria-controls="pills-listing" aria-selected="false">Summary
-
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-body pt-0">
-                                            <div class="tab-content" id="pills-tabContent">
-                                                <div class="tab-pane fade show active" id="pills-crypto" role="tabpanel"
-                                                     aria-labelledby="pills-crypto-tab">
-                                                    <div class="table-responsive dataTabletrade">
-                                                        <table id="example-history"
-                                                               class="table shadow-hover display  orderbookTable"
-                                                               style="min-width:845px">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Symbol/ID</th>
-                                                                <th>Position/Amount</th>
-                                                                <th>Open Rate/Time</th>
-                                                                <th>P&L/Current Rate</th>
-                                                                <th>Swap/commission</th>
-                                                                <th>Market Cap</th>
-                                                                <th class="text-end">Action</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-
-                                                            {% for i in numbers %}
-                                                                <tr>
-                                                                    <td>
-                                                                        <a class="market-title d-flex align-items-center"
-                                                                           href="javascript:void(0)">
-                                                                            <img src="{% static 'financial/images/svg/ripple-1.svg' %}"
-                                                                                 class="w-25" alt="">
-                                                                            <h5 class="mb-0 ms-2">AUD</h5>
-                                                                            <span class="text-muted ms-2">Australian Doller</span>
-                                                                        </a>
-                                                                    </td>
-                                                                    <td>$0.6932</td>
-                                                                    <td class="text-success">+22%</td>
-                                                                    <td>30,585.00/21,250.00</td>
-                                                                    <td>30,585.00</td>
-                                                                    <td>$96M</td>
-                                                                    <td class="text-end"><a href="javascript:void(0)"
-                                                                                            class="badge badge-sm badge-success">Trade</a>
-                                                                    </td>
-                                                                </tr>
                                                             {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="tab-pane fade" id="pills-spot" role="tabpanel"
-                                                     aria-labelledby="pills-spot-tab">
-                                                    <div class="table-responsive dataTabletrade">
-                                                        <table id="example-history-1"
-                                                               class="table shadow-hover display  orderbookTable"
-                                                               style="min-width:845px">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Symbol/ID</th>
-                                                                <th>Position/Amount</th>
-                                                                <th>Open Rate/Time</th>
-                                                                <th>P&L/Current Rate</th>
-                                                                <th>Swap/commission</th>
-                                                                <th>Market Cap</th>
-                                                                <th class="text-end">Action</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for i in numbers %}
-                                                                <tr>
-                                                                    <td>
-                                                                        <a class="market-title d-flex align-items-center"
-                                                                           href="javascript:void(0)">
-                                                                            <img src="{% static 'financial/images/svg/ripple-1.svg' %}"
-                                                                                 class="w-25" alt="">
-                                                                            <h5 class="mb-0 ms-2">AUD</h5>
-                                                                            <span class="text-muted ms-2">Australian Doller</span>
-                                                                        </a>
-                                                                    </td>
-                                                                    <td>$0.6932</td>
-                                                                    <td class="text-success">+22%</td>
-                                                                    <td>30,585.00/21,250.00</td>
-                                                                    <td>30,585.00</td>
-                                                                    <td>$96M</td>
-                                                                    <td class="text-end"><a href="javascript:void(0)"
-                                                                                            class="badge badge-sm badge-success">Trade</a>
-                                                                    </td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="tab-pane fade" id="pills-future" role="tabpanel"
-                                                     aria-labelledby="pills-future-tab">
-                                                    <div class="table-responsive dataTabletrade">
-                                                        <table id="example-history-2"
-                                                               class="table shadow-hover display  orderbookTable"
-                                                               style="min-width:845px">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Symbol/ID</th>
-                                                                <th>Position/Amount</th>
-                                                                <th>Open Rate/Time</th>
-                                                                <th>P&L/Current Rate</th>
-                                                                <th>Swap/commission</th>
-                                                                <th>Market Cap</th>
-                                                                <th class="text-end">Action</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for i in numbers %}
-                                                                <tr>
-                                                                    <td>
-                                                                        <a class="market-title d-flex align-items-center"
-                                                                           href="javascript:void(0)">
-                                                                            <img src="{% static 'financial/images/svg/ripple-1.svg' %}"
-                                                                                 class="w-25" alt="">
-                                                                            <h5 class="mb-0 ms-2">AUD</h5>
-                                                                            <span class="text-muted ms-2">Australian Doller</span>
-                                                                        </a>
-                                                                    </td>
-                                                                    <td>$0.6932</td>
-                                                                    <td class="text-success">+22%</td>
-                                                                    <td>30,585.00/21,250.00</td>
-                                                                    <td>30,585.00</td>
-                                                                    <td>$96M</td>
-                                                                    <td class="text-end"><a href="javascript:void(0)"
-                                                                                            class="badge badge-sm badge-success">Trade</a>
-                                                                    </td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="tab-pane fade" id="pills-listing" role="tabpanel"
-                                                     aria-labelledby="pills-listing-tab">
-                                                    <div class="table-responsive dataTabletrade">
-                                                        <table id="example-history-3"
-                                                               class="table shadow-hover centered display  orderbookTable"
-                                                               style="min-width:845px">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Symbol/ID</th>
-                                                                <th>Position/Amount</th>
-                                                                <th>Open Rate/Time</th>
-                                                                <th>P&L/Current Rate</th>
-                                                                <th>Swap/commission</th>
-                                                                <th>Market Cap</th>
-                                                                <th class="text-end">Action</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for i in numbers %}
-                                                                <tr>
-                                                                    <td>
-                                                                        <a class="market-title d-flex align-items-center"
-                                                                           href="javascript:void(0)">
-                                                                            <img src="{% static 'financial/images/svg/ripple-1.svg' %}"
-                                                                                 class="w-25" alt="">
-                                                                            <h5 class="mb-0 ms-2">AUD</h5>
-                                                                            <span class="text-muted ms-2">Australian Doller</span>
-                                                                        </a>
-                                                                    </td>
-                                                                    <td>$0.6932</td>
-                                                                    <td class="text-success">+22%</td>
-                                                                    <td>30,585.00/21,250.00</td>
-                                                                    <td>30,585.00</td>
-                                                                    <td>$96M</td>
-                                                                    <td class="text-end"><a href="javascript:void(0)"
-                                                                                            class="badge badge-sm badge-success">Trade</a>
-                                                                    </td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
-
-                                <!--详细信息-->
-                                <div class="col-xl-3 col-sm-12">
-                                    <div class="card overflow-hidden h-auto">
-                                        <div class="card-body pb-4">
-                                            <div class="row">
-                                                <div class="col-xl-12 col-md-12">
-                                                    <h4 class="card-title mb-0 center">APPLE</h4>
-                                                    <h2 class="font-w600 mb-0">$65,123</h2>
-
-                                                </div>
-
-
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="market-coin flex-wrap">
-                                                        <div class="mb-1">
-                                                            <span class="fs-14 font-w400">Price</span>
-                                                            <h5 class="font-w600 m-0 text-danger">-0,0252%/hr</h5>
                                                         </div>
-                                                        <div class="mb-1">
-                                                            <span class="fs-14 font-w400">Price</span>
-                                                            <h5 class="font-w600 m-0 text-danger">-0,0252%/hr</h5>
-                                                        </div>
-                                                        <div class="mb-1">
-                                                            <span class="fs-14 font-w400">Price</span>
-                                                            <h5 class="font-w600 m-0 text-danger">-0,0252%/hr</h5>
-                                                        </div>
-                                                        <div class="mb-1">
-                                                            <span class="fs-14 font-w400">Price</span>
-                                                            <h5 class="font-w600 m-0 text-danger">-0,0252%/hr</h5>
-                                                        </div>
-                                                        <div class="mb-1">
-                                                            <span class="fs-14 font-w400">Price</span>
-                                                            <h5 class="font-w600 m-0 text-danger">-0,0252%/hr</h5>
-                                                        </div>
-                                                        <div class="mb-1">
-                                                            <span class="fs-14 font-w400">Price</span>
-                                                            <h5 class="font-w600 m-0 text-danger">-0,0252%/hr</h5>
-                                                        </div>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -481,11 +409,27 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!--**********************************
-        Content body end
-    ***********************************-->
-
+        <!--**********************************
+            Content body end
+        ***********************************-->
+    {% else %}
+        <div class="authincation fix-wrapper">
+            <div class="container">
+                <div class="row justify-content-center h-100 align-items-center">
+                    <div class="col-md-6">
+                        <div class="error-page">
+                            <div class="error-inner text-center">
+                                {#                                <div class="dz-error" data-text="LOGIN">PLEASE LOGIN</div>#}
+                                <h2 class="error-head mb-0"><i
+                                        class="fa fa-exclamation-triangle text-warning me-2"></i>{{ tips }}</h2>
+                                <a href="{% url 'financial_system:login' %}" class="btn btn-secondary">GO TO LOGIN</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block additional_js %}
@@ -767,7 +711,7 @@
                     },
                     zoom: {
                         enabled: false
-                   }
+                    }
                 },
                 grid: {
                     show: false,
@@ -798,6 +742,19 @@
             var chart = new ApexCharts(document.querySelector("#stockhChart"), options);
             chart.render();
 
+
+
+            //点击watch list
+            $('.stock-watch').change(function () {
+            // Check if the checkbox is checked
+                if ($(this).prop('checked')) {
+                    // Get the stock_id from the 'stock_id' attribute
+                    var stockId = $(this).attr('stock_id');
+
+                    // Redirect to the watchlist page with the stock_id parameter
+                    window.location.href = '/watchlist/' + stockId;
+                }
+            });
         });
     </script>
 {% endblock %}

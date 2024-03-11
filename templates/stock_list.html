@@ -32,142 +32,163 @@
                 <!-- Row -->
                 <div class="row">
 
-                    {% for stock_data in stocks %}
+                    {% for stock in stocks %}
                             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                             <a href="{%  url 'financial_system:stock_detail'  stock_id=stock.stock_id   %}">
                                 <div class="card pull-up">
                                     <div class="card-body align-items-center flex-wrap">
                                         <div class="d-flex align-items-center mb-4">
-                                            <a href="{% url 'financial_system:stock_detail'  stock_id=stock_data.stock_id %}" class="ico-icon">
-                                                <img src="{% static 'financial/images/svg/ripple-1.svg' %}" alt="">
-                                            </a>
-                                            <div class="ms-3">
-                                                <a href="{% url 'financial_system:stock_detail'  stock_id=stock_data.stock_id %}"><h4
-                                                        class="card-title mb-0">{{ stock_data.stock_name }}</h4></a>
-                                                <span>Finance</span>
+                                            {#                                            <a href="{% url 'financial_system:stock_detail'  stock_id=stock_data.stock_id %}" class="ico-icon">#}
+                                            {#                                                <img src="{% static 'financial/images/svg/ripple-1.svg' %}" alt="">#}
+                                            {#                                            </a>#}
+                                            <div class="ms-0">
+                                                <h4 class="card-title mb-0">{{ stock.stock_name }}</h4>
+                                                <span>{{ stock.issuance_time }}</span>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div>
-                                                <p class="mb-0 fs-14 text-dark font-w600">$72/90</P>
-                                                <span class="fs-12">Neutral</span>
+                                                <p class="mb-0 fs-14 text-dark font-w600">{{ stock.closing_price_y }}</P>
+                                                <span class="fs-12">closing</span>
                                             </div>
                                             <div>
-                                                <p class="mb-0 fs-14 text-success font-w600">50%</P>
-                                                <span class="fs-12">Ended 12 Oct</span>
+                                                <p class="mb-0 fs-14 text-dark font-w600">{{ stock.open_price_t }}</P>
+                                                <span class="fs-12">open</span>
                                             </div>
+                                            <div>
+                                                <p class="mb-0 fs-14 text-success font-w600">{{ stock.stock_type }}</P>
+                                                <span class="fs-12">type</span>
+                                            </div>
+                                            {#                                      <div>#}
+                                            {#                                            <p class="mb-0 fs-14 text-success font-w600">{{ stock.block }}</P>#}
+                                            {#                                            <span class="fs-12">block</span>#}
+                                            {#                                        </div>#}
+                                            {% if stock.change_extent > 0 %}
+                                                <div>
+                                                    <p class="mb-0 fs-14 text-success font-w600">{{ stock.change_extent }}%</P>
+                                                    <span class="fs-12">change</span>
+                                                </div>
+                                            {% else %}
+                                                <div>
+                                                    <p class="mb-0 fs-14 text-danger font-w600">{{ stock.change_extent }}%</P>
+                                                    <span class="fs-12">change</span>
+                                                </div>
+                                            {% endif %}
+
                                         </div>
                                     </div>
                                 </div>
+                             </a>
                             </div>
                     {% endfor %}
 
                 </div>
 
 
-                <div class="row">
-                    <div class="mb-4">
-                        <h3 class="text-center mb-2 text-dark">US stocks</h3>
-                    </div>
-                </div>
-                <!-- Row -->
-                <div class="row">
-                    <div class="swiper mySwiper-counter position-relative overflow-hidden">
-                        <div class="swiper-button-prev"></div>
-                        <div class="swiper-button-next"></div>
+                {#                <div class="row">#}
+                {#                    <div class="mb-4">#}
+                {#                        <h3 class="text-center mb-2 text-dark">US stocks</h3>#}
+                {#                    </div>#}
+                {#                </div>#}
+                {#                <!-- Row -->#}
+                {#                <div class="row">#}
+                {#                    <div class="swiper mySwiper-counter position-relative overflow-hidden">#}
+                {#                        <div class="swiper-button-prev"></div>#}
+                {#                        <div class="swiper-button-next"></div>#}
+                {##}
+                {#                        <div class="swiper-wrapper">#}
+                {##}
+                {#                            {% for stock in stocks %}#}
+                {#                                <div class="swiper-slide">#}
+                {#                                    <!-- column -->#}
+                {#                                    <div class="col-md-12">#}
+                {#                                        <div class="card pull-up">#}
+                {#                                            <div class="card-body align-items-center flex-wrap">#}
+                {#                                                <div class="d-flex align-items-center mb-4">#}
+                {#                                                    <a href="javascript:void(0)" class="ico-icon">#}
+                {#                                                        <img src="{% static 'financial/images/svg/btc1.svg' %}"#}
+                {#                                                             alt="">#}
+                {#                                                    </a>#}
+                {#                                                    <div class="ms-3">#}
+                {#                                                        <a href="javascript:void(0)"><h4#}
+                {#                                                                class="card-title mb-0">{{ stock.stock_name }}</h4>#}
+                {#                                                        </a>#}
+                {#                                                        <span>Finance</span>#}
+                {#                                                    </div>#}
+                {#                                                </div>#}
+                {#                                                <div class="d-flex align-items-center justify-content-between">#}
+                {#                                                    <div>#}
+                {#                                                        <p class="mb-0 fs-14 text-dark font-w600">$72/90</P>#}
+                {#                                                        <span class="fs-12">Neutral</span>#}
+                {#                                                    </div>#}
+                {#                                                    <div>#}
+                {#                                                        <p class="mb-0 fs-14 text-success font-w600">50%</P>#}
+                {#                                                        <span class="fs-12">Ended 12 Oct</span>#}
+                {#                                                    </div>#}
+                {#                                                </div>#}
+                {#                                            </div>#}
+                {#                                        </div>#}
+                {#                                    </div>#}
+                {#                                    <!-- /column -->#}
+                {#                                </div>#}
+                {#                            {% endfor %}#}
+                {##}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
 
-                        <div class="swiper-wrapper">
 
-                            {% for stock in stocks %}
-                                <div class="swiper-slide">
-                                    <!-- column -->
-                                    <div class="col-md-12">
-                                        <div class="card pull-up">
-                                            <div class="card-body align-items-center flex-wrap">
-                                                <div class="d-flex align-items-center mb-4">
-                                                    <a href="javascript:void(0)" class="ico-icon">
-                                                        <img src="{% static 'financial/images/svg/btc1.svg' %}"
-                                                             alt="">
-                                                    </a>
-                                                    <div class="ms-3">
-                                                        <a href="javascript:void(0)"><h4
-                                                                class="card-title mb-0">{{ stock.stock_name }}</h4>
-                                                        </a>
-                                                        <span>Finance</span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <div>
-                                                        <p class="mb-0 fs-14 text-dark font-w600">$72/90</P>
-                                                        <span class="fs-12">Neutral</span>
-                                                    </div>
-                                                    <div>
-                                                        <p class="mb-0 fs-14 text-success font-w600">50%</P>
-                                                        <span class="fs-12">Ended 12 Oct</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /column -->
-                                </div>
-                            {% endfor %}
-
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="mb-4">
-                        <h3 class="text-center mb-2 text-dark">UK stocks</h3>
-                    </div>
-                </div>
-                <!-- Row -->
-                <div class="row">
-                    <div class="swiper mySwiper-counter position-relative overflow-hidden">
-                        <div class="swiper-button-prev"></div>
-                        <div class="swiper-button-next"></div>
-
-                        <div class="swiper-wrapper">
-
-                            {% for stock in stocks %}
-                                <div class="swiper-slide">
-                                    <!-- column -->
-                                    <div class="col-md-12">
-                                        <div class="card pull-up">
-                                            <div class="card-body align-items-center flex-wrap">
-                                                <div class="d-flex align-items-center mb-4">
-                                                    <a href="javascript:void(0)" class="ico-icon">
-                                                        <img src="{% static 'financial/images/svg/btc1.svg' %}"
-                                                             alt="">
-                                                    </a>
-                                                    <div class="ms-3">
-                                                        <a href="javascript:void(0)"><h4
-                                                                class="card-title mb-0">{{ stock.stock_name }}</h4>
-                                                        </a>
-                                                        <span>Finance</span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <div>
-                                                        <p class="mb-0 fs-14 text-dark font-w600">$72/90</P>
-                                                        <span class="fs-12">Neutral</span>
-                                                    </div>
-                                                    <div>
-                                                        <p class="mb-0 fs-14 text-success font-w600">50%</P>
-                                                        <span class="fs-12">Ended 12 Oct</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /column -->
-                                </div>
-                            {% endfor %}
-
-                        </div>
-                    </div>
-                </div>
+                {#                <div class="row">#}
+                {#                    <div class="mb-4">#}
+                {#                        <h3 class="text-center mb-2 text-dark">UK stocks</h3>#}
+                {#                    </div>#}
+                {#                </div>#}
+                {#                <!-- Row -->#}
+                {#                <div class="row">#}
+                {#                    <div class="swiper mySwiper-counter position-relative overflow-hidden">#}
+                {#                        <div class="swiper-button-prev"></div>#}
+                {#                        <div class="swiper-button-next"></div>#}
+                {##}
+                {#                        <div class="swiper-wrapper">#}
+                {##}
+                {#                            {% for stock in stocks %}#}
+                {#                                <div class="swiper-slide">#}
+                {#                                    <!-- column -->#}
+                {#                                    <div class="col-md-12">#}
+                {#                                        <div class="card pull-up">#}
+                {#                                            <div class="card-body align-items-center flex-wrap">#}
+                {#                                                <div class="d-flex align-items-center mb-4">#}
+                {#                                                    <a href="javascript:void(0)" class="ico-icon">#}
+                {#                                                        <img src="{% static 'financial/images/svg/btc1.svg' %}"#}
+                {#                                                             alt="">#}
+                {#                                                    </a>#}
+                {#                                                    <div class="ms-3">#}
+                {#                                                        <a href="javascript:void(0)"><h4#}
+                {#                                                                class="card-title mb-0">{{ stock.stock_name }}</h4>#}
+                {#                                                        </a>#}
+                {#                                                        <span>Finance</span>#}
+                {#                                                    </div>#}
+                {#                                                </div>#}
+                {#                                                <div class="d-flex align-items-center justify-content-between">#}
+                {#                                                    <div>#}
+                {#                                                        <p class="mb-0 fs-14 text-dark font-w600">$72/90</P>#}
+                {#                                                        <span class="fs-12">Neutral</span>#}
+                {#                                                    </div>#}
+                {#                                                    <div>#}
+                {#                                                        <p class="mb-0 fs-14 text-success font-w600">50%</P>#}
+                {#                                                        <span class="fs-12">Ended 12 Oct</span>#}
+                {#                                                    </div>#}
+                {#                                                </div>#}
+                {#                                            </div>#}
+                {#                                        </div>#}
+                {#                                    </div>#}
+                {#                                    <!-- /column -->#}
+                {#                                </div>#}
+                {#                            {% endfor %}#}
+                {##}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
             </div>
         </div>
     </div>

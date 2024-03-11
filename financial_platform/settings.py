@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'financial_system.middleware.CurrentUserMiddleware',
 ]
 
 ROOT_URLCONF = 'financial_platform.urls'
@@ -67,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'custom_context_processor.dz_static',
+                'custom_context_processor.current_user',
             ],
         },
     },

@@ -19,7 +19,11 @@ def base(request):
 
 
 def index(request):
-    return render(request, 'login.html')
+    user_id = request.session.get('user_id')
+    if user_id:
+        return redirect('financial_system:user_watchlist_view')
+    else:
+        return redirect('financial_system:login')
 
 
 def sign_up_view(request):
@@ -109,7 +113,7 @@ def login_action(request):
 def log_out(request):
     logout(request)
     request.session.flush()
-    return redirect('financial_system:login_view')
+    return redirect('financial_system:login')
 
 
 # @login_required
@@ -123,9 +127,13 @@ def user_profile_view(request):
 
         return render(request, 'user_profile.html', context)
 
-    except ObjectDoesNotExist:
-        context = {"message": "User not recognized, please login."}
-        return render(request, 'login.html', context)
+    except Exception:
+        # 根据后端意思，继续渲染到user_watchlist ，但是显示未登录界面
+        context = {
+            'user': None,
+            'tips': "User not recognized, please login.",
+        }
+        return render(request, 'user_watchlist.html', context)
 
 
 # @login_required
@@ -215,14 +223,18 @@ def calculate_pnl(trades):
     return pnl_per_stock, gross_pnl
 
 
-def user_watchlist_view(request):
+def user_watchlist_view(request,stock_id=None):
     try:
         user = User.objects.get(user_id=request.session.get('user_id'))
         stocks_in_watchlist = StockInfo.objects.filter(
             stock_id__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_id', flat=True)
         )
-
         # all_trades = HistoryTrade.objects.filter(user_id=user).order_by('-trade_dateTime')
+        #获取某个stockid，如果没有就选其一
+        if stock_id :
+            current_watch_stock = StockInfo.objects.get(stock_id = stock_id)
+        else:
+            current_watch_stock = stocks_in_watchlist[0] if stocks_in_watchlist else None
 
         all_trades = HistoryTrade.objects.filter(user_id=user) \
             .values('stock_id') \
@@ -243,20 +255,25 @@ def user_watchlist_view(request):
         context = {
             'user': user,
             'stocks_in_watchlist': stocks_in_watchlist,
+            'current_watch_stock': current_watch_stock,
             'all_trades': all_trades,
             'open_positions': open_positions,
             'closed_positions': closed_positions,
             'pnl_per_stock': pnl_per_stock,
             'gross_pnl': gross_pnl,
             "page_title":"user watchlist",
-            "numbers": range(1, 13)
         }
 
         return render(request, 'user_watchlist.html', context)
 
     except ObjectDoesNotExist:
         context = {"message": "User not recognized, please login."}
-        return render(request, 'login.html', context)
+        #根据后端意思，继续渲染到user_watchlist ，但是显示未登录界面
+        context = {
+            'user': None,
+            'tips':"User not recognized, please login.",
+        }
+        return render(request, 'user_watchlist.html', context)
 
 
 def news_view(request):
@@ -273,11 +290,10 @@ def news_detail_view(request, news_id):
 
 def stock_list_view(request):
     stock_list = models.StockInfo.objects.all()
-    stock_list = stock_list[0:20]
+    stock_list = stock_list[0:100]
 
     context = {
         "stocks": stock_list,
-        "numbers":  range(1, 13)
     }
 
     return render(request, 'stock_list.html', context)
@@ -288,8 +304,9 @@ def stock_detail_view(request, stock_id):
     comments = StockComment.objects.filter(stock_id=stock_id).order_by('-comment_time')
     return render(request, 'stock_detail.html', {'stock': stock, 'comments': comments})
 
-def trade(request):
-    return render(request, 'trade.html', {})
+def trade(request,stock_id):
+    stock = get_object_or_404(StockInfo, stock_id=stock_id)
+    return render(request, 'trade.html', {'stock':stock})
 
 def buy_stock(request):
     if request.method == "POST":
@@ -324,7 +341,7 @@ def sell_stock(request):
         stock = get_object_or_404(StockInfo, pk=stock_id)
         user = User.objects.get(user_id=request.session.get('user_id'))
 
-        trades = HistoryTrade.objects.filter(user_id=request.user, stock_id=stock).aggregate(
+        trades = HistoryTrade.objects.filter(user_id=user.user_id, stock_id=stock).aggregate(
             total_bought=Sum(
                 Case(When(trade_type='BUY', then='trade_quantity'), output_field=models.IntegerField(), default=0)),
             total_sold=Sum(
