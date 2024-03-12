@@ -336,11 +336,24 @@ def user_watchlist_view(request, stock_symbol=None):
 
 
 def news_view(request):
-    news = News.objects.all()
+    news_items = News.objects.all()
 
-    context = {'news': news, }
+    for news_item in news_items:
+        # Assuming relatedTickers is a comma-separated string of ticker symbols
+        ticker_symbols = news_item.relatedTickers.split(',')
+        # Initialize an empty list for relatedTickerURLs
+        news_item.relatedTickerURLs = []
+
+        for ticker in ticker_symbols:
+            # Check if the ticker exists in the Stock model
+            if Stock.objects.filter(symbol=ticker).exists():
+                # Generate the URL only if the stock exists in the database
+                url = reverse('financial_system:stock_detail', kwargs={'stock_symbol': ticker})
+                news_item.relatedTickerURLs.append((ticker, url))
+
+    context = {'news': news_items}
+
     return render(request, 'news.html', context)
-
 
 def news_detail_view(request, news_id):
     news_item = get_object_or_404(News, news_id=news_id)

@@ -1,5 +1,6 @@
 import time
 import uuid
+from datetime import datetime
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
@@ -229,15 +230,14 @@ def default_provider_publish_time():
 
 
 class News(models.Model):
-    news_id = models.AutoField(primary_key=True)
-    uuid = models.CharField(max_length=255, unique=True, default=uuid.uuid4)
+    uuid = models.CharField(max_length=255, unique=True)
     title = models.CharField(max_length=255)
     publisher = models.CharField(max_length=255, null=True, blank=True)
     link = models.URLField(null=True)
-    providerPublishTime = models.BigIntegerField(default=default_provider_publish_time())
+    providerPublishTime = models.DateTimeField(null=True)
     type = models.CharField(max_length=50, null=True)
-    thumbnail_resolutions = models.TextField(null=True)  # Store as JSON
-    relatedTickers = models.TextField(null=True)  # Store as JSON
+    photo_url = models.URLField(null=True, max_length=1000)
+    relatedTickers = models.TextField(null=True)
 
     @classmethod
     def create_from_dict(cls, article):
@@ -247,7 +247,8 @@ class News(models.Model):
         if not cls.objects.filter(uuid=article['uuid']).exists():
             # If the news doesn't exist, create a new entry
             thumbnails = article.get('thumbnail', {}).get('resolutions', [])
-            thumbnail_data = json.dumps(thumbnails, cls=DjangoJSONEncoder)  # Serialize thumbnail data to a JSON string
+            # Pick the first thumbnail URL, or None if not available
+            photo_url = thumbnails[0]['url'] if thumbnails else None
             related_tickers = ','.join(article.get('relatedTickers', []))
 
             news_article = cls.objects.create(
@@ -255,13 +256,14 @@ class News(models.Model):
                 title=article['title'],
                 publisher=article['publisher'],
                 link=article['link'],
-                providerPublishTime=article['providerPublishTime'],
+                providerPublishTime=datetime.utcfromtimestamp(article['providerPublishTime']).strftime('%Y-%m-%d'),
                 type=article['type'],
-                thumbnail_resolutions=thumbnail_data,  # Use the serialized JSON
+                photo_url=photo_url,  # Set the photo_url field
                 relatedTickers=related_tickers
             )
             return news_article, True  # Return the article and a flag indicating creation
         return None, False  # Return None and a flag indicating the article already exists
+
 
     @staticmethod
     def retrieve_news_by_uuids(news_dicts):
