@@ -389,17 +389,15 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
     recommendations_summary = ticker.recommendations_summary
     upgrades_downgrades = ticker.upgrades_downgrades
 
-
     # News
     news = News.retrieve_news_by_uuids(ticker.news)
-
     print(news)
-
 
     context = {
         'stock': stock,
         'historical_data': historical_data,
         'comments': comments,
+        'company_info': company_info,
         'actions': actions,
         'dividends': dividends,
         'splits': splits,
