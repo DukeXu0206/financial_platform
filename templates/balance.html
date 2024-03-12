@@ -118,7 +118,7 @@
     <div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form method="post" action="{% url 'financial_system:withdraw_funds' %}">
+                <form method="post" action="{% url 'financial_system:deposit_funds' %}">
                     {% csrf_token %}
                     <div class="modal-header ">
                         <h5 class="modal-title">Deposit</h5>

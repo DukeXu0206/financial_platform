@@ -123,7 +123,8 @@ def log_out(request):
 # @login_required
 def user_profile_view(request):
     try:
-        user = User.objects.get(phone_number=request.session['phone_number'])
+        # user = User.objects.get(phone_number=request.session['phone_number'])
+        user = User.objects.get(user_id=request.session.get('user_id'))
 
         context = {
             'user': user
@@ -146,9 +147,8 @@ def edit_user_profile_action(request):
     try:
         print("-" * 30)
         print("edit_user_profile_action")
-        print("request.session['user_id']: " + str(request.session['user_id']))
 
-        user = User.objects.get(user_id=request.session['user_id'])
+        user = User.objects.get(user_id=request.session.get('user_id'))
         print("user: " + str(user))
 
         if request.POST:
@@ -195,36 +195,59 @@ def edit_user_profile_action(request):
 
 
 def deposit_funds(request):
-    user = User.objects.get(user_id=request.session.get('user_id'))
     amount = request.POST.get('amount')
-    user.balance += amount
-    user.save()
-    user = User.objects.get(user_id=request.session.get('user_id'))
-    context = {
-        'user': user,
-    }
+
+    try:
+        amount = float(amount)
+        user = User.objects.get(user_id=request.session.get('user_id'))
+        user.account_balance += amount
+        user.save()
+        message = "Successful Deposit"
+        messages.success(request, message)
+
+        context = {
+            'user': user,
+            'message': message,
+        }
+    except ValueError:
+        context = {
+            'message': "Please introduce a valid amount (decimal value).",
+        }
+
     return render(request, 'balance.html', context)
 
 
 def withdraw_funds(request):
     amount = request.POST.get('amount')
-    user = User.objects.get(user_id=request.session.get('user_id'))
-    if user.balance >= amount:
-        user.balance -= amount
-        user.save()
-        messages.success(request, "Successful Withdraw")
-    else:
-        messages.error(request, "Insufficient balance, unsuccessful withdraw.")
-    user = User.objects.get(user_id=request.session.get('user_id'))
-    context = {
-        'user': user,
-    }
+
+    try:
+        amount = float(amount)
+        user = User.objects.get(user_id=request.session.get('user_id'))
+        if user.account_balance >= amount:
+            user.account_balance -= amount
+            user.save()
+            message = "Successful Withdraw"
+            messages.success(request, message)
+        else:
+            message = "Insufficient balance, unsuccessful withdraw."
+            messages.error(request, message)
+        user = User.objects.get(user_id=request.session.get('user_id'))
+
+        context = {
+            'user': user,
+            'message': message,
+        }
+
+    except ValueError:
+        context = {
+            'message': "Please introduce a valid amount (decimal value).",
+        }
+
     return render(request, 'balance.html', context)
 
 
 def balance(request):
     try:
-
         user = User.objects.get(user_id=request.session.get('user_id'))
         context = {
             'user': user,
@@ -447,8 +470,8 @@ def buy_stock(request):
 
         total_cost = current_price * quantity
 
-        if user.balance >= total_cost:
-            user.balance -= total_cost
+        if user.account_balance >= total_cost:
+            user.account_balance -= total_cost
             user.save()
             # Record the transaction
             HistoryTrade.objects.create(
@@ -486,7 +509,7 @@ def sell_stock(request):
         if total_owned >= quantity:
             total_revenue = current_price * quantity
 
-            user.balance += total_revenue
+            user.account_balance += total_revenue
             user.save()
             HistoryTrade.objects.create(
                 user_id=request.user,
