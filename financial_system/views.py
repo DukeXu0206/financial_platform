@@ -209,12 +209,14 @@ def deposit_funds(request):
             'user': user,
             'message': message,
         }
+
+        return render(request, 'balance.html', context)
     except ValueError:
         context = {
             'message': "Please introduce a valid amount (decimal value).",
         }
 
-    return render(request, 'balance.html', context)
+        return render(request, 'balance.html', context)
 
 
 def withdraw_funds(request):
@@ -231,19 +233,20 @@ def withdraw_funds(request):
         else:
             message = "Insufficient balance, unsuccessful withdraw."
             messages.error(request, message)
-        user = User.objects.get(user_id=request.session.get('user_id'))
 
         context = {
             'user': user,
             'message': message,
         }
 
+        return render(request, 'balance.html', context)
+
     except ValueError:
         context = {
             'message': "Please introduce a valid amount (decimal value).",
         }
 
-    return render(request, 'balance.html', context)
+        return render(request, 'balance.html', context)
 
 
 def balance(request):
