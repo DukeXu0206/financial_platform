@@ -261,23 +261,22 @@ def user_watchlist_view(request, stock_symbol=None):
     try:
         user = User.objects.get(user_id=request.session.get('user_id'))
         stocks_in_watchlist = Stock.objects.filter(
-            stock_symbol__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_symbol', flat=True)
+            symbol__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_symbol', flat=True)
         )
         # all_trades = HistoryTrade.objects.filter(user_id=user).order_by('-trade_dateTime')
         # 获取某个stockid，如果没有就选其一
         if stock_symbol:
-            current_watch_stock = Stock.objects.get(stock_symbol=stock_symbol)
+            current_watch_stock = Stock.objects.get(symbol=stock_symbol)
         else:
             current_watch_stock = stocks_in_watchlist[0] if stocks_in_watchlist else None
 
         all_trades = HistoryTrade.objects.filter(user_id=user) \
             .values('stock_symbol') \
             .annotate(
-            stock_name=F('stock_symbol__stock_name'),
             total_bought=Sum(
                 Case(When(trade_type='BUY', then='trade_quantity'), output_field=IntegerField(), default=0)),
             total_sold=Sum(Case(When(trade_type='SELL', then='trade_quantity'), output_field=IntegerField(), default=0))
-        )
+            ).order_by('stock_symbol')
 
         open_positions = [trade for trade in all_trades if trade['total_bought'] > trade['total_sold']]
 
@@ -422,9 +421,19 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
     return render(request, 'stock_detail.html', context)
 
 
-def trade(request, stock_symbol):
+def trade(request, stock_symbol, message=None):
     stock = get_object_or_404(Stock, stock_symbol=stock_symbol)
-    return render(request, 'trade.html', {'stock': stock})
+
+    context = {
+        'stock': stock
+    }
+
+    if message:
+        context += {
+            'message': message,
+        }
+
+    return render(request, 'trade.html', context)
 
 
 def buy_stock(request):
@@ -441,7 +450,6 @@ def buy_stock(request):
         if user.balance >= total_cost:
             user.balance -= total_cost
             user.save()
-
             # Record the transaction
             HistoryTrade.objects.create(
                 user_id=user,
@@ -450,8 +458,11 @@ def buy_stock(request):
                 trade_quantity=quantity,
                 trade_type='BUY',
             )
+            return redirect('financial_system:user_watchlist_view')
         else:
-            messages.error(request, "Insufficient balance, please deposit.")
+            message = "Insufficient balance, please deposit."
+            messages.error(request, message)
+            return redirect('financial_system:trade', stock_symbol, message)
 
 
 def sell_stock(request):
@@ -485,8 +496,12 @@ def sell_stock(request):
                 trade_type='SELL',
                 trade_dateTime=now()
             )
+
+            return redirect('financial_system:user_watchlist_view')
         else:
-            messages.error(request, "Insufficient stock to sell.")
+            message = "Insufficient stock to sell."
+            messages.error(request, message)
+            return redirect('financial_system:trade', stock_symbol, message)
 
 
 def add_comment(request, stock_symbol):
