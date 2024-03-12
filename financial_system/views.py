@@ -355,6 +355,7 @@ def news_view(request):
 
     return render(request, 'news.html', context)
 
+
 def news_detail_view(request, news_id):
     news_item = get_object_or_404(News, news_id=news_id)
     return render(request, 'news_detail.html', {'news_item': news_item})
@@ -594,3 +595,23 @@ def submit_feedback(request):
         return redirect('financial_system:index')  # Adjust the redirect as needed
 
     return render(request, 'submit_feedback.html')
+
+
+# def search_results(request):
+#     query = request.GET.get('query', '')
+#
+#     if query:
+#         # Filter News and Stock objects containing the query in their fields
+#         news_results = News.objects.filter(title__icontains=query) | News.objects.filter(publisher__icontains=query) \
+#                        |  News.objects.filter(title__relatedTickers
+#         stock_results = Stock.objects.filter(symbol__icontains=query) | Stock.objects.filter(name__icontains=query)
+#     else:
+#         news_results = News.objects.none()  # Return no results if query is empty
+#         stock_results = Stock.objects.none()
+#
+#     context = {
+#         'query': query,
+#         'news_results': news_results,
+#         'stock_results': stock_results,
+#     }
+#     return render(request, 'search_results.html', context)

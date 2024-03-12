@@ -161,7 +161,11 @@ class Stock(models.Model):
     def get_current_price(self):
         ticker = yf.Ticker(self.symbol)
         ticker = ticker.history(period='1d')
-        ticker['Close'][0]
+        return ticker['Close'][0]
+
+    def get_company_info(self):
+        ticker = yf.Ticker(self.symbol)
+        return ticker.info
 
 
 # class StockInfo(models.Model):
