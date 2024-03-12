@@ -21,7 +21,7 @@
                     <!-- Row -->
                     <div class="row">
                         <div class="text-center mb-4">
-                            <h2 class="text-center mb-2 text-dark">Market ,Choose yout Want</h2>
+                            <h2 class="text-center mb-2 text-dark">Stock Market</h2>
                         </div>
                     </div>
                 </div>
@@ -33,10 +33,11 @@
                 </div>
                 <!-- Row -->
                 <div class="row">
-
-                    {% for stock in stocks %}
+                {% for exchange, stocks in stock_groups.items %}
+                    <h2>{{ exchange }}</h2>
+                    {% for stock, detail_url in stocks %}
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
-                            <a href="{% url 'financial_system:stock_detail'  stock_id=stock.stock_id %}">
+                            <a href="{{ detail_url }}">
                                 <div class="card pull-up">
                                     <div class="card-body align-items-center flex-wrap">
                                         <div class="d-flex align-items-center mb-4">
@@ -83,6 +84,7 @@
                             </a>
                         </div>
                     {% endfor %}
+                {% endfor %}
 
                 </div>
 

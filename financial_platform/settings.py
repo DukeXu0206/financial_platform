@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'financial_system',
     'mptt',
+    'loguru',
+    'yfinance',
+    'uuid'
 ]
 
 MIDDLEWARE = [

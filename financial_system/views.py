@@ -1,17 +1,16 @@
-import uuid
+from django.urls import reverse
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum, Case, When, IntegerField, Q, F, FloatField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
 
-from financial_system import models
-from financial_system.models import User, StockInfo, Watchlist, News, UserNotification, Feedback, HistoryTrade, \
-    StockComment, CommentReply
+import yfinance as yf
+
+from financial_system.models import *
 
 
 def base(request):
@@ -78,7 +77,7 @@ def login_action(request):
             user = User.objects.get(phone_number=phone_number)
             login(request, user)
             user_num = User.objects.count()
-            # stock_num = StockInfo.objects.count()
+            # stock_num = Stock.objects.count()
             request.session['user_id'] = user.user_id
             request.session['phone_number'] = phone_number
             # request.session['user_name'] = user.user_name
@@ -143,7 +142,7 @@ def edit_user_profile_action(request):
     try:
         print("-" * 30)
         print("edit_user_profile_action")
-        print("request.session['user_id']: " + request.session['user_id'])
+        print("request.session['user_id']: " + str(request.session['user_id']))
 
         user = User.objects.get(user_id=request.session['user_id'])
         print("user: " + str(user))
@@ -202,6 +201,7 @@ def deposit_funds(request):
     }
     return render(request, 'balance.html', context)
 
+
 def withdraw_funds(request):
     amount = request.POST.get('amount')
     user = User.objects.get(user_id=request.session.get('user_id'))
@@ -216,6 +216,7 @@ def withdraw_funds(request):
         'user': user,
     }
     return render(request, 'balance.html', context)
+
 
 def balance(request):
     try:
@@ -237,7 +238,7 @@ def balance(request):
 
 def calculate_pnl(trades):
     # Aggregate the total spent on buys and the total earned from sells
-    # trades = HistoryTrade.objects.filter(user_id=user_id).values('stock_id')\
+    # trades = HistoryTrade.objects.filter(user_id=user_id).values('stock_symbol')\
     #     .annotate(
     #         total_spent=Sum(Case(When(trade_type='BUY', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
     #         total_earned=Sum(Case(When(trade_type='SELL', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
@@ -252,23 +253,23 @@ def calculate_pnl(trades):
     return pnl_per_stock, gross_pnl
 
 
-def user_watchlist_view(request, stock_id=None):
+def user_watchlist_view(request, stock_symbol=None):
     try:
         user = User.objects.get(user_id=request.session.get('user_id'))
-        stocks_in_watchlist = StockInfo.objects.filter(
-            stock_id__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_id', flat=True)
+        stocks_in_watchlist = Stock.objects.filter(
+            stock_symbol__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_symbol', flat=True)
         )
         # all_trades = HistoryTrade.objects.filter(user_id=user).order_by('-trade_dateTime')
         # 获取某个stockid，如果没有就选其一
-        if stock_id:
-            current_watch_stock = StockInfo.objects.get(stock_id=stock_id)
+        if stock_symbol:
+            current_watch_stock = Stock.objects.get(stock_symbol=stock_symbol)
         else:
             current_watch_stock = stocks_in_watchlist[0] if stocks_in_watchlist else None
 
         all_trades = HistoryTrade.objects.filter(user_id=user) \
-            .values('stock_id') \
+            .values('stock_symbol') \
             .annotate(
-            stock_name=F('stock_id__stock_name'),
+            stock_name=F('stock_symbol__stock_name'),
             total_bought=Sum(
                 Case(When(trade_type='BUY', then='trade_quantity'), output_field=IntegerField(), default=0)),
             total_sold=Sum(Case(When(trade_type='SELL', then='trade_quantity'), output_field=IntegerField(), default=0))
@@ -306,10 +307,10 @@ def user_watchlist_view(request, stock_id=None):
 
 
 def news_view(request):
-    news = News.objects.all().order_by('-news_dataTime')
+    # news = News.objects.all().order_by('-news_dataTime')
 
-    context = {'news': news, }
-    return render(request, 'news.html', context)
+    # context = {'news': news, }
+    return render(request, 'news.html') #, context)
 
 
 def news_detail_view(request, news_id):
@@ -318,33 +319,55 @@ def news_detail_view(request, news_id):
 
 
 def stock_list_view(request):
-    stock_list = models.StockInfo.objects.all()
-    stock_list = stock_list[0:100]
+    # Query all stocks
+    stocks = Stock.objects.all()
+
+    # Group stocks by 'exchangeName'
+    stock_groups = {}
+    for stock in stocks:
+        # Generate the URL for the stock detail view
+        detail_url = reverse('financial_system:stock_detail', kwargs={'stock_symbol': stock.symbol})
+
+        if stock.exchangeName in stock_groups:
+            stock_groups[stock.exchangeName].append((stock, detail_url))
+        else:
+            stock_groups[stock.exchangeName] = [(stock, detail_url)]
 
     context = {
-        "stocks": stock_list,
+        'stock_groups': stock_groups
     }
 
     return render(request, 'stock_list.html', context)
 
 
-def stock_detail_view(request, stock_id):
-    stock = get_object_or_404(StockInfo, stock_id=stock_id)
-    comments = StockComment.objects.filter(stock_id=stock_id).order_by('-comment_time')
-    return render(request, 'stock_detail.html', {'stock': stock, 'comments': comments})
+def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
+    stock = get_object_or_404(Stock, symbol=stock_symbol)
+    historical_data = yf.Ticker(stock.symbol).history(period=historical_data_period)
+    print(stock.validRanges)
+    print(historical_data)
+    comments = StockComment.objects.filter(stock_symbol=stock.symbol).order_by('-comment_time')
+
+    context = {
+        'stock': stock,
+        'historical_data': historical_data,
+        'comments': comments}
+
+    # Stock has validRanges attribute
+
+    return render(request, 'stock_detail.html', context)
 
 
-def trade(request, stock_id):
-    stock = get_object_or_404(StockInfo, stock_id=stock_id)
+def trade(request, stock_symbol):
+    stock = get_object_or_404(Stock, stock_symbol=stock_symbol)
     return render(request, 'trade.html', {'stock': stock})
 
 
 def buy_stock(request):
     if request.method == "POST":
-        stock_id = request.POST.get('stock_id')
+        stock_symbol = request.POST.get('stock_symbol')
         quantity = int(request.POST.get('quantity'))
 
-        stock = get_object_or_404(StockInfo, pk=stock_id)
+        stock = get_object_or_404(Stock, pk=stock_symbol)
         user = User.objects.get(user_id=request.session.get('user_id'))
 
         total_cost = stock.current_price * quantity
@@ -356,7 +379,7 @@ def buy_stock(request):
             # Record the transaction
             HistoryTrade.objects.create(
                 user_id=user,
-                stock_id=stock,
+                stock_symbol=stock,
                 trade_price=stock.current_price,
                 trade_quantity=quantity,
                 trade_type='BUY',
@@ -367,12 +390,12 @@ def buy_stock(request):
 
 def sell_stock(request):
     if request.method == "POST":
-        stock_id = request.POST.get('stock_id')
+        stock_symbol = request.POST.get('stock_symbol')
         quantity = int(request.POST.get('quantity'))
-        stock = get_object_or_404(StockInfo, pk=stock_id)
+        stock = get_object_or_404(Stock, pk=stock_symbol)
         user = User.objects.get(user_id=request.session.get('user_id'))
 
-        trades = HistoryTrade.objects.filter(user_id=user.user_id, stock_id=stock).aggregate(
+        trades = HistoryTrade.objects.filter(user_id=user.user_id, stock_symbol=stock).aggregate(
             total_bought=Sum(
                 Case(When(trade_type='BUY', then='trade_quantity'), output_field=models.IntegerField(), default=0)),
             total_sold=Sum(
@@ -388,7 +411,7 @@ def sell_stock(request):
             user.save()
             HistoryTrade.objects.create(
                 user_id=request.user,
-                stock_id=stock,
+                stock_symbol=stock,
                 trade_price=stock.current_price,
                 trade_quantity=quantity,
                 trade_type='SELL',
@@ -398,16 +421,16 @@ def sell_stock(request):
             messages.error(request, "Insufficient stock to sell.")
 
 
-def add_comment(request, stock_id):
+def add_comment(request, stock_symbol):
     if request.method == "POST":
         title = request.POST.get('title')
         content = request.POST.get('content')
         user = request.user
-        stock = get_object_or_404(StockInfo, pk=stock_id)
+        stock = get_object_or_404(Stock, pk=stock_symbol)
 
-        StockComment.objects.create(title=title, content=content, user_id=user, stock_id=stock)
-        return redirect('stock_comments', stock_id=stock_id)
-    return redirect('stock_comments', stock_id=stock_id)
+        StockComment.objects.create(title=title, content=content, user_id=user, stock_symbol=stock)
+        return redirect('stock_comments', stock_symbol=stock_symbol)
+    return redirect('stock_comments', stock_symbol=stock_symbol)
 
 
 def add_reply(request, comment_id):
@@ -417,9 +440,9 @@ def add_reply(request, comment_id):
         comment = get_object_or_404(StockComment, pk=comment_id)
 
         CommentReply.objects.create(content=content, user_id=user, comment_id=comment)
-        return redirect('stock_comments', stock_id=comment.stock_id.pk)
+        return redirect('stock_comments', stock_symbol=comment.stock_symbol.pk)
 
-    # return redirect('stock_comments', stock_id=comment_id.stock_id.pk)
+    # return redirect('stock_comments', stock_symbol=comment_id.stock_symbol.pk)
 
 
 def user_notification_view(request):

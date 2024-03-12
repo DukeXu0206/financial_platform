@@ -767,8 +767,8 @@
                                                     <form action="{% url 'financial_system:sell_stock' %}" method="post"
                                                           class="form-wrapper trade-form">
                                                         {% csrf_token %}
-                                                        <input type="hidden" name="stock_id"
-                                                               value="{{ stock.stock_id }}">
+                                                        <input type="hidden" name="symbol"
+                                                               value="{{ stock.symbol }}">
                                                         <div class="input-group mb-3 ">
                                                             <span class="input-group-text">PRICE</span>
                                                             <input class="form-control form-control text-end"
@@ -874,8 +874,8 @@
                                                     <form action="{% url 'financial_system:sell_stock' %}" method="post"
                                                           class="form-wrapper trade-form">
                                                         {% csrf_token %}
-                                                        <input type="hidden" name="stock_id"
-                                                               value="{{ stock.stock_id }}">
+                                                        <input type="hidden" name="symbol"
+                                                               value="{{ stock.symbol }}">
                                                         <!-- Same assumption as above -->
 
                                                         <div class="input-group mb-3 ">
@@ -1015,7 +1015,7 @@
                                         <h4 class="comment-reply-title text-primary mb-3" id="reply-title">Leave a
                                             Reply </h4>
                                         <form class="comment-form"
-                                              action="{% url 'financial_system:add_comment' stock_id=stock.pk %}"
+                                              action="{% url 'financial_system:add_comment' symbol=stock.pk %}"
                                               method="post">
                                             {% csrf_token %}
                                             <div class="row">

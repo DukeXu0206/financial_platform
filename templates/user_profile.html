@@ -22,7 +22,7 @@
 
                 {% if user %}
                     <form method="post" enctype="multipart/form-data"
-                          action="{% url 'financial_system:edit_profile_action' %}">
+                          action="{% url 'financial_system:edit_user_profile_action' %}">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="photo">Profile Picture:</label>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from financial_system.models import User, StockInfo, News
+from financial_system.models import *
 
 
 def adm_base(request):
@@ -14,7 +14,7 @@ def adm_user(request):
     return render(request, "adm_user.html", context)
 
 def adm_stock(request):
-    all_stock = StockInfo.objects.all()[:10]
+    all_stock = Stock.objects.all()[:10]
     context = {
         'all_stock': all_stock
     }

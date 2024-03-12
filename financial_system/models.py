@@ -1,5 +1,10 @@
-from django.db import models
-from django.db.models import Sum
+import time
+import uuid
+
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models, transaction
+import json
+
 from django.utils import timezone
 
 
@@ -63,35 +68,127 @@ class Manager(models.Model):
         db_table = 'manager'
 
 
-class StockInfo(models.Model):
-    # 股票信息表，记录股票系统中的股票信息
-    # 股票ID，固定6位，PK
-    stock_id = models.AutoField(primary_key=True)
-    # 股票名称
-    stock_name = models.CharField(max_length=45)
-    # 股票发行时间
-    issuance_time = models.CharField(max_length=45)
-    # 股票昨日收盘价
-    closing_price_y = models.FloatField(null=True)
-    # 股票今日开盘价
-    open_price_t = models.FloatField(null=True)
-    # 股票类型，上证/深证
-    stock_type = models.CharField(max_length=15, null=True)
-    # 股票所在版块，科创、金融。。
-    block = models.CharField(max_length=45, null=True)
-    # 涨跌幅，用于筛选牛股推荐
-    change_extent = models.FloatField(null=True)
-
-    def __str__(self):
-        return '-'.join([self.stock_id, self.stock_name])
+class TradingPeriod(models.Model):
+    timezone = models.CharField(max_length=50)
+    start = models.BigIntegerField()
+    end = models.BigIntegerField()
+    gmtoffset = models.IntegerField()
 
     class Meta:
-        db_table = 'stock_info'
+        db_table = 'trading_period'
+
+class Stock(models.Model):
+    currency = models.CharField(max_length=10)
+    symbol = models.CharField(max_length=10, primary_key=True)
+    exchangeName = models.CharField(max_length=50)
+    instrumentType = models.CharField(max_length=50)
+    firstTradeDate = models.BigIntegerField()
+    regularMarketTime = models.BigIntegerField()
+    hasPrePostMarketData = models.BooleanField(default=False)
+    gmtoffset = models.IntegerField()
+    timezone = models.CharField(max_length=50)
+    exchangeTimezoneName = models.CharField(max_length=50)
+    regularMarketPrice = models.DecimalField(max_digits=10, decimal_places=2)
+    chartPreviousClose = models.DecimalField(max_digits=10, decimal_places=2)
+    priceHint = models.IntegerField()
+    dataGranularity = models.CharField(max_length=10)
+    range = models.CharField(max_length=10)
+    validRanges = models.CharField(max_length=100)  # Consider a ManyToManyField for a more normalized design
+
+    pre_market = models.OneToOneField(TradingPeriod, on_delete=models.CASCADE, related_name='stock_pre', null=True, blank=True)
+    regular_market = models.OneToOneField(TradingPeriod, on_delete=models.CASCADE, related_name='stock_regular')
+    post_market = models.OneToOneField(TradingPeriod, on_delete=models.CASCADE, related_name='stock_post', null=True, blank=True)
+
+    class Meta:
+        db_table = 'stock'
+
+    def __str__(self):
+        return self.symbol
+
+    @classmethod
+    def create_stock_with_trading_periods_form_dict(cls, data):
+        with transaction.atomic():
+            # Create the trading periods first
+            pre_period_data = data['currentTradingPeriod']['pre']
+            regular_period_data = data['currentTradingPeriod']['regular']
+            post_period_data = data['currentTradingPeriod']['post']
+
+            pre_period = TradingPeriod.objects.create(
+                timezone=pre_period_data['timezone'],
+                start=pre_period_data['start'],
+                end=pre_period_data['end'],
+                gmtoffset=pre_period_data['gmtoffset']
+            )
+
+            regular_period = TradingPeriod.objects.create(
+                timezone=regular_period_data['timezone'],
+                start=regular_period_data['start'],
+                end=regular_period_data['end'],
+                gmtoffset=regular_period_data['gmtoffset']
+            )
+
+            post_period = TradingPeriod.objects.create(
+                timezone=post_period_data['timezone'],
+                start=post_period_data['start'],
+                end=post_period_data['end'],
+                gmtoffset=post_period_data['gmtoffset']
+            )
+
+            # Now, create the stock and link the trading periods
+            stock = cls.objects.create(
+                currency=data['currency'],
+                symbol=data['symbol'],
+                exchangeName=data['exchangeName'],
+                instrumentType=data['instrumentType'],
+                firstTradeDate=data['firstTradeDate'],
+                regularMarketTime=data['regularMarketTime'],
+                hasPrePostMarketData=data['hasPrePostMarketData'],
+                gmtoffset=data['gmtoffset'],
+                timezone=data['timezone'],
+                exchangeTimezoneName=data['exchangeTimezoneName'],
+                regularMarketPrice=data['regularMarketPrice'],
+                chartPreviousClose=data['chartPreviousClose'],
+                priceHint=data['priceHint'],
+                dataGranularity=data['dataGranularity'],
+                range=data['range'],
+                validRanges=','.join(data['validRanges']),
+                pre_market=pre_period,
+                regular_market=regular_period,
+                post_market=post_period
+            )
+
+            return stock
+
+
+# class StockInfo(models.Model):
+#     # 股票信息表，记录股票系统中的股票信息
+#     # 股票ID，固定6位，PK
+#     stock_id = models.AutoField(primary_key=True)
+#     # 股票名称
+#     stock_name = models.CharField(max_length=45)
+#     # 股票发行时间
+#     issuance_time = models.CharField(max_length=45)
+#     # 股票昨日收盘价
+#     closing_price_y = models.FloatField(null=True)
+#     # 股票今日开盘价
+#     open_price_t = models.FloatField(null=True)
+#     # 股票类型，上证/深证
+#     stock_type = models.CharField(max_length=15, null=True)
+#     # 股票所在版块，科创、金融。。
+#     block = models.CharField(max_length=45, null=True)
+#     # 涨跌幅，用于筛选牛股推荐
+#     change_extent = models.FloatField(null=True)
+#
+#     def __str__(self):
+#         return '-'.join([self.stock_id, self.stock_name])
+#
+#     class Meta:
+#         db_table = 'stock_info'
 
 
 class Watchlist(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    stock_id = models.ForeignKey(to=StockInfo, on_delete=models.CASCADE)
+    stock_symbol = models.ForeignKey(to=Stock, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'watchlist'
@@ -107,7 +204,7 @@ class HistoryTrade(models.Model):
     # 交易ID，PK
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     # 交易股票ID，FK
-    stock_id = models.ForeignKey(to=StockInfo, on_delete=models.CASCADE)
+    stock_symbol = models.ForeignKey(to=Stock, on_delete=models.CASCADE)
     # 交易价格
     trade_price = models.FloatField()
     # 成交股数
@@ -118,29 +215,50 @@ class HistoryTrade(models.Model):
     trade_type = models.CharField(max_length=4, choices=TRADE_TYPE_CHOICES, default='BUY')
 
     def __str__(self):
-        return '-'.join([self.user_id.phone_number, self.stock_id])
+        return '-'.join([self.user_id.phone_number, self.stock_symbol])
 
     class Meta:
         db_table = 'history_trade'
 
 
+def default_provider_publish_time():
+    return int(time.time())
+
+
 class News(models.Model):
-    # 新闻id
     news_id = models.AutoField(primary_key=True)
+    uuid = models.CharField(max_length=255, unique=True, default=uuid.uuid4)
+    title = models.CharField(max_length=255)
+    publisher = models.CharField(max_length=255, null=True, blank=True)
+    link = models.URLField(null=True)
+    providerPublishTime = models.BigIntegerField(default=default_provider_publish_time())
+    type = models.CharField(max_length=50, null=True)
+    thumbnail_resolutions = models.TextField(null=True)  # Store as JSON
+    relatedTickers = models.TextField(null=True)  # Store as JSON
 
-    # stock_id = models.ForeignKey(StockInfo, on_delete=models.SET_NULL, null=True)
+    @classmethod
+    def create_from_dict(cls, article):
+        """
+        Create a News instance from a dictionary.
+        """
+        if not cls.objects.filter(uuid=article['uuid']).exists():
+            # If the news doesn't exist, create a new entry
+            thumbnails = article.get('thumbnail', {}).get('resolutions', [])
+            thumbnail_data = json.dumps(thumbnails, cls=DjangoJSONEncoder)  # Serialize thumbnail data to a JSON string
+            related_tickers = ','.join(article.get('relatedTickers', []))
 
-    # 新闻标题
-    title = models.CharField(max_length=100)
-    # 新闻来源
-    source = models.URLField(null=True)
-    # 新闻内容
-    content = models.TextField()
-    # 发生时间
-    news_dataTime = models.DateField(auto_now=True)
-
-    def __str__(self):
-        return '-'.join([str(self.news_id), self.title])
+            news_article = cls.objects.create(
+                uuid=article['uuid'],
+                title=article['title'],
+                publisher=article['publisher'],
+                link=article['link'],
+                providerPublishTime=article['providerPublishTime'],
+                type=article['type'],
+                thumbnail_resolutions=thumbnail_data,  # Use the serialized JSON
+                relatedTickers=related_tickers
+            )
+            return news_article, True  # Return the article and a flag indicating creation
+        return None, False  # Return None and a flag indicating the article already exists
 
     class Meta:
         db_table = 'news'
@@ -157,7 +275,7 @@ class StockComment(models.Model):
     # 发起用户
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     # 关联股票
-    stock_id = models.ForeignKey(to=StockInfo, on_delete=models.CASCADE)
+    stock_symbol = models.ForeignKey(to=Stock, on_delete=models.CASCADE)
 
     def __str__(self):
         return '-'.join([str(self.user_id), self.title])
