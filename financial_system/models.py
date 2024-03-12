@@ -4,9 +4,7 @@ import uuid
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 import json
-
-from django.utils import timezone
-
+import yfinance as yf
 
 # from mptt.models import MPTTModel, TreeForeignKey
 
@@ -158,6 +156,11 @@ class Stock(models.Model):
             )
 
             return stock
+
+    def get_current_price(self):
+        ticker = yf.Ticker(self.symbol)
+        ticker = ticker.history(period='1d')
+        ticker['Close'][0]
 
 
 # class StockInfo(models.Model):

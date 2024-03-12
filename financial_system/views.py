@@ -431,11 +431,12 @@ def buy_stock(request):
     if request.method == "POST":
         stock_symbol = request.POST.get('stock_symbol')
         quantity = int(request.POST.get('quantity'))
+        current_price = float(request.POST.get('current_price'))
 
         stock = get_object_or_404(Stock, pk=stock_symbol)
         user = User.objects.get(user_id=request.session.get('user_id'))
 
-        total_cost = stock.current_price * quantity
+        total_cost = current_price * quantity
 
         if user.balance >= total_cost:
             user.balance -= total_cost
@@ -445,7 +446,7 @@ def buy_stock(request):
             HistoryTrade.objects.create(
                 user_id=user,
                 stock_symbol=stock,
-                trade_price=stock.current_price,
+                trade_price=current_price,
                 trade_quantity=quantity,
                 trade_type='BUY',
             )
@@ -457,10 +458,12 @@ def sell_stock(request):
     if request.method == "POST":
         stock_symbol = request.POST.get('stock_symbol')
         quantity = int(request.POST.get('quantity'))
+        current_price = float(request.POST.get('current_price'))
+
         stock = get_object_or_404(Stock, pk=stock_symbol)
         user = User.objects.get(user_id=request.session.get('user_id'))
 
-        trades = HistoryTrade.objects.filter(user_id=user.user_id, stock_symbol=stock).aggregate(
+        trades = HistoryTrade.objects.filter(user_id=user.user_id, stock_symbol=stock.symbol).aggregate(
             total_bought=Sum(
                 Case(When(trade_type='BUY', then='trade_quantity'), output_field=models.IntegerField(), default=0)),
             total_sold=Sum(
@@ -470,14 +473,14 @@ def sell_stock(request):
         total_owned = trades['total_bought'] - trades['total_sold']
 
         if total_owned >= quantity:
-            total_revenue = stock.current_price * quantity
+            total_revenue = current_price * quantity
 
             user.balance += total_revenue
             user.save()
             HistoryTrade.objects.create(
                 user_id=request.user,
                 stock_symbol=stock,
-                trade_price=stock.current_price,
+                trade_price=current_price,
                 trade_quantity=quantity,
                 trade_type='SELL',
                 trade_dateTime=now()

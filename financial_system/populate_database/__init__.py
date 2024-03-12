@@ -5,7 +5,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'financial_platform.settings')
 django.setup()
 
 
-from financial_system.populate_database.populate_stock import *
+from financial_system.populate_database.populate import *
 
 
 def print_results(table_name, results):
