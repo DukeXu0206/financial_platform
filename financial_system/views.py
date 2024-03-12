@@ -418,10 +418,14 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
     news = News.retrieve_news_by_uuids(ticker.news)
     print(news)
 
+    add_comment_url = reverse('financial_system:add_comment', kwargs={'stock_symbol': stock.symbol})
+
     context = {
         'stock': stock,
-        'historical_data': historical_data,
         'comments': comments,
+        'add_comment_url': add_comment_url,
+
+        'historical_data': historical_data,
         'company_info': company_info,
         'actions': actions,
         'dividends': dividends,
@@ -441,7 +445,7 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
         'recommendations_summary': recommendations_summary,
         'upgrades_downgrades': upgrades_downgrades,
         'earnings_dates': earnings_dates,
-        'news': news
+        'news': news,
     }
 
     return render(request, 'stock_detail.html', context)

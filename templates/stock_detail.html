@@ -1015,7 +1015,7 @@
                                         <h4 class="comment-reply-title text-primary mb-3" id="reply-title">Leave a
                                             Reply </h4>
                                         <form class="comment-form"
-                                              action="{% url 'financial_system:add_comment' symbol=stock.pk %}"
+                                              action="{{ add_comment_url }}"
                                               method="post">
                                             {% csrf_token %}
                                             <div class="row">
