@@ -260,6 +260,25 @@ class News(models.Model):
             return news_article, True  # Return the article and a flag indicating creation
         return None, False  # Return None and a flag indicating the article already exists
 
+    @staticmethod
+    def retrieve_news_by_uuids(news_dicts):
+        news_articles = []
+
+        # Iterate over the list of news article dictionaries
+        for article_dict in news_dicts:
+            # Get the UUID from the current dictionary
+            uuid = article_dict.get('uuid')
+            if uuid:
+                # Try to retrieve the News item by UUID
+                try:
+                    news_article = News.objects.get(uuid=uuid)
+                    news_articles.append(news_article)
+                except News.DoesNotExist:
+                    # If a news item with this UUID doesn't exist, skip it
+                    continue
+
+        return news_articles
+
     class Meta:
         db_table = 'news'
 

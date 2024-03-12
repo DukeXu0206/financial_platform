@@ -1,3 +1,5 @@
+from yfinance import Ticker
+
 from django.urls import reverse
 
 from django.contrib import messages
@@ -8,9 +10,11 @@ from django.db.models import Sum, Case, When, IntegerField, Q, F, FloatField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
 
-import yfinance as yf
-
 from financial_system.models import *
+# from financial_system.tests.yfinance_api import load
+
+
+# from financial_system.yfinance_api import YFinanceApi
 
 
 def base(request):
@@ -307,10 +311,10 @@ def user_watchlist_view(request, stock_symbol=None):
 
 
 def news_view(request):
-    # news = News.objects.all().order_by('-news_dataTime')
+    news = News.objects.all()
 
-    # context = {'news': news, }
-    return render(request, 'news.html') #, context)
+    context = {'news': news, }
+    return render(request, 'news.html', context)
 
 
 def news_detail_view(request, news_id):
@@ -342,17 +346,80 @@ def stock_list_view(request):
 
 def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
     stock = get_object_or_404(Stock, symbol=stock_symbol)
-    historical_data = yf.Ticker(stock.symbol).history(period=historical_data_period)
-    print(stock.validRanges)
-    print(historical_data)
     comments = StockComment.objects.filter(stock_symbol=stock.symbol).order_by('-comment_time')
+
+    ticker = Ticker(stock.symbol)
+
+    # Historical data for a given period
+    historical_data = ticker.history(period=historical_data_period)
+    company_info = ticker.info
+
+    print(company_info)
+    # print(ticker.recommendations)
+
+    # Fetch additional data
+    actions = ticker.actions
+    dividends = ticker.dividends
+    splits = ticker.splits
+    earnings_dates = ticker.earnings_dates
+
+    share_count = ticker.get_shares_full(start="2022-01-01", end=None)
+
+    # Financial information
+    # - income statement:
+    income_statement = ticker.income_stmt
+    quarterly_income_statement = ticker.quarterly_income_stmt
+
+    # - balance
+    balance_sheet = ticker.balance_sheet
+    quarterly_balance_sheet = ticker.quarterly_balance_sheet
+
+    # - cashflow
+    cashflow = ticker.cashflow
+    quarterly_cashflow = ticker.quarterly_cashflow
+
+    # Holders
+    major_holders = ticker.major_holders
+    institutional_holders = ticker.institutional_holders
+    mutualfund_holders = ticker.mutualfund_holders
+    insider_transactions = ticker.insider_transactions
+
+    # Recomendations
+    recommendations = ticker.recommendations
+    recommendations_summary = ticker.recommendations_summary
+    upgrades_downgrades = ticker.upgrades_downgrades
+
+
+    # News
+    news = News.retrieve_news_by_uuids(ticker.news)
+
+    print(news)
+
 
     context = {
         'stock': stock,
         'historical_data': historical_data,
-        'comments': comments}
-
-    # Stock has validRanges attribute
+        'comments': comments,
+        'actions': actions,
+        'dividends': dividends,
+        'splits': splits,
+        'share_count': share_count,
+        'income_statement': income_statement,
+        'quarterly_income_statement': quarterly_income_statement,
+        'balance_sheet': balance_sheet,
+        'quarterly_balance_sheet': quarterly_balance_sheet,
+        'cashflow': cashflow,
+        'quarterly_cashflow': quarterly_cashflow,
+        'major_holders': major_holders,
+        'institutional_holders': institutional_holders,
+        'mutualfund_holders': mutualfund_holders,
+        'insider_transactions': insider_transactions,
+        'recommendations': recommendations,
+        'recommendations_summary': recommendations_summary,
+        'upgrades_downgrades': upgrades_downgrades,
+        'earnings_dates': earnings_dates,
+        'news': news
+    }
 
     return render(request, 'stock_detail.html', context)
 

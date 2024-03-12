@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'financial_system',
     'mptt',
     'loguru',
-    'yfinance',
-    'uuid'
+    'yfinance'
 ]
 
 MIDDLEWARE = [
