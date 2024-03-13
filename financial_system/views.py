@@ -1,3 +1,5 @@
+import pprint
+
 from yfinance import Ticker
 
 from django.urls import reverse
