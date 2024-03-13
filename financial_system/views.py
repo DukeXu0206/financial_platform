@@ -447,12 +447,10 @@ def stock_detail_view(request, stock_symbol):
     historical_data = ticker.history(period=historical_data_period)
     company_info = ticker.info
     historical_data = historical_data.reset_index()
-    print(historical_data)
     historical_data['Date'] = historical_data['Date'].dt.strftime('%Y/%m/%d %H:%M:%S')
     # KLine data 整理
     kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
-    print(kline_data)
-    # print(json.dumps(company_info))
+    print(company_info)
     # print(ticker.recommendations)
 
     # Fetch additional data
@@ -511,7 +509,7 @@ def stock_detail_view(request, stock_symbol):
         'quarterly_balance_sheet': quarterly_balance_sheet.to_html(classes='table table-bordered table-responsive-sm'),
         'cashflow': cashflow.to_html(classes='table table-bordered table-responsive-sm'),
         'quarterly_cashflow': quarterly_cashflow.to_html(classes='table table-bordered table-responsive-sm'),
-        'major_holders': major_holders,
+        'major_holders': major_holders.to_html(classes='table table-bordered table-responsive-sm'),
         'institutional_holders': institutional_holders,
         'mutualfund_holders': mutualfund_holders,
         'insider_transactions': insider_transactions,

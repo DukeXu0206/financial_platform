@@ -150,7 +150,7 @@
                                                             data-bs-toggle="pill"
                                                             data-bs-target="#pills-listing-3" type="button" role="tab"
                                                             aria-controls="pills-listing-3" aria-selected="false">
-                                                        Quarterly balance
+                                                        Major Holders
 
                                                     </button>
                                                 </li>
@@ -203,6 +203,86 @@
                                                                 </td>
 
                                                             </tr>
+                                                             <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">open</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.open }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">dayLow</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.dayLow }}</td>
+
+
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">dayHigh</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.dayHigh }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">trailingPE</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.trailingPE }}</td>
+
+
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">targetHighPrice</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.targetHighPrice }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">totalCash</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.totalCash }}</td>
+
+
+                                                            </tr>
+
+
+                                                             <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">earningsGrowth</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.earningsGrowth }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">revenueGrowth</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.revenueGrowth }}</td>
+
+
+                                                            </tr>
 
                                                             </tbody>
                                                         </table>
@@ -219,7 +299,7 @@
                                                                 <tr>
                                                                     <td>
                                                                         <div class="ms-3">
-                                                                            <h5 class="mb-0"><a class="link-primary"
+                                                                            <h5 class="mb-0"><a class="link-primary" target="_blank"
                                                                                                 href="{{ new.link }}">{{ new.title }}</a>
                                                                             </h5>
                                                                         </div>
@@ -256,10 +336,10 @@
 
                                                     </div>
                                                 </div>
-                                                <div class="tab-pane fade" id="pills-listinG-3" role="tabpanel"
+                                                <div class="tab-pane fade" id="pills-listing-3" role="tabpanel"
                                                      aria-labelledby="pills-listing-tab">
                                                     <div class="table-responsive">
-                                                        {{ quarterly_balance_sheet|safe }}
+                                                        {{ major_holders|safe }}
 
                                                     </div>
                                                 </div>
