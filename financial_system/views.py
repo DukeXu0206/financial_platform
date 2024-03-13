@@ -590,6 +590,7 @@ def submit_feedback(request):
         email = request.POST.get('email')
         title = request.POST.get('title')
         content = request.POST.get('content')
+
         user = User.objects.get(user_id=request.session.get('user_id')) \
             if request.session.get('user_id') else None
 

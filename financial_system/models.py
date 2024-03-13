@@ -210,7 +210,7 @@ class HistoryTrade(models.Model):
     trade_type = models.CharField(max_length=4, choices=TRADE_TYPE_CHOICES, default='BUY')
 
     def __str__(self):
-        return '-'.join([self.user_id.phone_number, self.stock_symbol])
+        return '-'.join([self.user_id.phone_number, self.stock_symbol.symbol])
 
     class Meta:
         db_table = 'history_trade'
@@ -297,6 +297,7 @@ class StockComment(models.Model):
 
     class Meta:
         db_table = 'stock_comment'
+        ordering = ['-comment_time']
 
 
 class CommentReply(models.Model):
@@ -315,11 +316,11 @@ class CommentReply(models.Model):
 
     class Meta:
         db_table = 'comment_reply'
-        ordering = ['reply_time']
+        ordering = ['-reply_time']
 
 
 class Feedback(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedback', null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='feedback', null=True)
     email = models.EmailField(null=False, blank=False)
     title = models.CharField(max_length=255)
     content = models.TextField()
@@ -328,9 +329,27 @@ class Feedback(models.Model):
     def __str__(self):
         return f"Feedback from {self.email} - {self.title}"
 
+    def create(self, user, email, title, content):
+        if user:
+            feedback = self.model(
+                user=user,
+                email=user.user_email,
+                title=title,
+                content=content
+            )
+        else:
+            feedback = self.model(
+                email=email,
+                title=title,
+                content=content
+            )
+
+        feedback.save(using=self._db)
+        return feedback
+
     class Meta:
         db_table = 'feedback'
-        ordering = ['created_at']
+        ordering = ['-created_at']
 
 
 class UserNotification(models.Model):
@@ -345,7 +364,7 @@ class UserNotification(models.Model):
 
     class Meta:
         db_table = 'user_notification'
-        ordering = ['created_at']
+        ordering = ['-created_at']
 
 # 可以用来做树级评论
 # class Comment(MPTTModel):

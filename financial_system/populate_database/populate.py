@@ -1,4 +1,8 @@
 import yfinance as yf
+from django.utils import timezone
+import random
+from datetime import timedelta
+
 from financial_system.models import *
 
 
@@ -90,13 +94,11 @@ def populate_manager():
         manager = Manager(**manager_data)
         manager.save()
 
-    print(Manager.objects.all())
+    # print(Manager.objects.all())
 
 
-stocks = Stock.objects.all()
-users = User.objects.all()
 
-def populate_watchlist():
+def populate_watchlist(users, stocks):
     # Add 10 Watchlist entries for the first 2 users, 2 for the rest
     for i, user in enumerate(users):
         watchlist_stocks = stocks[:10] if i < 2 else stocks[:2]
@@ -106,4 +108,106 @@ def populate_watchlist():
     print(Watchlist.objects.all())
 
 
-# def populate_
+
+def create_trades_for_user(user, symbols):
+    # First, create 8 buy trades with different stocks
+    for symbol in symbols[:8]:
+        stock = Stock.objects.get(symbol=symbol)
+        HistoryTrade.objects.create(
+            user_id=user,
+            stock_symbol=stock,
+            trade_price=100,  # Example price
+            trade_quantity=10,  # Example quantity
+            trade_dateTime=timezone.now() - timedelta(days=random.randint(1, 30)),
+            trade_type='BUY'
+        )
+
+    # Then, create 5 sell trades, reusing some of the previously bought stocks
+    for symbol in symbols[3:8]:  # Reuse some stocks for selling
+        stock = Stock.objects.get(symbol=symbol)
+        HistoryTrade.objects.create(
+            user_id=user,
+            stock_symbol=stock,
+            trade_price=100,  # Example price, assuming flat for simplicity
+            trade_quantity=5,  # Example quantity, assuming some sold
+            trade_dateTime=timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
+            trade_type='SELL'
+        )
+
+
+def populate_history_trade(users, symbols):
+    for user in users:
+        create_trades_for_user(user, symbols)
+    print(HistoryTrade.objects.all())
+
+
+def populate_comments(user, stocks):
+    stocks = stocks[:10]
+
+    comments_data = [
+        {'title': 'Great Stock', 'content': 'This stock has been performing really well. Highly recommend!'},
+        {'title': 'Undervalued Gem',
+         'content': 'This stock is currently undervalued and presents a great buying opportunity.'}
+    ]
+
+    for stock in stocks:
+        for comment_data in comments_data:
+            # Create and save the comment for the current stock
+            StockComment.objects.create(
+                title=comment_data['title'],
+                content=comment_data['content'],
+                comment_time=timezone.now() - timedelta(days=random.randint(1, 30)),
+                user_id=user,
+                stock_symbol=stock
+            )
+
+    print(StockComment.objects.all())
+
+
+def populate_reply(user):
+    comments = StockComment.objects.all()
+
+    # Sample reply content
+    reply_content = "Thank you for your insight!"
+
+    for comment in comments:
+        # Create a reply for each comment
+        CommentReply.objects.create(
+            comment_id=comment,
+            user_id=user,
+            reply_time=timezone.now() - timedelta(hours=random.randint(1, 24)),
+            # Randomize reply time within the last 24 hours
+            content=reply_content
+        )
+
+    print(CommentReply.objects.all())
+
+
+def populate_notifications(users):
+    notifications_data = [
+        {'title': 'System Update', 'message': 'We will be performing a system update this weekend.'},
+        {'title': 'New Feature', 'message': 'Check out our new feature in the latest app update!'}
+    ]
+
+    for user in users:
+        for notification_data in notifications_data:
+            UserNotification.objects.create(user=user, **notification_data)
+
+    print(UserNotification.objects.all())
+
+
+def populate_feedback(users):
+    feedback_list = [
+        {'title': 'Great App!', 'content': 'Really enjoyed using this app. Great work!'},
+        {'title': 'Feature Request', 'content': 'Could you add a dark mode?'},
+        {'title': 'Bug Report',
+         'content': 'Found a bug in the latest version, please check.'},
+        {'title': 'Thank You!',
+         'content': 'Thank you for the constant updates and improvements.'}
+    ]
+
+    for i, feedback_data in enumerate(feedback_list):
+        user = users[i]
+        Feedback.objects.create(user=user, **feedback_data)
+
+    print(Feedback.objects.all())
