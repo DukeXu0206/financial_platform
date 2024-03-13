@@ -30,17 +30,22 @@
                                         <div class="card coin-content">
                                             <div class="card-header border-0 flex-wrap pb-0">
                                                 <div class="mb-xl-0 mb-2">
-                                                    <h2>{{ current_watch_stock.symbol }}</h2>
+                                                    <a href="javascript:void(0);"
+                                                           onclick="goToStockDetailPage('{{ current_watch_stock.symbol }}')"
+                                                           class="text-info">
+                                                        <h2>{{ current_watch_stock.symbol }}</h2>
+                                                        <h4>{{ current_watch_stock.get_company_name }}</h4>
+                                                    </a>
                                                 </div>
 
 
                                                 <div class="d-flex align-items-center">
                                                     <button onclick="goToTradePage('{{ current_watch_stock.symbol }}')"
                                                             class="me-4 font-w600 mb-0 btn btn-outline-success fs-18"
-                                                    ><span class="me-2">BUY</span></button>
-                                                    <button onclick="goToTradePage('{{ current_watch_stock.symbol }}')"
+                                                    ><span class="me-2">Trade</span></button>
+                                                    <!--<button onclick="goToTradePage('{{ current_watch_stock.symbol }}')"
                                                             class="font-w600 mb-0 btn btn-outline-danger fs-18"><span
-                                                            class="me-2">SELL</span></button>
+                                                            class="me-2">SELL</span></button>-->
                                                 </div>
                                             </div>
 
@@ -54,7 +59,7 @@
                                                             <div class="price-content">
                                                                 <span class="d-block mb-2">Current Price</span>
                                                                 <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
-                                                                    {{ current_watch_stock.get_current_price }}</h4>
+                                                                    {{ current_watch_stock.get_current_price | floatformat:4 }}</h4>
                                                                 {% if current_watch_stock.get_change_extent > 0 %}
                                                                     <span class="font-w600 text-success mb-0">
                                                             {{ current_watch_stock.get_change_extent | floatformat:2 }}%
@@ -167,7 +172,7 @@
                                     <div class="col-xl-5 col-sm-12">
                                         <div class="card">
                                             <div class="card-header flex-wrap border-0">
-                                                <h4 class="card-title mb-lg-0 mb-2">Trading Market List</h4>
+                                                <h4 class="card-title mb-lg-0 mb-2">Trading History</h4>
                                                 <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
                                                     <li class="nav-item my-1" role="presentation">
                                                         <button class="nav-link active" id="pills-crypto-tab"
@@ -226,8 +231,6 @@
                                                                                    class="market-title d-flex align-items-center">
                                                                                     <h5 class="mb-0 ms-2">{{ trade.stock_symbol }}</h5>
                                                                                 </a>
-
-                                                                                </a>
                                                                             </td>
                                                                             <td>{{ trade.total_bought }}</td>
                                                                             <td class="text-success">{{ trade.total_sold }}</td>
@@ -235,13 +238,13 @@
                                                                                 <button type="button"
                                                                                         onclick="goToTradePage('{{ trade.stock_symbol }}')"
                                                                                         class="btn btn-primary btn-sm">
-                                                                                    Buy
+                                                                                    Trade
                                                                                 </button>
-                                                                                <button type="button"
+                                                                               <!-- <button type="button"
                                                                                         onclick="goToTradePage('{{ trade.stock_symbol }}')"
                                                                                         class="btn btn-warning btn-sm">
                                                                                     Sell
-                                                                                </button>
+                                                                                </button>-->
                                                                             </td>
                                                                         </tr>
                                                                     {% endfor %}
@@ -289,12 +292,12 @@
                                                                         <td class="text-success">
                                                                             <button type="button"
                                                                                     onclick="goToTradePage('{{ position.stock_symbol }}')"
-                                                                                    class="btn btn-primary btn-sm">Buy
+                                                                                    class="btn btn-primary btn-sm">Trade
                                                                             </button>
-                                                                            <button type="button"
+                                                                            <!--<button type="button"
                                                                                     onclick="goToTradePage('{{ position.stock_symbol }}')"
                                                                                     class="btn btn-warning btn-sm">Sell
-                                                                            </button>
+                                                                            </button>-->
                                                                         </td>
                                                                     </tr>
 
@@ -321,7 +324,6 @@
                                                                     <th>Stock Name</th>
                                                                     <th>Bought</th>
                                                                     <th>Sold</th>
-                                                                    <th>Action</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -339,18 +341,6 @@
                                                                             </td>
                                                                             <td>{{ position.total_bought }}</td>
                                                                             <td class="text-success">{{ position.total_sold }}</td>
-                                                                            <td class="text-success">
-                                                                                <button type="button"
-                                                                                        onclick="goToTradePage('{{ trade.stock_symbol }}')"
-                                                                                        class="btn btn-primary btn-sm">
-                                                                                    Buy
-                                                                                </button>
-                                                                                <button type="button"
-                                                                                        onclick="goToTradePage('{{ trade.stock_symbol }}')"
-                                                                                        class="btn btn-warning btn-sm">
-                                                                                    Sell
-                                                                                </button>
-                                                                            </td>
                                                                         </tr>
                                                                     {% endfor %}
                                                                 {% else %}

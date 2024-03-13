@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, admin_view
+from . import views
 
 app_name = 'financial_system'
 urlpatterns = [
@@ -14,12 +14,12 @@ urlpatterns = [
 
     path('watchlist/', views.user_watchlist_view, name='user_watchlist_view'),
     path('watchlist/<str:stock_symbol>', views.user_watchlist_view, name='user_watchlist_id_view'),
+    path('add_to_watchlist/<str:stock_symbol>/', views.add_to_watchlist, name='add_to_watchlist'),
+    path('remove_from_watchlist/<str:stock_symbol>/', views.remove_from_watchlist, name='remove_from_watchlist'),
 
     path('stocks/', views.stock_list_view, name='stock_list'),
     path('stock/<str:stock_symbol>', views.stock_detail_view, name='stock_detail'),
     path('stock_current_price/', views.stock_current_price, name='stock_current_price'),
-
-
 
     path('trade/<str:stock_symbol>', views.trade, name='trade'),
     path('buy_stock/', views.buy_stock, name='buy_stock'),
@@ -42,20 +42,5 @@ urlpatterns = [
 
     path('submit_feedback/', views.submit_feedback, name='submit_feedback'),
 
-
     path('base', views.base, name='base'),
-
-
-    # 管理员视图与URL
-    path('a/base', admin_view.adm_base, name='adm_base'),
-    path('a/news', admin_view.adm_news, name='adm_news'),
-
-
-
-    # 管理员查看新闻详情
-    path('adm_news_detail/<int:news_id>', admin_view.adm_news_detail, name='adm_news_detail'),
-    # 管理员编辑新闻内容
-    path('adm_edit_news', admin_view.adm_edit_news, name='adm_edit_news'),
-    # 管理员新建新闻
-    path('adm_add_news', admin_view.adm_add_news, name='adm_add_news'),
 ]

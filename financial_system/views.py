@@ -2,8 +2,9 @@ import json
 import pprint
 
 from django.core.serializers import serialize
+from django.db import IntegrityError
 from django.forms import model_to_dict
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from yfinance import Ticker
 
 from django.urls import reverse
@@ -11,7 +12,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Sum, Case, When, IntegerField, Q, F, FloatField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
@@ -69,7 +70,7 @@ def register_action(request):
         return render(request, 'sign_up.html', {"message": message})
 
     # 跳转到登录
-    return redirect('financial_system:login')
+    return redirect('financial_system:login', {"message": message})
 
 
 def login_view(request):
@@ -84,20 +85,12 @@ def login_action(request):
         password = request.POST.get('password')
         print(phone_number)
         print(password)
-        message = ''
         try:
             user = User.objects.get(phone_number=phone_number)
             login(request, user)
-            user_num = User.objects.count()
-            # stock_num = Stock.objects.count()
+            # user_num = User.objects.count()
             request.session['user_id'] = user.user_id
             request.session['phone_number'] = phone_number
-            # request.session['user_name'] = user.user_name
-            # request.session['online'] = True
-            # request.session['user_num'] = user_num
-            # request.session['stock_num'] = stock_num
-            # request.session['photo_url'] = ''
-
             # return redirect('financial_system:adm_index')
             return redirect('financial_system:user_watchlist_view')
         except ObjectDoesNotExist:
@@ -106,18 +99,16 @@ def login_action(request):
                 if user.password == password:
                     login(request, user)
                     request.session['user_name'] = user.user_name
-                    # request.session['photo_url'] = user.photo_url
-                    # print(user.photo_url)
-                    # request.session['photo_url'] = '/static/img/avatar.png'
                     request.session['user_id'] = user.user_id
                     request.session['user_email'] = user.user_email
-                    # request.session['account_balance'] = user.account_balance
                     request.session['phone_number'] = user.phone_number
                     return redirect('financial_system:index')
                 else:
                     message = "Password incorrect."
+                    messages.error(request, message)
             except ObjectDoesNotExist:
                 message = "User does not exist."
+                messages.error(request, message)
 
         return render(request, 'login.html', {"message": message})
 
@@ -128,7 +119,6 @@ def log_out(request):
     return redirect('financial_system:login')
 
 
-# @login_required
 def user_profile_view(request):
     try:
         # user = User.objects.get(phone_number=request.session['phone_number'])
@@ -325,6 +315,53 @@ def calculate_pnl(user_id):
     return pnl_per_stock, gross_pnl
 
 
+def add_to_watchlist(request, stock_symbol):
+    previous_url = request.META.get('HTTP_REFERER')
+    try:
+        user_id = request.session.get('user_id')
+        user = User.objects.get(user_id=user_id)
+        stock = get_object_or_404(Stock, symbol=stock_symbol)
+        Watchlist.objects.create(user_id=user, stock_symbol=stock)
+        messages.success(request, f"{stock_symbol} successfully added to your Watchlist.")
+
+    except IntegrityError:
+        messages.info(request, f"{stock_symbol} is already in your Watchlist.")
+    except ValidationError as e:
+        messages.error(request, "Failed to add to Watchlist due to invalid data.")
+    except Exception as e:
+        messages.error(request, "An unexpected error occurred. Please try again later.")
+
+    return HttpResponseRedirect(previous_url)
+
+
+def remove_from_watchlist(request, stock_symbol):
+    previous_url = request.META.get('HTTP_REFERER', '/')
+    try:
+        user_id = request.session.get('user_id')
+        if not user_id:
+            raise Exception("User not logged in.")
+
+        user = get_object_or_404(User, user_id=user_id)
+        stock = get_object_or_404(Stock, symbol=stock_symbol)
+
+        # Attempt to find the watchlist item and delete it
+        watchlist_item = Watchlist.objects.get(user_id=user, stock_symbol=stock)
+        watchlist_item.delete()
+
+        message = f"{stock_symbol} successfully removed from Watchlist"
+        messages.success(request, message)
+    except Watchlist.DoesNotExist:
+        message = f"{stock_symbol} is not in your Watchlist"
+        messages.info(request, message)
+    except Exception as e:
+        print(e)  # Log the error for debugging
+        message = "Failed to remove from Watchlist, please try again later."
+        messages.error(request, message)
+
+    return HttpResponseRedirect(previous_url)
+
+
+
 def user_watchlist_view(request, stock_symbol=None):
     try:
         user_id = request.session.get('user_id')
@@ -346,7 +383,7 @@ def user_watchlist_view(request, stock_symbol=None):
         historical_data = ticker.history(period=historical_data_period)
         historical_data = historical_data.reset_index()
 
-        print(historical_data)
+        # print(historical_data)
         historical_data['Date'] = historical_data['Date'].dt.strftime('%Y/%m/%d %H:%M:%S')
         # KLine data 整理
         kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
@@ -424,7 +461,6 @@ def news_view(request):
 def news_detail_view(request, news_id):
     news_item = get_object_or_404(News, news_id=news_id)
     return render(request, 'news_detail.html', {'news_item': news_item})
-
 
 
 def stock_list_view(request):
@@ -516,6 +552,7 @@ def stock_detail_view(request, stock_symbol):
 
     add_comment_url = reverse('financial_system:add_comment', kwargs={'stock_symbol': stock.symbol})
 
+
     context = {
         'stock': stock,
         'comments': comments,
@@ -546,6 +583,17 @@ def stock_detail_view(request, stock_symbol):
         "kline_data": kline_data
     }
 
+    user_id = request.session.get('user_id')
+
+    if user_id:
+        user = User.objects.get(user_id=request.session.get('user_id'))
+        is_in_watchlist = Watchlist.is_in_watchlist(user, stock)
+
+        if is_in_watchlist:
+            context.update({
+                'is_in_watchlist': is_in_watchlist,
+            })
+
     return render(request, 'stock_detail.html', context)
 
 
@@ -575,9 +623,9 @@ def trade(request, stock_symbol, message=None):
     }
 
     if message:
-        context += {
+        context.update({
             'message': message,
-        }
+        })
 
     return render(request, 'trade.html', context)
 
@@ -603,17 +651,20 @@ def buy_stock(request):
                     stock_symbol=stock,
                     trade_price=current_price,
                     trade_quantity=quantity,
+                    trade_dateTime=now(),
                     trade_type='BUY',
                 )
                 return redirect('financial_system:user_watchlist_view')
             else:
                 message = "Insufficient balance, please deposit."
                 messages.error(request, message)
-                return redirect('financial_system:trade', stock_symbol, message)
+                return redirect(reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
+
 
         except ValueError:
             message = "Invalid input."
-            return redirect('financial_system:trade', stock_symbol, message)
+            return redirect(reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
+
 
 
 def sell_stock(request):
@@ -622,7 +673,6 @@ def sell_stock(request):
         try:
             quantity = int(request.POST.get('sell_quantity'))
             current_price = float(request.POST.get('current_price'))
-
             stock = get_object_or_404(Stock, pk=stock_symbol)
             user = User.objects.get(user_id=request.session.get('user_id'))
 
@@ -641,7 +691,7 @@ def sell_stock(request):
                 user.account_balance += total_revenue
                 user.save()
                 HistoryTrade.objects.create(
-                    user_id=request.user,
+                    user_id=user,
                     stock_symbol=stock,
                     trade_price=current_price,
                     trade_quantity=quantity,
@@ -672,7 +722,7 @@ def add_comment(request, stock_symbol):
     return redirect('financial_system:stock_detail', stock_symbol=stock_symbol)
 
 
-def add_reply(request, ):
+def add_reply(request):
     if request.method == "POST":
         content = request.POST.get('content')
         comment_id = request.POST.get('comment_id')
@@ -714,47 +764,51 @@ def submit_feedback(request):
 
 def search_view(request):
     query = request.GET.get('query', '').strip()
-    query_tokens = query.split()
+    if query != "":
+        query_tokens = query.split()
 
-    print(query)
-    print(query_tokens)
+        print(query)
+        print(query_tokens)
 
-    filtered_stocks = []
-    stock_symbols = []
+        filtered_stocks = []
+        stock_symbols = []
 
-    for stock in Stock.objects.all():
-        info = stock.get_company_info()  # This needs to be optimized for performance.
-        shortName = info.get('shortName', '').lower()
+        for stock in Stock.objects.all():
+            info = stock.get_company_info()  # This needs to be optimized for performance.
+            shortName = info.get('shortName', '').lower()
 
-        # Check if any token matches.
-        symbol_match = any(token.upper() in stock.symbol for token in query_tokens)
-        shortName_match = any(token.lower() in shortName for token in query_tokens)
-        sector_match = any(query_token.lower() in info.get('sector', '').lower() for query_token in query_tokens)
+            # Check if any token matches.
+            symbol_match = any(token.upper() in stock.symbol for token in query_tokens)
+            shortName_match = any(token.lower() in shortName for token in query_tokens)
+            sector_match = any(query_token.lower() in info.get('sector', '').lower() for query_token in query_tokens)
 
-        if symbol_match or shortName_match or sector_match:
-            stock_url = reverse('financial_system:stock_detail', kwargs={'stock_symbol': stock.symbol})
-            filtered_stocks.append((stock, stock_url))
-            stock_symbols.append(stock.symbol.upper())
+            if symbol_match or shortName_match or sector_match:
+                stock_url = reverse('financial_system:stock_detail', kwargs={'stock_symbol': stock.symbol})
+                filtered_stocks.append((stock, stock_url))
+                stock_symbols.append(stock.symbol.upper())
 
-    print(filtered_stocks)
+        print(filtered_stocks)
 
-    # filtered_news = []
-    # filtered_news.append(
-    #     news for news in News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
+        # filtered_news = []
+        # filtered_news.append(
+        #     news for news in News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
 
-    filtered_news = list(News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
+        filtered_news = list(News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
 
+        for news_item in News.objects.all():
+            related_tickers_list = [ticker.strip().upper() for ticker in
+                                    news_item.relatedTickers.split(',')] if news_item.relatedTickers else []
+            if set(related_tickers_list) & set(stock_symbols):  # Intersection of related tickers and filtered stock symbols
+                if news_item not in filtered_news:  # Avoid duplicating news items
+                    filtered_news.append(news_item)
 
-    for news_item in News.objects.all():
-        related_tickers_list = [ticker.strip().upper() for ticker in
-                                news_item.relatedTickers.split(',')] if news_item.relatedTickers else []
-        if set(related_tickers_list) & set(stock_symbols):  # Intersection of related tickers and filtered stock symbols
-            if news_item not in filtered_news:  # Avoid duplicating news items
-                filtered_news.append(news_item)
-
-    context = {
-        'query': query,
-        'filtered_news': filtered_news,
-        'filtered_stocks': filtered_stocks,
-    }
+        context = {
+            'query': query,
+            'filtered_news': filtered_news,
+            'filtered_stocks': filtered_stocks,
+        }
+    else:
+        context = {
+            'query': query,
+        }
     return render(request, 'search_results.html', context)

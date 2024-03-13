@@ -38,45 +38,53 @@
                                                 <h2 class="mb-0">{{ stock.symbol }}</h2>
                                             </div>
 
+                                            <div class="mb-xl-0 mb-2">
+                                            {% if is_in_watchlist %}
+                                                <a class="watchlist-btn" onclick="removeFromWatchlist('{{ stock.symbol }}')">
+                                                    <i class="fa-solid fa-star"></i>
+                                                </a>
+                                            {% else %}
+                                                <a class="watchlist-btn" onclick="addToWatchlist('{{ stock.symbol }}')">
+                                                    <i class="fa-regular fa-star"></i>
+                                                </a>
+                                            {% endif %}
+                                            </div>
                                         </div>
                                         <div class="card-body">
                                             <div class="d-flex align-items-center justify-content-between flex-wrap">
                                                 <div class="d-flex align-items-end justify-content-between flex-wrap">
                                                     <div class="price-content">
-                                                        <span class="d-block mb-2">current</span>
+                                                        <span class="d-block mb-2">Current Price</span>
                                                         <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
-                                                            ${{ stock.get_current_price }}</h4>
+                                                            ${{ stock.get_current_price | floatformat:4 }}</h4>
                                                     </div>
                                                     <div class="price-content">
-
                                                         {% if stock.change_extent > 0 %}
-                                                            <span class="fs-14 d-block mb-2">24h% change</span>
+                                                            <span class="fs-14 d-block mb-2">Change</span>
                                                             <h4 class="font-w600 text-success mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
                                                                     class="fa-solid fa-caret-up ms-1 text-success"></i>
                                                             </h4>
                                                         {% else %}
-                                                            <span class="fs-14 d-block mb-2">24h% change</span>
+                                                            <span class="fs-14 d-block mb-2">Change</span>
                                                             <h4 class="font-w600 text-danger mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
                                                                     class="fa-solid fa-caret-down ms-1 text-danger"></i>
                                                             </h4>
                                                         {% endif %}
-
-
                                                     </div>
                                                     <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">open</span>
+                                                        <span class="fs-14 d-block mb-2">Open Price</span>
                                                         <h4 class="font-w600 mb-0 text-danger">{{ stock.get_open_price | floatformat:2 }}</h4>
                                                     </div>
                                                     <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">company</span>
+                                                        <span class="fs-14 d-block mb-2">Company</span>
                                                         <h4 class="font-w600 mb-0 text-primary">{{ stock.get_company_name }}</h4>
                                                     </div>
                                                     <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">exchangeName</span>
+                                                        <span class="fs-14 d-block mb-2">Exchange Name</span>
                                                         <h4 class="font-w600 mb-0">{{ stock.exchangeName }}</h4>
                                                     </div>
                                                     <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">regularMarketPrice</span>
+                                                        <span class="fs-14 d-block mb-2">Regular Market Price</span>
                                                         <h4 class="font-w600 mb-0 text-warning">
                                                             ${{ stock.regularMarketPrice }}</h4>
                                                     </div>
@@ -97,7 +105,6 @@
                                                             </a>
                                                         </li>
                                                     {% endfor %}
-
                                                 </ul>
                                             </div>
 
@@ -439,33 +446,33 @@
                                         <div class="card quick-trade">
                                             <div class="card-header pb-0 border-0 flex-wrap">
                                                 <div>
-                                                    <h4 class="card-title">{{ stock.symbol }} &nbsp; </h4>
-                                                    <p class="mb-xl-0 mb-3 fs-12 current_price_number"> {{ stock.get_current_price }}</p>
+                                                    <h4 class="card-title">{{ stock.symbol }}</h4>
                                                 </div>
                                             </div>
                                             <div class="card-body pb-0">
                                                 <div class="basic-form">
-                                                    <form action="{% url 'financial_system:sell_stock' %}" method="post"
+                                                    <form action="{% url 'financial_system:buy_stock' %}" method="post"
                                                           class="form-wrapper trade-form">
                                                         {% csrf_token %}
-                                                        <input type="hidden" name="symbol"
+                                                        <input type="hidden" name="stock_symbol"
                                                                value="{{ stock.symbol }}">
                                                         <div class="input-group mb-3 ">
                                                             <span class="input-group-text">PRICE</span>
                                                             <input class="form-control form-control text-end current_price_text"
                                                                    readonly="readonly" type="text"
+                                                                   name="current_price"
                                                                    value="{{ stock.get_current_price }}"
-                                                                   placeholder="0,000000">
+                                                                   placeholder="0">
                                                         </div>
                                                         <div class="input-group mb-3 ">
                                                             <span class="input-group-text">Quantity</span>
-                                                            <input name="quantity"
+                                                            <input name="buy_quantity"
                                                                    class="form-control form-control text-end"
                                                                    type="number"
-                                                                   placeholder="0,000000">
+                                                                   placeholder="0" min="1" step="1">
                                                         </div>
 
-                                                        <div class="input-group mb-3 ">
+                                                        <div class="input-group mb-3">
                                                             <button type="submit"
                                                                     class="btn d-flex  btn-success justify-content-between align-items-center w-100">
                                                                 BUY
@@ -490,8 +497,7 @@
                                         <div class="card quick-trade">
                                             <div class="card-header pb-0 border-0 flex-wrap">
                                                 <div>
-                                                    <h4 class="card-title">{{ stock.symbol }} &nbsp; </h4>
-                                                    <p class="mb-xl-0 mb-3 fs-12"> {{ stock.get_current_price }}</p>
+                                                    <h4 class="card-title">{{ stock.symbol }}</h4>
                                                 </div>
                                             </div>
                                             <div class="card-body pb-0">
@@ -499,7 +505,8 @@
                                                     <form action="{% url 'financial_system:sell_stock' %}" method="post"
                                                           class="form-wrapper trade-form">
                                                         {% csrf_token %}
-                                                        <input type="hidden" name="symbol"
+                                                        <input type="hidden"
+                                                               name="stock_symbol"
                                                                value="{{ stock.symbol }}">
                                                         <!-- Same assumption as above -->
 
@@ -507,15 +514,16 @@
                                                             <span class="input-group-text">PRICE</span>
                                                             <input class="form-control form-control text-end current_price_text"
                                                                    readonly="readonly" type="text"
+                                                                   name="current_price"
                                                                    value="{{ stock.get_current_price }}"
-                                                                   placeholder="0,000000">
+                                                                   placeholder="0">
                                                         </div>
                                                         <div class="input-group mb-3 ">
                                                             <span class="input-group-text">Quantity</span>
-                                                            <input name="quantity"
+                                                            <input name="sell_quantity"
                                                                    class="form-control form-control text-end"
                                                                    type="number"
-                                                                   placeholder="0,000000">
+                                                                   placeholder="0" min="1" step="1">
                                                         </div>
 
                                                         <div class="input-group mb-3 ">
@@ -555,10 +563,10 @@
                                     <div class="media pt-3 pb-3">
                                         <div class="media-body">
                                             <h5 class="m-b-5"><a href="#"
-                                                                 class="text-dark">Title:{{ comment.title }}</a>
+                                                                 class="text-dark">{{ comment.title }}</a>
                                             </h5>
-                                            <p class="mb-0">Content:{{ comment.content }}</p>
-                                            <small>By: {{ comment.user_id.username }}
+                                            <p class="mb-0">{{ comment.content }}</p>
+                                            <small>By {{ comment.user_id.user_name }}
                                                 at {{ comment.comment_time }}</small>
                                         </div>
                                         <div class="media-action">
@@ -594,17 +602,17 @@
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="mb-3">
-                                                        <label for="author"
+                                                        <label for="title"
                                                                class="text-dark font-w600 form-label required">Title</label>
-                                                        <input type="text" class="form-control" value="Author"
+                                                        <input type="text" class="form-control" value=""
                                                                name="title"
-                                                               placeholder="Author" id="author" required>
+                                                               placeholder="" id="title" required>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-lg-12">
                                                     <div class="mb-3">
-                                                        <label for="comment"
+                                                        <label for="content"
                                                                class="text-dark font-w600 form-label">Comment</label>
                                                         <textarea rows="5" class="form-control" name="content"
                                                                   placeholder="Comment" id="content"
@@ -620,8 +628,6 @@
                                             </div>
                                         </form>
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
@@ -687,6 +693,53 @@
     }
     </style>
     <script>
+        // CSRF token setup for AJAX requests
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        function addToWatchlist(stockSymbol) {
+            $.ajax({
+                type: "POST",
+                url: `/add_to_watchlist/${stockSymbol}/`,
+                data: {
+                    csrfmiddlewaretoken: getCSRFToken(),
+                    'stock_symbol': stockSymbol
+                },
+                success: function(response) {
+                    // Update the icon to filled star
+                    // Assuming you have a way to select the specific star icon for this stock
+                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-regular').addClass('fa-solid');
+                    // Optionally, show a message to the user
+                    alert(`${stockSymbol} added to watchlist.`);
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('Error adding to watchlist.');
+                }
+            });
+        }
+
+        function removeFromWatchlist(stockSymbol) {
+            $.ajax({
+                type: "POST",
+                url: `/remove_from_watchlist/${stockSymbol}/`,
+                data: {
+                    csrfmiddlewaretoken: getCSRFToken(),
+                    'stock_symbol': stockSymbol
+                },
+                success: function(response) {
+                    // Update the icon to unfilled star
+                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-solid').addClass('fa-regular');
+                    // Optionally, show a message to the user
+                    alert(`${stockSymbol} removed from watchlist.`);
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('Error removing from watchlist.');
+                }
+            });
+        }
 
 
         //draw k line

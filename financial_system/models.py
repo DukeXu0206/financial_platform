@@ -118,7 +118,6 @@ class Stock(models.Model):
         # return ticker['Close'][0]
         return self.ticker.info['currentPrice']
 
-
     def get_open_price(self):
         open = self.ticker.history(period='1d')['Open']
         open_price = open.iloc[0]
@@ -198,6 +197,10 @@ class Watchlist(models.Model):
 
     def __str__(self):
         return f'{self.user_id}: {self.stock_symbol}'
+
+    @classmethod
+    def is_in_watchlist(cls, user, stock):
+        return cls.objects.filter(user_id=user, stock_symbol=stock).exists()
 
     class Meta:
         db_table = 'watchlist'
@@ -340,6 +343,8 @@ class News(models.Model):
 
     class Meta:
         db_table = 'news'
+        verbose_name_plural = "News"
+
 
 
 class StockComment(models.Model):
