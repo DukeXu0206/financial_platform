@@ -132,7 +132,7 @@
                                                                             <input type="radio"
                                                                                    class="form-check-input stock-watch"
                                                                                    id="stock-{{ stock.symbol }}"
-                                                                                   stock_id="{{ stock.symbol }}"
+                                                                                   symbol="{{ stock.symbol }}"
                                                                                    required
                                                                                     {% if stock.symbol == current_watch_stock.symbol %}
                                                                                    checked="checked"{% endif %}>
@@ -483,14 +483,14 @@
         function render_stock_kline() {
             var myChart = echarts.init(document.getElementById('stockhChart'));
 
-            const upColor = '#ec0000';
-            const upBorderColor = '#8A0000';
-            const downColor = '#00da3c';
-            const downBorderColor = '#008F28';
+            const upColor = '#30d94c';
+            const upBorderColor = '#30d94c';
+            const downColor = '#ff4238';
+            const downBorderColor = '#ff4238';
+
             // Each item: open，close，lowest，highest
 
-            var testData =
-            {{ kline_data|safe }}
+            var testData ={{ kline_data|safe }}
 
             const data0 = splitData(testData);
 
@@ -525,7 +525,6 @@
 
             var option = {
                 title: {
-                    text: '{{ current_watch_stock.symbol }}',
                     left: 0
                 },
                 tooltip: {
@@ -535,7 +534,7 @@
                     }
                 },
                 legend: {
-                    data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
+                    data: ['Daily K', 'MA5', 'MA10', 'MA20', 'MA30']
                 },
                 grid: {
                     left: '10%',
@@ -560,7 +559,7 @@
                 dataZoom: [
                     {
                         type: 'inside',
-                        start: 20,
+                        start: 0,
                         end: 100
                     },
                     {
@@ -709,7 +708,7 @@
                 // Check if the checkbox is checked
                 if ($(this).prop('checked')) {
                     // Get the stock_symbol from the 'stock_symbol' attribute
-                    var stock_symbol = $(this).attr('stock_symbol');
+                    var stock_symbol = $(this).attr('symbol');
 
                     // Redirect to the watchlist page with the stock_symbol parameter
                     window.location.href = '/watchlist/' + stock_symbol;
