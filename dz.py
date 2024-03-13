@@ -51,7 +51,7 @@ dz_array = {
                             f"{folder_name}/vendor/echarts/echarts.js",
                         ],
                         "stock_detail_view":[
-                            f"{folder_name}/vendor/apexchart/apexchart.js",
+                            f"{folder_name}/vendor/echarts/echarts.js",
                         ],
                         "news_view": [
                             f"{folder_name}/vendor/swiper/js/swiper-bundle.min.js",
