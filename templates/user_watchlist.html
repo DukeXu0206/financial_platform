@@ -108,7 +108,7 @@
                                     <div class="col-xl-4 col-sm-12">
                                         <div class="card price-list-1 mb-0">
                                             <div class="card-header border-0 pb-2 px-3">
-                                                <h4 class="text-primary card-title mb-2">Stock List</h4>
+                                                <h4 class="text-primary card-title mb-2">Watchlist</h4>
                                             </div>
                                             <div class="card-body p-3 py-0 height370 dlab-scroll">
                                                 <div class="table-responsive">
@@ -376,17 +376,16 @@
                                             <div class="card-body pb-4">
                                                 <div class="row">
                                                     <div class="col-xl-12 col-md-12">
-                                                        <h4 class="card-title mb-0 center">Profit and Loss</h4>
-                                                        <h2 class="font-w600 mb-0">By Stock</h2>
-                                                        <h3 class="font-w500 mb-0">Overall Gross
-                                                            P&L: {{ gross_pnl }}</h3>
+                                                        <h3 class="card-title font-w500 mb-0 center">Profit and Loss</h3>
+                                                        <br>
+                                                        <h5 class="font-w500 mb-0">Overall Gross
+                                                            P&L: {{ gross_pnl }}</h5>
                                                     </div>
-
-
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="market-coin flex-wrap">
+                                                            <h4 class="font-w500 mb-0">P&L By Stock</h4>
                                                             {% for trade in pnl_per_stock %}
                                                                 <div class="mb-1">
                                                                     <span class="fs-14 font-w400">{{ trade.stock_symbol }}</span>
@@ -419,9 +418,9 @@
                     <div class="col-md-6">
                         <div class="error-page">
                             <div class="error-inner text-center">
-                                {#
+                                <!--{#
                                 <div class="dz-error" data-text="LOGIN">PLEASE LOGIN</div>
-                                #}
+                                #}-->
                                 <h2 class="error-head mb-0"><i
                                         class="fa fa-exclamation-triangle text-warning me-2"></i>{{ tips }}</h2>
                                 <a href="{% url 'financial_system:login' %}" class="btn btn-secondary">GO TO LOGIN</a>
@@ -714,6 +713,8 @@
 
             render_stock_kline()
         });
+
+
 
 
     </script>
