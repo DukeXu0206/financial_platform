@@ -523,8 +523,8 @@ def stock_detail_view(request, stock_symbol):
     return render(request, 'stock_detail.html', context)
 
 
-def stock_current_price(request, ):
-    historical_data_period = "1mo"
+def stock_current_price(request):
+    # historical_data_period = "1mo"
     stock_symbol = request.POST.get('stock_symbol')
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     data = {

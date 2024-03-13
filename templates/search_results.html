@@ -26,8 +26,10 @@
             <h3>Stock Results</h3>
             <ul>
                 {% for stock, stock_url in filtered_stocks %}
-                <li><a href="{{ stock_url }}"><strong>{{ stock.symbol }} </strong> {{ stock.get_company_info.shortName
-                    }} </a>
+                <li>
+                    <a href="{{ stock_url }}"><strong>{{ stock.symbol }} </strong>
+                        {{ stock.get_company_name }}
+                    </a>
                 </li>
                 {% empty %}
                 <li>No matching stocks found.</li>
