@@ -26,15 +26,15 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <!--<div class="row">
                     <div class="mb-4">
                         <h3 class="text-center mb-2 text-dark">Higest volume stocks</h3>
                     </div>
-                </div>
+                </div>-->
                 <!-- Row -->
                 <div class="row">
                 {% for exchange, stocks in stock_groups.items %}
-                    <h2 class="text-center">{{ exchange }}</h2>
+                    <h3 class="text-center">{{ exchange }}</h3>
                     {% for stock, detail_url in stocks %}
                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
                             <a href="{{ detail_url }}">

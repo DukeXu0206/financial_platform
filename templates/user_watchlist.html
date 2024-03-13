@@ -5,354 +5,359 @@
 {% endblock %}
 
 {% block title %}
-    <title> {{ page_title }}</title>
+<title>Trading & WatchList</title>
 {% endblock %}
 
 {% block content %}
-    {% if current_user %}
-        <!--**********************************
-            Content body start
-        ***********************************-->
-        <div class="content-body">
-            <!-- row -->
-            <div class="container-fluid">
-                <!-- Row -->
-                <div class="row">
+{% if current_user %}
+<!--**********************************
+    Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <!-- Row -->
+        <div class="row">
 
-                   {% include 'elements/nav-tool.html' %}
+            {% include 'elements/nav-tool.html' %}
 
-                    <div class="col-xl-12">
-                        <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
-                                <div class="row">
-                                    <!-- 图表 -->
-                                    <div class="col-xl-9">
-                                        <div class="card coin-content">
-                                            <div class="card-header border-0 flex-wrap pb-0">
-                                                <div class="mb-xl-0 mb-2">
-                                                    <h4 class="card-title">Stock Trading
-                                                        - {{ current_watch_stock.stock_name }}
-                                                        - {{ current_watch_stock.stock_type }}</h4>
-                                                </div>
-                                            </div>
-                                            <div class="card-body">
+            <div class="col-xl-12">
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
+                        <div class="row">
+                            <!-- 图表 -->
+                            <div class="col-xl-8">
+                                <div class="card coin-content">
+                                    <div class="card-header border-0 flex-wrap pb-0">
+                                        <div class="mb-xl-0 mb-2">
+                                            <h2>{{ current_watch_stock.symbol }}</h2>
+                                        </div>
 
 
-                                                {% if current_watch_stock %}
-
-                                                    <div class="d-flex align-items-center justify-content-between flex-wrap">
-                                                        <div class="d-flex align-items-end justify-content-between flex-wrap">
-                                                            <div class="price-content">
-                                                                <span class="d-block mb-2">Price</span>
-                                                                <h4 class="fs-20 font-w600 mb-0">{{ current_watch_stock.closing_price_y }}</h4>
-                                                            </div>
-                                                            <div class="price-content">
-                                                                <span class="fs-14 d-block mb-2">24h change</span>
-                                                                {% if current_watch_stock.change_extent > 0 %}
-                                                                    <h4 class="font-w600 text-success mb-0">
-                                                                    {{ current_watch_stock.change_extent }}%
-                                                                    <i class="fa-solid fa-caret-up ms-1 text-success"></i>
-                                                                {% else %}
-                                                                    <h4 class="font-w600 text-danger mb-0">
-                                                                    {{ current_watch_stock.change_extent }}%
-                                                                    <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
-                                                                {% endif %}
-                                                                </h4>
-                                                            </div>
-
-                                                        </div>
-                                                        <div class="d-flex align-items-center">
-                                                            <a href="{% url 'financial_system:trade' stock_id=current_watch_stock.stock_id %}"
-                                                               class="me-4 font-w600 mb-0 btn btn-outline-success fs-18"
-                                                            ><span class="me-2">BUY</span>{{ current_watch_stock.open_price_t }}
-                                                            </a>
-                                                            <a href="{% url 'financial_system:trade' stock_id=current_watch_stock.stock_id %}"
-                                                               class="font-w600 mb-0 btn btn-outline-danger fs-18"><span
-                                                                    class="me-2">SELL</span>{{ current_watch_stock.closing_price_y }}
-                                                            </a>
-                                                        </div>
-                                                    </div>
-
-                                                    <div id="stockhChart"></div>
-
-                                                    <div class="col-xs-12">
-                                                        <ul class="nav nav-pills">
-                                                            <li class=" nav-item">
-                                                                <a href="#navpills-1" class="nav-link active"
-                                                                   data-bs-toggle="tab" aria-expanded="false">1D</a>
-                                                            </li>
-                                                            <li class="nav-item">
-                                                                <a href="#navpills-2" class="nav-link "
-                                                                   data-bs-toggle="tab"
-                                                                   aria-expanded="false">5D</a>
-                                                            </li>
-                                                            <li class="nav-item">
-                                                                <a href="#navpills-3" class="nav-link"
-                                                                   data-bs-toggle="tab"
-                                                                   aria-expanded="true">1M</a>
-                                                            </li>
-                                                            <li class="nav-item">
-                                                                <a href="#navpills-5" class="nav-link"
-                                                                   data-bs-toggle="tab"
-                                                                   aria-expanded="true">5M</a>
-                                                            </li>
-
-                                                        </ul>
-                                                    </div>
-                                                {% else %}
-                                                    <h2>No Watch Stock</h2>
-                                                {% endif %}
-                                            </div>
+                                        <div class="d-flex align-items-center">
+                                            <button onclick="goToTradePage('{{ current_watch_stock.stock.symbol }}')"
+                                                    class="me-4 font-w600 mb-0 btn btn-outline-success fs-18"
+                                            ><span class="me-2">BUY</span></button>
+                                            <button onclick="goToTradePage('{{ current_watch_stock.stock.symbol }}')"
+                                                    class="font-w600 mb-0 btn btn-outline-danger fs-18"><span
+                                                    class="me-2">SELL</span></button>
                                         </div>
                                     </div>
 
+                                    <div class="card-body">
 
-                                    <!--监控列表start-->
-                                    <div class="col-xl-3 col-sm-12">
-                                        <div class="card price-list-1 mb-0">
-                                            <div class="card-header border-0 pb-2 px-3">
-                                                <h4 class="text-primary card-title mb-2">Stock List</h4>
+
+                                        {% if current_watch_stock %}
+
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                            <div class="d-flex align-items-end justify-content-between flex-wrap">
+                                                <div class="price-content">
+                                                    <span class="d-block mb-2">Current Price</span>
+                                                    <h4 class="fs-20 font-w600 mb-0">
+                                                        {{current_watch_stock.get_current_price }}</h4>
+                                                    {% if current_watch_stock.get_change_extent > 0 %}
+                                                        <span class="font-w600 text-success mb-0">
+                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}%
+                                                            <i class="fa-solid fa-caret-up ms-1 text-success"></i>
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="font-w600 text-danger mb-0">
+                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}%
+                                                            <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="price-content">
+                                                    <span class="d-block mb-2">Open Price</span>
+                                                    <h4 class="fs-20 font-w600 mb-0">
+                                                        {{current_watch_stock.get_open_price | floatformat:2 }}</h4>
+                                                    <span class="font-w600 mb-0"><br></span>
+
+
+                                                </div>
+
                                             </div>
-                                            <div class="card-body p-3 py-0 height370 dlab-scroll">
-                                                <div class="table-responsive">
-                                                    <table class="table text-center bg-primary-hover tr-rounded order-tbl mt-2 ">
+                                        </div>
+
+                                        <div id="stockhChart"></div>
+
+                                        <div class="col-xs-12">
+                                            <ul class="nav nav-pills">
+                                                <li class=" nav-item">
+                                                    <a href="#navpills-1" class="nav-link active"
+                                                       data-bs-toggle="tab" aria-expanded="false">1D</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="#navpills-2" class="nav-link "
+                                                       data-bs-toggle="tab"
+                                                       aria-expanded="false">5D</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="#navpills-3" class="nav-link"
+                                                       data-bs-toggle="tab"
+                                                       aria-expanded="true">1M</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="#navpills-5" class="nav-link"
+                                                       data-bs-toggle="tab"
+                                                       aria-expanded="true">5M</a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                        {% else %}
+                                        <h2>No Watch Stock</h2>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!--监控列表start-->
+                            <div class="col-xl-4 col-sm-12">
+                                <div class="card price-list-1 mb-0">
+                                    <div class="card-header border-0 pb-2 px-3">
+                                        <h4 class="text-primary card-title mb-2">Stock List</h4>
+                                    </div>
+                                    <div class="card-body p-3 py-0 height370 dlab-scroll">
+                                        <div class="table-responsive">
+                                            <table class="table text-center bg-primary-hover tr-rounded order-tbl mt-2 ">
+                                                <thead>
+                                                <tr>
+                                                    <th class="border-bottom">
+
+                                                    </th>
+                                                    <th class="text-start border-bottom">Stock Name</th>
+                                                    <th class="text-center border-bottom">Current Price</th>
+                                                    <th class="text-end border-bottom">Open Price</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for stock in stocks_in_watchlist %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="radio me-0 align-self-center">
+                                                            <div class="custom-control form-check ">
+                                                                <input type="radio"
+                                                                       class="form-check-input stock-watch"
+                                                                       id="stock-{{ stock.symbol }}"
+                                                                       stock_id="{{ stock.symbol }}"
+                                                                       required
+                                                                       {% if stock.symbol == current_watch_stock.symbol %}
+                                                                       checked="checked"{% endif %}>
+                                                                <label class="custom-control-label"
+                                                                       for="check8"></label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button onclick="goToStockDetailPage('{{ stock.symbol }}')"
+                                                                class="text-info">
+                                                            {{ stock.get_company_name }}
+                                                        </button>
+                                                    </td>
+                                                    <td>{{ stock.get_current_price }}</td>
+                                                    <td>{{ stock.get_open_price | floatformat:2 }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-center py-2">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--监控列表end-->
+
+                            <!-- 交易表格 -->
+                            <div class="col-xl-6 col-sm-12">
+                                <div class="card">
+                                    <div class="card-header flex-wrap border-0">
+                                        <h4 class="card-title mb-lg-0 mb-2">Trading Market List</h4>
+                                        <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
+                                            <li class="nav-item my-1" role="presentation">
+                                                <button class="nav-link active" id="pills-crypto-tab"
+                                                        data-bs-toggle="pill"
+                                                        data-bs-target="#pills-crypto" type="button" role="tab"
+                                                        aria-controls="pills-crypto" aria-selected="true">
+                                                    All Trades
+
+                                                </button>
+                                            </li>
+
+                                            <li class="nav-item my-1" role="presentation">
+                                                <button class="nav-link" id="pills-future-tab"
+                                                        data-bs-toggle="pill"
+                                                        data-bs-target="#pills-future" type="button" role="tab"
+                                                        aria-controls="pills-future" aria-selected="false">
+                                                    Open Positions
+
+                                                </button>
+                                            </li>
+                                            <li class="nav-item my-1" role="presentation">
+                                                <button class="nav-link me-0" id="pills-listing-tab"
+                                                        data-bs-toggle="pill"
+                                                        data-bs-target="#pills-listing" type="button" role="tab"
+                                                        aria-controls="pills-listing" aria-selected="false">
+                                                    Closed Positions
+
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class="tab-content" id="pills-tabContent">
+                                            <div class="tab-pane fade show active" id="pills-crypto"
+                                                 role="tabpanel"
+                                                 aria-labelledby="pills-crypto-tab">
+                                                <div class="table-responsive dataTabletrade">
+                                                    <table id="example-history"
+                                                           class="table shadow-hover display  orderbookTable"
+                                                           style="min-width:845px">
                                                         <thead>
                                                         <tr>
-                                                            <th class="border-bottom">
-
-                                                            </th>
-                                                            <th class="text-start border-bottom">Stock Name</th>
-                                                            <th class="text-center border-bottom">Closing Price</th>
-                                                            <th class="text-end border-bottom">Stock Type</th>
+                                                            <th>Stock Name</th>
+                                                            <th>Bought</th>
+                                                            <th>Sold</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {% for stock in stocks_in_watchlist %}
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="radio me-0 align-self-center">
-                                                                        <div class="custom-control form-check ">
-                                                                            <input type="radio"
-                                                                                   class="form-check-input stock-watch"
-                                                                                   id="stock-{{ stock.stock_id }}"
-                                                                                   stock_id="{{ stock.stock_id }}"
-                                                                                   required=""
-                                                                                    {% if stock.stock_id == current_watch_stock.stock_id %}
-                                                                                   checked="checked" {% endif %}>
-                                                                            <label class="custom-control-label"
-                                                                                   for="check8"></label>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <a href="{% url 'financial_system:stock_detail' stock_id=stock.stock_id %}"
-                                                                       class="text-info">
-                                                                        {{ stock.stock_name }}
-                                                                    </a>
-                                                                </td>
-                                                                <td>{{ stock.closing_price_y }}</td>
-                                                                <td class="text-end text-success">{{ stock.stock_type }}</td>
-                                                            </tr>
+                                                        {% if all_trades %}
+                                                        {% for trade in all_trades %}
+                                                        <tr>
+                                                            <td>
+                                                                <button onclick="goToStockDetailPage('{{trade.stock_symbol}}')"
+                                                                        class="market-title d-flex align-items-center">
+                                                                    <h5 class="mb-0 ms-2">{{ trade.stock_symbol }}</h5>
+                                                                </button>
+                                                            </td>
+                                                            <td>{{ trade.total_bought }}</td>
+                                                            <td class="text-success">{{ trade.total_sold }}</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                        <tr>
+                                                            <td colspan="3"
+                                                                class="text-success text-center">
+                                                                No trade history available.
+                                                            </td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="pills-future" role="tabpanel"
+                                                 aria-labelledby="pills-future-tab">
+                                                <div class="table-responsive dataTabletrade">
+                                                    <table id="example-history-2"
+                                                           class="table shadow-hover display  orderbookTable"
+                                                           style="min-width:845px">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Stock Name</th>
+                                                            <th>Bought</th>
+                                                            <th>Sold</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for position in open_positions %}
+                                                        <tr>
+                                                            <td>
+                                                                <button onclick="goToStockDetailPage('{{position.stock_symbol}}')"
+                                                                        class="market-title d-flex align-items-center">
+                                                                    <h5 class="mb-0 ms-2">
+                                                                        {{ position.stock_symbol}}
+                                                                    </h5>
+                                                                </button>
+                                                            </td>
+                                                            <td>{{ position.total_bought }}</td>
+                                                            <td class="text-success">{{ position.total_sold }}</td>
+                                                        </tr>
+
+                                                        {% empty %}
+                                                        <tr>
+                                                            <td colspan="3"
+                                                                class="text-success text-center">No open positions.
+                                                            </td>
+                                                        </tr>
                                                         {% endfor %}
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div class="card-footer text-center py-2">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--监控列表end-->
-
-                                    <!-- 交易表格 -->
-                                    <div class="col-xl-6 col-sm-12">
-                                        <div class="card">
-                                            <div class="card-header flex-wrap border-0">
-                                                <h4 class="card-title mb-lg-0 mb-2">Trading Market List</h4>
-                                                <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
-                                                    <li class="nav-item my-1" role="presentation">
-                                                        <button class="nav-link active" id="pills-crypto-tab"
-                                                                data-bs-toggle="pill"
-                                                                data-bs-target="#pills-crypto" type="button" role="tab"
-                                                                aria-controls="pills-crypto" aria-selected="true">
-                                                            All Trades
-
-                                                        </button>
-                                                    </li>
-
-                                                    <li class="nav-item my-1" role="presentation">
-                                                        <button class="nav-link" id="pills-future-tab"
-                                                                data-bs-toggle="pill"
-                                                                data-bs-target="#pills-future" type="button" role="tab"
-                                                                aria-controls="pills-future" aria-selected="false">
-                                                            Open Positions
-
-                                                        </button>
-                                                    </li>
-                                                    <li class="nav-item my-1" role="presentation">
-                                                        <button class="nav-link me-0" id="pills-listing-tab"
-                                                                data-bs-toggle="pill"
-                                                                data-bs-target="#pills-listing" type="button" role="tab"
-                                                                aria-controls="pills-listing" aria-selected="false">
-                                                            Closed Positions
-
-                                                        </button>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="card-body pt-0">
-                                                <div class="tab-content" id="pills-tabContent">
-                                                    <div class="tab-pane fade show active" id="pills-crypto"
-                                                         role="tabpanel"
-                                                         aria-labelledby="pills-crypto-tab">
-                                                        <div class="table-responsive dataTabletrade">
-                                                            <table id="example-history"
-                                                                   class="table shadow-hover display  orderbookTable"
-                                                                   style="min-width:845px">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                {% if all_trades %}
-                                                                    {% for trade in all_trades %}
-                                                                        <tr>
-                                                                            <td>
-                                                                                <a class="market-title d-flex align-items-center"
-                                                                                   href="javascript:void(0)">
-                                                                                    <h5 class="mb-0 ms-2">{{ trade.stock_name }}</h5>
-                                                                                </a>
-                                                                            </td>
-                                                                            <td>{{ trade.total_bought }}</td>
-                                                                            <td class="text-success">{{ trade.total_sold }}</td>
-                                                                        </tr>
-                                                                    {% endfor %}
-                                                                {% else %}
-                                                                    <tr>
-                                                                        <td colspan="3"
-                                                                            class="text-success text-center">No trade
-                                                                            history available.
-                                                                        </td>
-                                                                    </tr>
-                                                                {% endif %}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="tab-pane fade" id="pills-future" role="tabpanel"
-                                                         aria-labelledby="pills-future-tab">
-                                                        <div class="table-responsive dataTabletrade">
-                                                            <table id="example-history-2"
-                                                                   class="table shadow-hover display  orderbookTable"
-                                                                   style="min-width:845px">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                {% if open_positions %}
-                                                                    {% for position in open_positions %}
-                                                                        <tr>
-                                                                            <td>
-                                                                                <a class="market-title d-flex align-items-center"
-                                                                                   href="javascript:void(0)">
-                                                                                    <h5 class="mb-0 ms-2">{{ position.stock_name }}</h5>
-                                                                                </a>
-                                                                            </td>
-                                                                            <td>{{ position.total_bought }}</td>
-                                                                            <td class="text-success">{{ position.total_sold }}</td>
-                                                                        </tr>
-                                                                    {% endfor %}
-                                                                {% else %}
-                                                                    <tr>
-                                                                        <td colspan="3"
-                                                                            class="text-success text-center">No open
-                                                                            positions.
-                                                                        </td>
-                                                                    </tr>
-                                                                {% endif %}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                    <div class="tab-pane fade" id="pills-listing" role="tabpanel"
-                                                         aria-labelledby="pills-listing-tab">
-                                                        <div class="table-responsive dataTabletrade">
-                                                            <table id="example-history-3"
-                                                                   class="table shadow-hover centered display  orderbookTable"
-                                                                   style="min-width:845px">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                {% if closed_positions %}
-                                                                    {% for position in closed_positions %}
-                                                                        <tr>
-                                                                            <td>
-                                                                                <a class="market-title d-flex align-items-center"
-                                                                                   href="javascript:void(0)">
-                                                                                    <h5 class="mb-0 ms-2">{{ position.stock_name }}</h5>
-                                                                                </a>
-                                                                            </td>
-                                                                            <td>{{ position.total_bought }}</td>
-                                                                            <td class="text-success">{{ position.total_sold }}</td>
-                                                                        </tr>
-                                                                    {% endfor %}
-                                                                {% else %}
-                                                                    <tr>
-                                                                        <td colspan="3" class="text-center">No closed
-                                                                            positions.
-                                                                        </td>
-                                                                    </tr>
-                                                                {% endif %}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
+                                            <div class="tab-pane fade" id="pills-listing" role="tabpanel"
+                                                 aria-labelledby="pills-listing-tab">
+                                                <div class="table-responsive dataTabletrade">
+                                                    <table id="example-history-3"
+                                                           class="table shadow-hover centered display  orderbookTable"
+                                                           style="min-width:845px">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Stock Name</th>
+                                                            <th>Bought</th>
+                                                            <th>Sold</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% if closed_positions %}
+                                                        {% for position in closed_positions %}
+                                                        <tr>
+                                                            <td>
+                                                                <button onclick="goToStockDetailPage('{{position.stock_symbol}}')"
+                                                                        class="market-title d-flex align-items-center">
+                                                                    <h5 class="mb-0 ms-2">
+                                                                        {{ position.stock_symbol}}
+                                                                    </h5>
+                                                                </button>
+                                                            </td>
+                                                            <td>{{ position.total_bought }}</td>
+                                                            <td class="text-success">{{ position.total_sold }}</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                        {% else %}
+                                                        <tr>
+                                                            <td colspan="3" class="text-center">No closed positions.
+                                                            </td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
 
-                                    <!--详细信息-->
-                                    <div class="col-xl-6 col-sm-12">
-                                        <div class="card overflow-hidden h-auto">
-                                            <div class="card-body pb-4">
-                                                <div class="row">
-                                                    <div class="col-xl-12 col-md-12">
-                                                        <h4 class="card-title mb-0 center">Profit and Loss</h4>
-                                                        <h2 class="font-w600 mb-0">By Stock</h2>
-                                                        <h3 class="font-w500 mb-0">Overall Gross
-                                                            P&L: {{ gross_pnl }}</h3>
+                            <!--详细信息-->
+                            <div class="col-xl-6 col-sm-12">
+                                <div class="card overflow-hidden h-auto">
+                                    <div class="card-body pb-4">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-md-12">
+                                                <h4 class="card-title mb-0 center">Profit and Loss</h4>
+                                                <h2 class="font-w600 mb-0">By Stock</h2>
+                                                <h3 class="font-w500 mb-0">Overall Gross
+                                                    P&L: {{ gross_pnl }}</h3>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="market-coin flex-wrap">
+                                                    {% for trade in pnl_per_stock %}
+                                                    <div class="mb-1">
+                                                        <span class="fs-14 font-w400">{{ trade.stock_symbol }}</span>
+                                                        <h5 class="font-w600 m-0 text-danger">{{ trade.pnl }}</h5>
                                                     </div>
+                                                    {% endfor %}
 
-
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="market-coin flex-wrap">
-                                                            {% for trade in pnl_per_stock %}
-                                                                <div class="mb-1">
-                                                                    <span class="fs-14 font-w400">{{ trade.stock_id }}</span>
-                                                                    <h5 class="font-w600 m-0 text-danger">{{ trade.pnl }}</h5>
-                                                                </div>
-                                                            {% endfor %}
-
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -364,351 +369,371 @@
                 </div>
             </div>
         </div>
-        <!--**********************************
-            Content body end
-        ***********************************-->
-    {% else %}
-        <div class="authincation fix-wrapper">
-            <div class="container">
-                <div class="row justify-content-center h-100 align-items-center">
-                    <div class="col-md-6">
-                        <div class="error-page">
-                            <div class="error-inner text-center">
-                                {#                                <div class="dz-error" data-text="LOGIN">PLEASE LOGIN</div>#}
-                                <h2 class="error-head mb-0"><i
-                                        class="fa fa-exclamation-triangle text-warning me-2"></i>{{ tips }}</h2>
-                                <a href="{% url 'financial_system:login' %}" class="btn btn-secondary">GO TO LOGIN</a>
-                            </div>
-                        </div>
+    </div>
+</div>
+<!--**********************************
+    Content body end
+***********************************-->
+{% else %}
+<div class="authincation fix-wrapper">
+    <div class="container">
+        <div class="row justify-content-center h-100 align-items-center">
+            <div class="col-md-6">
+                <div class="error-page">
+                    <div class="error-inner text-center">
+                        {#
+                        <div class="dz-error" data-text="LOGIN">PLEASE LOGIN</div>
+                        #}
+                        <h2 class="error-head mb-0"><i
+                                class="fa fa-exclamation-triangle text-warning me-2"></i>{{ tips }}</h2>
+                        <a href="{% url 'financial_system:login' %}" class="btn btn-secondary">GO TO LOGIN</a>
                     </div>
                 </div>
             </div>
         </div>
-    {% endif %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block additional_js %}
-    <script>
-        $(function () {
-            var start = moment().subtract(29, 'days');
-            var end = moment();
+<script type="text/javascript">
+    function goToTradePage(stockSymbol) {
+        // Construct the URL using the stockSymbol parameter
+        var tradeUrl = '/trade/' + encodeURIComponent(stockSymbol);
 
-            function cb(start, end) {
-                $('#reportrange span,#reportrange1 span,#reportrange2 span,#reportrange3 span,#reportrange4 span,#reportrange5 span').html(start.format('D MMMM YYYY') + ' &nbsp - &nbsp ' + end.format('D MMMM YYYY'));
+        // Navigate to the constructed URL
+        window.location.href = tradeUrl;
+    }
+
+    function goToStockDetailPage(stockSymbol) {
+        // Construct the URL using the stockSymbol parameter
+        var stockDetailUrl = '/stock/' + encodeURIComponent(stockSymbol);
+
+        // Navigate to the constructed URL
+        window.location.href = stockDetailUrl;
+    }
+
+    $(function () {
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+
+        function cb(start, end) {
+            $('#reportrange span,#reportrange1 span,#reportrange2 span,#reportrange3 span,#reportrange4 span,#reportrange5 span').html(start.format('D MMMM YYYY') + ' &nbsp - &nbsp ' + end.format('D MMMM YYYY'));
+        }
+
+        $('#reportrange , #reportrange1,#reportrange2,#reportrange3,#reportrange4,#reportrange5').daterangepicker({
+            startDate: start,
+            endDate: end,
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             }
+        }, cb);
 
-            $('#reportrange , #reportrange1,#reportrange2,#reportrange3,#reportrange4,#reportrange5').daterangepicker({
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                }
-            }, cb);
+        cb(start, end);
 
-            cb(start, end);
-
-            //绘图的js ,数据格式是  时间
-            var options = {
-                series: [{
-                    data: [{
-                        x: new Date(1538778600000),
-                        y: [6629.81, 6650.5, 6623.04, 6633.33]
+        //绘图的js ,数据格式是  时间
+        var options = {
+            series: [{
+                data: [{
+                    x: new Date(1538778600000),
+                    y: [6629.81, 6650.5, 6623.04, 6633.33]
+                },
+                    {
+                        x: new Date(1538780400000),
+                        y: [6632.01, 6643.59, 6620, 6630.11]
                     },
-                        {
-                            x: new Date(1538780400000),
-                            y: [6632.01, 6643.59, 6620, 6630.11]
-                        },
-                        {
-                            x: new Date(1538782200000),
-                            y: [6630.71, 6648.95, 6623.34, 6635.65]
-                        },
-                        {
-                            x: new Date(1538784000000),
-                            y: [6635.65, 6651, 6629.67, 6638.24]
-                        },
-                        {
-                            x: new Date(1538785800000),
-                            y: [6638.24, 6640, 6620, 6624.47]
-                        },
-                        {
-                            x: new Date(1538787600000),
-                            y: [6624.53, 6636.03, 6621.68, 6624.31]
-                        },
-                        {
-                            x: new Date(1538789400000),
-                            y: [6624.61, 6632.2, 6617, 6626.02]
-                        },
-                        {
-                            x: new Date(1538791200000),
-                            y: [6627, 6627.62, 6584.22, 6603.02]
-                        },
-                        {
-                            x: new Date(1538793000000),
-                            y: [6605, 6608.03, 6598.95, 6604.01]
-                        },
-                        {
-                            x: new Date(1538794800000),
-                            y: [6604.5, 6614.4, 6602.26, 6608.02]
-                        },
-                        {
-                            x: new Date(1538796600000),
-                            y: [6608.02, 6610.68, 6601.99, 6608.91]
-                        },
-                        {
-                            x: new Date(1538798400000),
-                            y: [6608.91, 6618.99, 6608.01, 6612]
-                        },
-                        {
-                            x: new Date(1538800200000),
-                            y: [6612, 6615.13, 6605.09, 6612]
-                        },
-                        {
-                            x: new Date(1538802000000),
-                            y: [6612, 6624.12, 6608.43, 6622.95]
-                        },
-                        {
-                            x: new Date(1538803800000),
-                            y: [6623.91, 6623.91, 6615, 6615.67]
-                        },
-                        {
-                            x: new Date(1538805600000),
-                            y: [6618.69, 6618.74, 6610, 6610.4]
-                        },
-                        {
-                            x: new Date(1538807400000),
-                            y: [6611, 6622.78, 6610.4, 6614.9]
-                        },
-                        {
-                            x: new Date(1538809200000),
-                            y: [6614.9, 6626.2, 6613.33, 6623.45]
-                        },
-                        {
-                            x: new Date(1538811000000),
-                            y: [6623.48, 6627, 6618.38, 6620.35]
-                        },
-                        {
-                            x: new Date(1538812800000),
-                            y: [6619.43, 6620.35, 6610.05, 6615.53]
-                        },
-                        {
-                            x: new Date(1538814600000),
-                            y: [6615.53, 6617.93, 6610, 6615.19]
-                        },
-                        {
-                            x: new Date(1538816400000),
-                            y: [6615.19, 6621.6, 6608.2, 6620]
-                        },
-                        {
-                            x: new Date(1538818200000),
-                            y: [6619.54, 6625.17, 6614.15, 6620]
-                        },
-                        {
-                            x: new Date(1538820000000),
-                            y: [6620.33, 6634.15, 6617.24, 6624.61]
-                        },
-                        {
-                            x: new Date(1538821800000),
-                            y: [6625.95, 6626, 6611.66, 6617.58]
-                        },
-                        {
-                            x: new Date(1538823600000),
-                            y: [6619, 6625.97, 6595.27, 6598.86]
-                        },
-                        {
-                            x: new Date(1538825400000),
-                            y: [6598.86, 6598.88, 6570, 6587.16]
-                        },
-                        {
-                            x: new Date(1538827200000),
-                            y: [6588.86, 6600, 6580, 6593.4]
-                        },
-                        {
-                            x: new Date(1538829000000),
-                            y: [6593.99, 6598.89, 6585, 6587.81]
-                        },
-                        {
-                            x: new Date(1538830800000),
-                            y: [6587.81, 6592.73, 6567.14, 6578]
-                        },
-                        {
-                            x: new Date(1538832600000),
-                            y: [6578.35, 6581.72, 6567.39, 6579]
-                        },
-                        {
-                            x: new Date(1538834400000),
-                            y: [6579.38, 6580.92, 6566.77, 6575.96]
-                        },
-                        {
-                            x: new Date(1538836200000),
-                            y: [6575.96, 6589, 6571.77, 6588.92]
-                        },
-                        {
-                            x: new Date(1538838000000),
-                            y: [6588.92, 6594, 6577.55, 6589.22]
-                        },
-                        {
-                            x: new Date(1538839800000),
-                            y: [6589.3, 6598.89, 6589.1, 6596.08]
-                        },
-                        {
-                            x: new Date(1538841600000),
-                            y: [6597.5, 6600, 6588.39, 6596.25]
-                        },
-                        {
-                            x: new Date(1538843400000),
-                            y: [6598.03, 6600, 6588.73, 6595.97]
-                        },
-                        {
-                            x: new Date(1538845200000),
-                            y: [6595.97, 6602.01, 6588.17, 6602]
-                        },
-                        {
-                            x: new Date(1538847000000),
-                            y: [6602, 6607, 6596.51, 6599.95]
-                        },
-                        {
-                            x: new Date(1538848800000),
-                            y: [6600.63, 6601.21, 6590.39, 6591.02]
-                        },
-                        {
-                            x: new Date(1538850600000),
-                            y: [6591.02, 6603.08, 6591, 6591]
-                        },
-                        {
-                            x: new Date(1538852400000),
-                            y: [6591, 6601.32, 6585, 6592]
-                        },
-                        {
-                            x: new Date(1538854200000),
-                            y: [6593.13, 6596.01, 6590, 6593.34]
-                        },
-                        {
-                            x: new Date(1538856000000),
-                            y: [6593.34, 6604.76, 6582.63, 6593.86]
-                        },
-                        {
-                            x: new Date(1538857800000),
-                            y: [6593.86, 6604.28, 6586.57, 6600.01]
-                        },
-                        {
-                            x: new Date(1538859600000),
-                            y: [6601.81, 6603.21, 6592.78, 6596.25]
-                        },
-                        {
-                            x: new Date(1538861400000),
-                            y: [6596.25, 6604.2, 6590, 6602.99]
-                        },
-                        {
-                            x: new Date(1538863200000),
-                            y: [6602.99, 6606, 6584.99, 6587.81]
-                        },
-                        {
-                            x: new Date(1538865000000),
-                            y: [6587.81, 6595, 6583.27, 6591.96]
-                        },
-                        {
-                            x: new Date(1538866800000),
-                            y: [6591.97, 6596.07, 6585, 6588.39]
-                        },
-                        {
-                            x: new Date(1538868600000),
-                            y: [6587.6, 6598.21, 6587.6, 6594.27]
-                        },
-                        {
-                            x: new Date(1538870400000),
-                            y: [6596.44, 6601, 6590, 6596.55]
-                        },
-                        {
-                            x: new Date(1538872200000),
-                            y: [6598.91, 6605, 6596.61, 6600.02]
-                        },
-                        {
-                            x: new Date(1538874000000),
-                            y: [6600.55, 6605, 6589.14, 6593.01]
-                        },
-                        {
-                            x: new Date(1538875800000),
-                            y: [6593.15, 6605, 6592, 6603.06]
-                        },
-                        {
-                            x: new Date(1538877600000),
-                            y: [6603.07, 6604.5, 6599.09, 6603.89]
-                        },
-                        {
-                            x: new Date(1538879400000),
-                            y: [6604.44, 6604.44, 6600, 6603.5]
-                        },
-                        {
-                            x: new Date(1538881200000),
-                            y: [6603.5, 6603.99, 6597.5, 6603.86]
-                        },
-                        {
-                            x: new Date(1538883000000),
-                            y: [6603.85, 6605, 6600, 6604.07]
-                        },
-                        {
-                            x: new Date(1538884800000),
-                            y: [6604.98, 6606, 6604.07, 6606]
-                        },
-                    ]
-                }],
-                chart: {
-                    type: 'candlestick',
-                    height: 350,
-                    toolbar: {
-                        autoSelected: 'pan',
-                        show: false
+                    {
+                        x: new Date(1538782200000),
+                        y: [6630.71, 6648.95, 6623.34, 6635.65]
                     },
-                    zoom: {
-                        enabled: false
-                    }
+                    {
+                        x: new Date(1538784000000),
+                        y: [6635.65, 6651, 6629.67, 6638.24]
+                    },
+                    {
+                        x: new Date(1538785800000),
+                        y: [6638.24, 6640, 6620, 6624.47]
+                    },
+                    {
+                        x: new Date(1538787600000),
+                        y: [6624.53, 6636.03, 6621.68, 6624.31]
+                    },
+                    {
+                        x: new Date(1538789400000),
+                        y: [6624.61, 6632.2, 6617, 6626.02]
+                    },
+                    {
+                        x: new Date(1538791200000),
+                        y: [6627, 6627.62, 6584.22, 6603.02]
+                    },
+                    {
+                        x: new Date(1538793000000),
+                        y: [6605, 6608.03, 6598.95, 6604.01]
+                    },
+                    {
+                        x: new Date(1538794800000),
+                        y: [6604.5, 6614.4, 6602.26, 6608.02]
+                    },
+                    {
+                        x: new Date(1538796600000),
+                        y: [6608.02, 6610.68, 6601.99, 6608.91]
+                    },
+                    {
+                        x: new Date(1538798400000),
+                        y: [6608.91, 6618.99, 6608.01, 6612]
+                    },
+                    {
+                        x: new Date(1538800200000),
+                        y: [6612, 6615.13, 6605.09, 6612]
+                    },
+                    {
+                        x: new Date(1538802000000),
+                        y: [6612, 6624.12, 6608.43, 6622.95]
+                    },
+                    {
+                        x: new Date(1538803800000),
+                        y: [6623.91, 6623.91, 6615, 6615.67]
+                    },
+                    {
+                        x: new Date(1538805600000),
+                        y: [6618.69, 6618.74, 6610, 6610.4]
+                    },
+                    {
+                        x: new Date(1538807400000),
+                        y: [6611, 6622.78, 6610.4, 6614.9]
+                    },
+                    {
+                        x: new Date(1538809200000),
+                        y: [6614.9, 6626.2, 6613.33, 6623.45]
+                    },
+                    {
+                        x: new Date(1538811000000),
+                        y: [6623.48, 6627, 6618.38, 6620.35]
+                    },
+                    {
+                        x: new Date(1538812800000),
+                        y: [6619.43, 6620.35, 6610.05, 6615.53]
+                    },
+                    {
+                        x: new Date(1538814600000),
+                        y: [6615.53, 6617.93, 6610, 6615.19]
+                    },
+                    {
+                        x: new Date(1538816400000),
+                        y: [6615.19, 6621.6, 6608.2, 6620]
+                    },
+                    {
+                        x: new Date(1538818200000),
+                        y: [6619.54, 6625.17, 6614.15, 6620]
+                    },
+                    {
+                        x: new Date(1538820000000),
+                        y: [6620.33, 6634.15, 6617.24, 6624.61]
+                    },
+                    {
+                        x: new Date(1538821800000),
+                        y: [6625.95, 6626, 6611.66, 6617.58]
+                    },
+                    {
+                        x: new Date(1538823600000),
+                        y: [6619, 6625.97, 6595.27, 6598.86]
+                    },
+                    {
+                        x: new Date(1538825400000),
+                        y: [6598.86, 6598.88, 6570, 6587.16]
+                    },
+                    {
+                        x: new Date(1538827200000),
+                        y: [6588.86, 6600, 6580, 6593.4]
+                    },
+                    {
+                        x: new Date(1538829000000),
+                        y: [6593.99, 6598.89, 6585, 6587.81]
+                    },
+                    {
+                        x: new Date(1538830800000),
+                        y: [6587.81, 6592.73, 6567.14, 6578]
+                    },
+                    {
+                        x: new Date(1538832600000),
+                        y: [6578.35, 6581.72, 6567.39, 6579]
+                    },
+                    {
+                        x: new Date(1538834400000),
+                        y: [6579.38, 6580.92, 6566.77, 6575.96]
+                    },
+                    {
+                        x: new Date(1538836200000),
+                        y: [6575.96, 6589, 6571.77, 6588.92]
+                    },
+                    {
+                        x: new Date(1538838000000),
+                        y: [6588.92, 6594, 6577.55, 6589.22]
+                    },
+                    {
+                        x: new Date(1538839800000),
+                        y: [6589.3, 6598.89, 6589.1, 6596.08]
+                    },
+                    {
+                        x: new Date(1538841600000),
+                        y: [6597.5, 6600, 6588.39, 6596.25]
+                    },
+                    {
+                        x: new Date(1538843400000),
+                        y: [6598.03, 6600, 6588.73, 6595.97]
+                    },
+                    {
+                        x: new Date(1538845200000),
+                        y: [6595.97, 6602.01, 6588.17, 6602]
+                    },
+                    {
+                        x: new Date(1538847000000),
+                        y: [6602, 6607, 6596.51, 6599.95]
+                    },
+                    {
+                        x: new Date(1538848800000),
+                        y: [6600.63, 6601.21, 6590.39, 6591.02]
+                    },
+                    {
+                        x: new Date(1538850600000),
+                        y: [6591.02, 6603.08, 6591, 6591]
+                    },
+                    {
+                        x: new Date(1538852400000),
+                        y: [6591, 6601.32, 6585, 6592]
+                    },
+                    {
+                        x: new Date(1538854200000),
+                        y: [6593.13, 6596.01, 6590, 6593.34]
+                    },
+                    {
+                        x: new Date(1538856000000),
+                        y: [6593.34, 6604.76, 6582.63, 6593.86]
+                    },
+                    {
+                        x: new Date(1538857800000),
+                        y: [6593.86, 6604.28, 6586.57, 6600.01]
+                    },
+                    {
+                        x: new Date(1538859600000),
+                        y: [6601.81, 6603.21, 6592.78, 6596.25]
+                    },
+                    {
+                        x: new Date(1538861400000),
+                        y: [6596.25, 6604.2, 6590, 6602.99]
+                    },
+                    {
+                        x: new Date(1538863200000),
+                        y: [6602.99, 6606, 6584.99, 6587.81]
+                    },
+                    {
+                        x: new Date(1538865000000),
+                        y: [6587.81, 6595, 6583.27, 6591.96]
+                    },
+                    {
+                        x: new Date(1538866800000),
+                        y: [6591.97, 6596.07, 6585, 6588.39]
+                    },
+                    {
+                        x: new Date(1538868600000),
+                        y: [6587.6, 6598.21, 6587.6, 6594.27]
+                    },
+                    {
+                        x: new Date(1538870400000),
+                        y: [6596.44, 6601, 6590, 6596.55]
+                    },
+                    {
+                        x: new Date(1538872200000),
+                        y: [6598.91, 6605, 6596.61, 6600.02]
+                    },
+                    {
+                        x: new Date(1538874000000),
+                        y: [6600.55, 6605, 6589.14, 6593.01]
+                    },
+                    {
+                        x: new Date(1538875800000),
+                        y: [6593.15, 6605, 6592, 6603.06]
+                    },
+                    {
+                        x: new Date(1538877600000),
+                        y: [6603.07, 6604.5, 6599.09, 6603.89]
+                    },
+                    {
+                        x: new Date(1538879400000),
+                        y: [6604.44, 6604.44, 6600, 6603.5]
+                    },
+                    {
+                        x: new Date(1538881200000),
+                        y: [6603.5, 6603.99, 6597.5, 6603.86]
+                    },
+                    {
+                        x: new Date(1538883000000),
+                        y: [6603.85, 6605, 6600, 6604.07]
+                    },
+                    {
+                        x: new Date(1538884800000),
+                        y: [6604.98, 6606, 6604.07, 6606]
+                    },
+                ]
+            }],
+            chart: {
+                type: 'candlestick',
+                height: 350,
+                toolbar: {
+                    autoSelected: 'pan',
+                    show: false
                 },
-                grid: {
-                    show: false,
-                },
-                plotOptions: {
-                    candlestick: {
-                        colors: {
-                            upward: '#3ab67a',
-                            downward: '#fd5353'
-                        }
-                    }
-                },
-                title: {
-                    text: '',
-                    align: 'left'
-                },
-                xaxis: {
-                    type: 'datetime'
-                },
-                yaxis: {
-                    opposite: true,
-                    tooltip: {
-                        enabled: true
+                zoom: {
+                    enabled: false
+                }
+            },
+            grid: {
+                show: false,
+            },
+            plotOptions: {
+                candlestick: {
+                    colors: {
+                        upward: '#3ab67a',
+                        downward: '#fd5353'
                     }
                 }
-            };
-
-            var chart = new ApexCharts(document.querySelector("#stockhChart"), options);
-            chart.render();
-
-
-            //点击watch list
-            $('.stock-watch').change(function () {
-                // Check if the checkbox is checked
-                if ($(this).prop('checked')) {
-                    // Get the stock_id from the 'stock_id' attribute
-                    var stockId = $(this).attr('stock_id');
-
-                    // Redirect to the watchlist page with the stock_id parameter
-                    window.location.href = '/watchlist/' + stockId;
+            },
+            title: {
+                text: '',
+                align: 'left'
+            },
+            xaxis: {
+                type: 'datetime'
+            },
+            yaxis: {
+                opposite: true,
+                tooltip: {
+                    enabled: true
                 }
-            });
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#stockhChart"), options);
+        chart.render();
+
+
+        //点击watch list
+        $('.stock-watch').change(function () {
+            // Check if the checkbox is checked
+            if ($(this).prop('checked')) {
+                // Get the stock_symbol from the 'stock_symbol' attribute
+                var stock_symbol = $(this).attr('stock_symbol');
+
+                // Redirect to the watchlist page with the stock_symbol parameter
+                window.location.href = '/watchlist/' + stock_symbol;
+            }
         });
-    </script>
+    });
+</script>
 {% endblock %}

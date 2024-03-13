@@ -30,20 +30,20 @@
                                         <div class="card-header pb-0 border-0 flex-wrap">
                                             <div>
                                                 <h4 class="card-title">{{ stock.stock_name }} &nbsp; </h4>
-                                                <p class="mb-xl-0 mb-3 fs-12"> {{ stock.closing_price_y }}</p>
+                                                <p class="mb-xl-0 mb-3 fs-12"> {{ stock.get_current_price }}</p>
                                             </div>
                                         </div>
                                         <div class="card-body pb-0">
                                             <div class="basic-form">
-                                                <form action="{% url 'financial_system:sell_stock' %}" method="post"
+                                                <form action="{% url 'financial_system:buy_stock' %}" method="post"
                                                       class="form-wrapper trade-form">
                                                     {% csrf_token %}
-                                                    <input type="hidden" name="stock_id" value="{{ stock.stock_id }}">
+                                                    <input type="hidden" name="stock_symbol" value="{{ stock.symbol }}">
                                                     <div class="input-group mb-3 ">
                                                         <span class="input-group-text">PRICE</span>
                                                         <input class="form-control form-control text-end"
                                                                readonly="readonly" type="text"
-                                                               value="{{ stock.closing_price_y }}"
+                                                               value="{{ stock.get_current_price }}"
                                                                placeholder="0,000000">
                                                     </div>
                                                     <div class="input-group mb-3 ">
@@ -143,14 +143,14 @@
                                                 <form action="{% url 'financial_system:sell_stock' %}" method="post"
                                                       class="form-wrapper trade-form">
                                                     {% csrf_token %}
-                                                    <input type="hidden" name="stock_id" value="{{ stock.stock_id }}">
+                                                    <input type="hidden" name="stock_symbol" value="{{ stock.symbol }}">
                                                     <!-- Same assumption as above -->
 
                                                     <div class="input-group mb-3 ">
                                                         <span class="input-group-text">PRICE</span>
                                                         <input class="form-control form-control text-end"
                                                                readonly="readonly" type="text"
-                                                               value="{{ stock.closing_price_y }}"
+                                                               value="{{ stock.get_current_price }}"
                                                                placeholder="0,000000">
                                                     </div>
                                                     <div class="input-group mb-3 ">
