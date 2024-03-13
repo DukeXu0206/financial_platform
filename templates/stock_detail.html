@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block additional_css %}
 {% endblock %}
@@ -13,14 +14,14 @@
         <!-- row -->
         <div class="container-fluid">
 
-            {#            <div class="row">#}
+<!--            {#            <div class="row">#}
             {#                <div class="previews-info-list">#}
             {#                    <div class="ms-2">#}
             {#                        <h1 class="mb-0">{{ stock.stock_name }}</h1>#}
             {#                    </div>#}
             {#                </div>#}
             {##}
-            {#            </div>#}
+            {#            </div>#}-->
             <!-- Row -->
             <div class="row">
 
@@ -73,20 +74,20 @@
                                                     </div>
                                                     <div class="price-content">
                                                         <span class="fs-14 d-block mb-2">Open Price</span>
-                                                        <h4 class="font-w600 mb-0 text-danger">{{ stock.get_open_price | floatformat:2 }}</h4>
-                                                    </div>
-                                                    <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">Company</span>
-                                                        <h4 class="font-w600 mb-0 text-primary">{{ stock.get_company_name }}</h4>
-                                                    </div>
-                                                    <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">Exchange Name</span>
-                                                        <h4 class="font-w600 mb-0">{{ stock.exchangeName }}</h4>
+                                                        <h4 class="font-w600 mb-0">${{ stock.get_open_price | floatformat:2 }}</h4>
                                                     </div>
                                                     <div class="price-content">
                                                         <span class="fs-14 d-block mb-2">Regular Market Price</span>
                                                         <h4 class="font-w600 mb-0 text-warning">
                                                             ${{ stock.regularMarketPrice }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Company Name</span>
+                                                        <h4 class="font-w600 mb-0 text-primary">{{ stock.get_company_name }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Exchange Name</span>
+                                                        <h4 class="font-w600 mb-0">{{ stock.exchangeName }}</h4>
                                                     </div>
                                                 </div>
 
@@ -175,14 +176,14 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">address</a></h5>
+                                                                                href="#">Address</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td>{{ company_info.address1 }}</td>
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">city</a></h5>
+                                                                                href="#">City</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td>{{ company_info.city }}</td>
@@ -193,7 +194,7 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">country</a></h5>
+                                                                                href="#">Country</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td>{{ company_info.country }}</td>
@@ -201,7 +202,7 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">website</a></h5>
+                                                                                href="#">Website</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td><a class="btn tp-btn-light btn-secondary"
@@ -214,18 +215,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">open</a></h5>
+                                                                                href="#">Open Price</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.open }}</td>
+                                                                <td>${{ company_info.open }}</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">dayLow</a></h5>
+                                                                                href="#">Day Low</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.dayLow }}</td>
+                                                                <td>${{ company_info.dayLow }}</td>
 
 
                                                             </tr>
@@ -234,18 +235,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">dayHigh</a></h5>
+                                                                                href="#">Day High</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.dayHigh }}</td>
+                                                                <td>${{ company_info.dayHigh }}</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">trailingPE</a></h5>
+                                                                                href="#">Trailing PE</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.trailingPE }}</td>
+                                                                <td>{{ company_info.trailingPE|floatformat:2}}</td>
 
 
                                                             </tr>
@@ -254,18 +255,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">targetHighPrice</a></h5>
+                                                                                href="#">Target High Price</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.targetHighPrice }}</td>
+                                                                <td>${{ company_info.targetHighPrice }}</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">totalCash</a></h5>
+                                                                                href="#">Total Cash</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.totalCash }}</td>
+                                                                <td>${{ company_info.totalCash|format_bigint }}</td>
 
 
                                                             </tr>
@@ -275,18 +276,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">earningsGrowth</a></h5>
+                                                                                href="#">Earnings Growth</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.earningsGrowth }}</td>
+                                                                <td>{{ company_info.earningsGrowth|floatformat:2|multiply:100 }}%</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">revenueGrowth</a></h5>
+                                                                                href="#">Revenue Growth</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.revenueGrowth }}</td>
+                                                                <td>{{ company_info.revenueGrowth|floatformat:2|multiply:100 }}%</td>
 
 
                                                             </tr>
@@ -447,6 +448,7 @@
                                             <div class="card-header pb-0 border-0 flex-wrap">
                                                 <div>
                                                     <h4 class="card-title">{{ stock.symbol }}</h4>
+                                                    <p>{{ stock.get_company_name }}</p>
                                                 </div>
                                             </div>
                                             <div class="card-body pb-0">
@@ -741,7 +743,6 @@
             });
         }
 
-
         //draw k line
         function render_stock_kline() {
             var myChart = echarts.init(document.getElementById('stockhChart'));
@@ -990,8 +991,8 @@
                 success: function (response) {
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
-                    $(".current_price_number").html(response['get_current_price'])
-                    $(".current_price_text").val(response['get_current_price'])
+                    $(".current_price_number").html($response['get_current_price'])
+                    $(".current_price_text").val($response['get_current_price'])
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
@@ -1009,6 +1010,8 @@
             render_stock_kline()
 
         });
+
+
 
 
     </script>

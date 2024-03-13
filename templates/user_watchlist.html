@@ -59,7 +59,7 @@
                                                             <div class="price-content">
                                                                 <span class="d-block mb-2">Current Price</span>
                                                                 <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
-                                                                    {{ current_watch_stock.get_current_price | floatformat:4 }}</h4>
+                                                                    ${{ current_watch_stock.get_current_price | floatformat:4 }}</h4>
                                                                 {% if current_watch_stock.get_change_extent > 0 %}
                                                                     <span class="font-w600 text-success mb-0">
                                                             {{ current_watch_stock.get_change_extent | floatformat:2 }}%
@@ -75,7 +75,7 @@
                                                             <div class="price-content">
                                                                 <span class="d-block mb-2">Open Price</span>
                                                                 <h4 class="fs-20 font-w600 mb-0">
-                                                                    {{ current_watch_stock.get_open_price | floatformat:2 }}</h4>
+                                                                    ${{ current_watch_stock.get_open_price | floatformat:2 }}</h4>
                                                                 <span class="font-w600 mb-0"><br></span>
 
 
@@ -153,8 +153,8 @@
                                                                         {{ stock.get_company_name }}
                                                                     </a>
                                                                 </td>
-                                                                <td>{{ stock.get_current_price }}</td>
-                                                                <td>{{ stock.get_open_price | floatformat:2 }}</td>
+                                                                <td>${{ stock.get_current_price }}</td>
+                                                                <td>${{ stock.get_open_price | floatformat:2 }}</td>
                                                             </tr>
                                                         {% endfor %}
                                                         </tbody>
@@ -169,7 +169,7 @@
                                     <!--监控列表end-->
 
                                     <!-- 交易表格 -->
-                                    <div class="col-xl-5 col-sm-12">
+                                    <div class="col-xl-12 col-sm-12">
                                         <div class="card">
                                             <div class="card-header flex-wrap border-0">
                                                 <h4 class="card-title mb-lg-0 mb-2">Trading History</h4>
@@ -203,7 +203,18 @@
                                                         </button>
                                                     </li>
                                                 </ul>
+                                                <br>
+
+                                                <h5 class="card-title mb-lg-0 mb-2">
+                                                    Total P&L:
+                                                    <span class="{% if total_pl_closed > 0 %}text-success{% else %}text-danger{% endif %}" >
+                                                        ${{ total_pl_closed }}
+                                                    </span>
+                                                </h5>
                                             </div>
+
+
+
                                             <div class="card-body pt-0">
                                                 <div class="tab-content" id="pills-tabContent">
                                                     <div class="tab-pane fade show active" id="pills-crypto"
@@ -216,14 +227,16 @@
                                                                 <thead>
                                                                 <tr>
                                                                     <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Total</th>
+                                                                    <th>Status</th>
+                                                                    <th>Profit & Loss</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                {% if all_trades %}
-                                                                    {% for trade in all_trades %}
+                                                                {% if all_positions %}
+                                                                    {% for trade in all_positions %}
                                                                         <tr>
                                                                             <td>
                                                                                 <a href="javascript:void(0);"
@@ -232,8 +245,16 @@
                                                                                     <h5 class="mb-0 ms-2">{{ trade.stock_symbol }}</h5>
                                                                                 </a>
                                                                             </td>
-                                                                            <td>{{ trade.total_bought }}</td>
-                                                                            <td class="text-success">{{ trade.total_sold }}</td>
+                                                                            <td>{{ trade.quantity }} actions</td>
+                                                                            {% if trade.total_spent %}
+                                                                            <td><strong>Bought</strong> ${{ trade.total_spent|floatformat:2 }}</td>
+                                                                            <td class="text-success">{{ trade.status }}</td>
+                                                                            <td>N/A for open positions.</td>
+                                                                            {% else %}
+                                                                            <td><strong>Sold</strong> ${{ trade.total_earned|floatformat:2 }}</td>
+                                                                            <td class="text-warning">{{ trade.status }}</td>
+                                                                            <td>${{ trade.pl|floatformat:2 }}</td>
+                                                                            {% endif %}
                                                                             <td class="text-success">
                                                                                 <button type="button"
                                                                                         onclick="goToTradePage('{{ trade.stock_symbol }}')"
@@ -250,7 +271,7 @@
                                                                     {% endfor %}
                                                                 {% else %}
                                                                     <tr>
-                                                                        <td colspan="3"
+                                                                        <td colspan="6"
                                                                             class="text-success text-center">
                                                                             No trade history available.
                                                                         </td>
@@ -270,8 +291,10 @@
                                                                 <thead>
                                                                 <tr>
                                                                     <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Total Bought</th>
+                                                                    <th>Status</th>
+                                                                    <th>Profit & Loss</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </thead>
@@ -287,9 +310,12 @@
                                                                                 </h5>
                                                                             </a>
                                                                         </td>
-                                                                        <td>{{ position.total_bought }}</td>
-                                                                        <td class="text-success">{{ position.total_sold }}</td>
-                                                                        <td class="text-success">
+
+                                                                        <td>{{ position.quantity }} actions</td>
+                                                                        <td>${{ position.total_spent|floatformat:2 }}</td>
+                                                                        <td class="text-success">{{ position.status }}</td>
+                                                                        <td>N/A for open positions.</td>
+                                                                        <td>
                                                                             <button type="button"
                                                                                     onclick="goToTradePage('{{ position.stock_symbol }}')"
                                                                                     class="btn btn-primary btn-sm">Trade
@@ -303,7 +329,7 @@
 
                                                                 {% empty %}
                                                                     <tr>
-                                                                        <td colspan="3"
+                                                                        <td colspan="6"
                                                                             class="text-success text-center">No open
                                                                             positions.
                                                                         </td>
@@ -322,8 +348,10 @@
                                                                 <thead>
                                                                 <tr>
                                                                     <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Total Sold</th>
+                                                                    <th>Status</th>
+                                                                    <th>Profit & Loss</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -339,13 +367,19 @@
                                                                                     </h5>
                                                                                 </a>
                                                                             </td>
-                                                                            <td>{{ position.total_bought }}</td>
-                                                                            <td class="text-success">{{ position.total_sold }}</td>
+                                                                            <td>{{ position.quantity }} actions</td>
+                                                                            <td>${{ position.total_earned|floatformat:2 }}</td>
+                                                                            <td class="text-warning">{{ position.status }}</td>
+                                                                            {% if position.pl > 0 %}
+                                                                            <td class="text-success">${{ position.pl|floatformat:2 }}</td>
+                                                                            {% else %}
+                                                                            <td class="text-danger">${{ position.pl|floatformat:2 }}</td>
+                                                                            {% endif %}
                                                                         </tr>
                                                                     {% endfor %}
                                                                 {% else %}
                                                                     <tr>
-                                                                        <td colspan="3" class="text-center">No closed
+                                                                        <td colspan="5" class="text-center">No closed
                                                                             positions.
                                                                         </td>
                                                                     </tr>
@@ -358,38 +392,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
-                                    <!--详细信息-->
-                                    <div class="col-xl-7 col-sm-12">
-                                        <div class="card overflow-hidden h-auto">
-                                            <div class="card-body pb-4">
-                                                <div class="row">
-                                                    <div class="col-xl-12 col-md-12">
-                                                        <h3 class="card-title font-w500 mb-0 center">Profit and Loss</h3>
-                                                        <br>
-                                                        <h5 class="font-w500 mb-0">Overall Gross
-                                                            P&L: {{ gross_pnl }}</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="market-coin flex-wrap">
-                                                            <h4 class="font-w500 mb-0">P&L By Stock</h4>
-                                                            {% for trade in pnl_per_stock %}
-                                                                <div class="mb-1">
-                                                                    <span class="fs-14 font-w400">{{ trade.stock_symbol }}</span>
-                                                                    <h5 class="font-w600 m-0 text-danger">{{ trade.pnl }}</h5>
-                                                                </div>
-                                                            {% endfor %}
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
 
                                 </div>
                             </div>
@@ -413,7 +415,8 @@
                                 #}-->
                                 <h2 class="error-head mb-0"><i
                                         class="fa fa-exclamation-triangle text-warning me-2"></i>{{ tips }}</h2>
-                                <a href="{% url 'financial_system:login' %}" class="btn btn-secondary">GO TO LOGIN</a>
+                                <br><br>
+                                <a href="{% url 'financial_system:login' %}" class="btn btn-secondary"> LOGIN</a>
                             </div>
                         </div>
                     </div>
@@ -466,7 +469,7 @@
                 success: function (response) {
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
-                    $(".current_price_number").html(response['get_current_price'])
+                    $(".current_price_number").html($response['get_current_price'])
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);

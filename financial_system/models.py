@@ -6,7 +6,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 import json
 import yfinance as yf
-from django.db.models import Sum, F, FloatField
+from django.db.models import Sum, F, FloatField, Min, Max
 
 
 # from mptt.models import MPTTModel, TreeForeignKey
@@ -268,6 +268,28 @@ class HistoryTrade(models.Model):
             )
         return sell_trades
 
+    from django.db.models import F, Sum, FloatField
+
+    @classmethod
+    def get_trade_aggregates(cls, user):
+        # Aggregate buy trades by stock symbol
+        buys = cls.objects.filter(
+            user_id=user, trade_type='BUY'
+        ).values('stock_symbol').annotate(
+            total_quantity_bought=Sum('trade_quantity'),
+            total_spent=Sum(F('trade_quantity') * F('trade_price'), output_field=FloatField())
+        ).order_by('stock_symbol')
+
+        # Aggregate sell trades by stock symbol
+        sells = cls.objects.filter(
+            user_id=user, trade_type='SELL'
+        ).values('stock_symbol').annotate(
+            total_quantity_sold=Sum('trade_quantity'),
+            total_earned=Sum(F('trade_quantity') * F('trade_price'), output_field=FloatField())
+        ).order_by('stock_symbol')
+
+        return buys, sells
+
     @classmethod
     def get_average_buy_price(cls, user, stock):
         buy_trades = cls.get_all_buy_trades(user, stock)
@@ -280,6 +302,106 @@ class HistoryTrade(models.Model):
         average_sell_price = (sell_trades['total_earned'] / sell_trades['total_quantity_sold']) if sell_trades[
             'total_quantity_sold'] else 0
         return average_sell_price, sell_trades
+
+    @classmethod
+    def get_positions_with_pl(cls, user):
+        buys, sells = cls.get_trade_aggregates(user)
+        open_positions = []
+        closed_positions = []
+        all_positions = []
+
+        # Convert sell trades to a dictionary for easier lookup
+        sells_dict = {sell['stock_symbol']: sell for sell in sells}
+
+        for buy in buys:
+            stock_symbol = buy['stock_symbol']
+            total_bought = buy['total_quantity_bought']
+            total_spent = buy['total_spent']
+            sell = sells_dict.get(stock_symbol, {})
+            total_sold = sell.get('total_quantity_sold', 0)
+            total_earned = sell.get('total_earned', 0)
+
+            # Calculate P&L for closed positions
+            pl_closed = total_earned - total_spent if total_sold >= total_bought \
+                else (total_sold / total_bought) * total_spent - total_spent
+
+            if total_bought > total_sold:
+                # Open position
+                open_position = {
+                    'stock_symbol': stock_symbol,
+                    'quantity': total_bought - total_sold,
+                    'total_spent': total_spent - (total_sold / total_bought * total_spent if total_sold else 0),
+                    'status': 'open',
+                    'pl': None  # P&L calculation for open positions might require current market price
+                }
+                open_positions.append(open_position)
+                all_positions.append(open_position)
+
+            if total_sold > 0:
+                # Closed position for the sold quantity
+                closed_position = {
+                    'stock_symbol': stock_symbol,
+                    'quantity': min(total_bought, total_sold),
+                    'total_earned': total_earned,
+                    'status': 'closed',
+                    'pl': pl_closed
+                }
+                closed_positions.append(closed_position)
+                all_positions.append(closed_position)
+
+        return open_positions, closed_positions, all_positions
+
+    from django.db.models import Max, Min
+
+    def get_positions_with_pl_and_dates(cls, user):
+        buys = cls.get_all_buy_trades(user)
+        sells = cls.get_all_sell_trades(user)
+        open_positions = []
+        closed_positions = []
+        all_positions = []
+
+        # Convert sell trades to a dictionary for easier lookup
+        sells_dict = {sell['stock_symbol']: sell for sell in sells}
+
+        for buy in buys:
+            stock_symbol = buy['stock_symbol']
+            total_bought = buy['total_quantity_bought']
+            total_spent = buy['total_spent']
+            sell = sells_dict.get(stock_symbol, {})
+            total_sold = sell.get('total_quantity_sold', 0)
+            total_earned = sell.get('total_earned', 0)
+
+            # Fetch additional dates and average prices
+            buy_dates = HistoryTrade.objects.filter(
+                user_id=user, trade_type='BUY', stock_symbol=stock_symbol
+            ).aggregate(first_buy_date=Min('trade_dateTime'), last_buy_date=Max('trade_dateTime'))
+
+            sell_dates = HistoryTrade.objects.filter(
+                user_id=user, trade_type='SELL', stock_symbol=stock_symbol
+            ).aggregate(first_sell_date=Min('trade_dateTime'), last_sell_date=Max('trade_dateTime'))
+
+            average_buy_price = total_spent / total_bought if total_bought else 0
+            average_sell_price = total_earned / total_sold if total_sold else 0
+
+            position = {
+                'stock_symbol': stock_symbol,
+                'quantity': total_bought - total_sold if total_bought > total_sold else min(total_bought, total_sold),
+                'average_price': average_buy_price if total_bought > total_sold else average_sell_price,
+                'first_trade_date': buy_dates['first_buy_date'],
+                'last_trade_date': sell_dates['last_sell_date'] if total_sold else buy_dates['last_buy_date'],
+                'status': 'open' if total_bought > total_sold else 'closed',
+                'pl': (total_earned - total_spent) if total_sold else None
+                # P&L might need adjustment for open positions
+            }
+
+            all_positions.append(position)
+
+            if total_bought > total_sold:
+                open_positions.append(position)
+            if total_sold > 0:
+                closed_positions.append(position)
+
+        return open_positions, closed_positions, all_positions
 
 
 def default_provider_publish_time():

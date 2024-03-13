@@ -30,6 +30,19 @@ def getdata(json_data, args):
 register.filter('getdata', getdata)
 
 
+@register.filter(name='multiply')
+def multiply(value, arg):
+    """Multiplies the given value by the argument."""
+    try:
+        return float(value) * float(arg)
+    except (ValueError, TypeError):
+        return None
+
+
+@register.filter(name='format_bigint')
+def format_bigint(value):
+    """Formats a big integer into a more readable string with thousand separators."""
+    return '{:,}'.format(value)
 
 # request.path	                  /home/
 # request.get_full_path	         /home/?q=test
