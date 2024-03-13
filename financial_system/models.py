@@ -88,7 +88,7 @@ class Stock(models.Model):
     timezone = models.CharField(max_length=50)
     exchangeTimezoneName = models.CharField(max_length=50)
     regularMarketPrice = models.DecimalField(max_digits=10, decimal_places=2)
-    chartPreviousClose = models.DecimalField(max_digits=10, decimal_places=2)
+    # chartPreviousClose = models.DecimalField(max_digits=10, decimal_places=2)
     priceHint = models.IntegerField()
     dataGranularity = models.CharField(max_length=10)
     range = models.CharField(max_length=10)
@@ -98,11 +98,27 @@ class Stock(models.Model):
     regular_market = models.OneToOneField(TradingPeriod, on_delete=models.CASCADE, related_name='stock_regular')
     post_market = models.OneToOneField(TradingPeriod, on_delete=models.CASCADE, related_name='stock_post', null=True, blank=True)
 
-    class Meta:
-        db_table = 'stock'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ticker = yf.Ticker(self.symbol)
 
     def __str__(self):
         return self.symbol
+
+    def get_current_price(self):
+        # ticker = ticker.history(period='1d')
+        # return ticker['Close'][0]
+        return self.ticker.info['currentPrice']
+
+    def get_company_info(self):
+        return self.ticker.info
+
+    def get_company_name(self):
+        return self.ticker.info.get('shortName', self.symbol)
+
+    def get_open_price(self):
+        return self.ticker.history(period='1d')['Open']
+
 
     @classmethod
     def create_stock_with_trading_periods_form_dict(cls, data):
@@ -146,7 +162,7 @@ class Stock(models.Model):
                 timezone=data['timezone'],
                 exchangeTimezoneName=data['exchangeTimezoneName'],
                 regularMarketPrice=data['regularMarketPrice'],
-                chartPreviousClose=data['chartPreviousClose'],
+                # chartPreviousClose=data['chartPreviousClose'],
                 priceHint=data['priceHint'],
                 dataGranularity=data['dataGranularity'],
                 range=data['range'],
@@ -158,23 +174,16 @@ class Stock(models.Model):
 
             return stock
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.ticker = yf.Ticker(self.symbol)
-
-    def get_current_price(self):
-        # ticker = ticker.history(period='1d')
-        # return ticker['Close'][0]
-        return self.ticker.info['currentPrice']
-
-    def get_company_info(self):
-        ticker = yf.Ticker(self.symbol)
-        return self.ticker.info
+    class Meta:
+        db_table = 'stock'
 
 
 class Watchlist(models.Model):
     user_id = models.ForeignKey(to=User, on_delete=models.CASCADE)
     stock_symbol = models.ForeignKey(to=Stock, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user_id}: {self.stock_symbol}'
 
     class Meta:
         db_table = 'watchlist'

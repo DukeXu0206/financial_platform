@@ -19,6 +19,8 @@ def display_dictionary(dictionary):
 def load(symbol):
     ticker = yf.Ticker(symbol)
 
+    print(ticker.history(period='1d')['Open'])
+
     # get all stock info
     print(ticker.info)
 

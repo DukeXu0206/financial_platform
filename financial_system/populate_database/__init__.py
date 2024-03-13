@@ -28,3 +28,4 @@ print_results("Stock", stock_results)
 
 news_results = populate_news(dow_30_symbols)
 print_results("News", news_results)
+

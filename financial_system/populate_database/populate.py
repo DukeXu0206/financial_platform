@@ -46,3 +46,64 @@ def populate_news(symbols):
             results[symbol] = 'Symbol not found in tickers dictionary'
 
     return results
+
+
+def populate_user():
+    users_data = [
+        {'user_name': 'Alice', 'password': 'password123', 'user_gender': 'Female', 'phone_number': '1234567890',
+         'user_email': 'alice@example.com'},
+        {'user_name': 'Bob', 'password': 'password123', 'user_gender': 'Male', 'phone_number': '2345678901',
+         'user_email': 'bob@example.com'},
+        {'user_name': 'Charlie', 'password': 'password123', 'user_gender': 'Male', 'phone_number': '3456789012',
+         'user_email': 'charlie@example.com'},
+        {'user_name': 'Diana', 'password': 'password123', 'user_gender': 'Female', 'phone_number': '4567890123',
+         'user_email': 'diana@example.com'},
+        {'user_name': 'Eve', 'password': 'password123', 'user_gender': 'Female', 'phone_number': '5678901234',
+         'user_email': 'eve@example.com'}
+    ]
+
+    for user_data in users_data:
+        user = User(**user_data)
+        user.save()
+
+    print(User.objects.all())
+
+
+def populate_manager():
+    managers_data = [
+        {
+            'manager_name': 'Manager1',
+            'password': 'securepassword1',  # Consider using Django's make_password for hashing
+            'phone_number': '1111111111',
+            'photo_url': 'url/to/manager1/photo',
+        },
+        {
+            'manager_name': 'Manager2',
+            'password': 'securepassword2',  # Consider using Django's make_password for hashing
+            'phone_number': '2222222222',
+            'photo_url': 'url/to/manager2/photo',
+        },
+    ]
+
+    # Iterate over each dictionary in the list and create Manager instances
+    for manager_data in managers_data:
+        manager = Manager(**manager_data)
+        manager.save()
+
+    print(Manager.objects.all())
+
+
+stocks = Stock.objects.all()
+users = User.objects.all()
+
+def populate_watchlist():
+    # Add 10 Watchlist entries for the first 2 users, 2 for the rest
+    for i, user in enumerate(users):
+        watchlist_stocks = stocks[:10] if i < 2 else stocks[:2]
+        for stock in watchlist_stocks:
+            Watchlist.objects.create(user_id=user, stock_symbol=stock)
+
+    print(Watchlist.objects.all())
+
+
+# def populate_

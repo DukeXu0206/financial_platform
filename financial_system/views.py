@@ -554,7 +554,7 @@ def add_comment(request, stock_symbol):
     if request.method == "POST":
         title = request.POST.get('title')
         content = request.POST.get('content')
-        user = request.user
+        user = User.objects.get(user_id=request.session.get('user_id'))
         stock = get_object_or_404(Stock, pk=stock_symbol)
 
         StockComment.objects.create(title=title, content=content, user_id=user, stock_symbol=stock)
@@ -565,7 +565,7 @@ def add_comment(request, stock_symbol):
 def add_reply(request, comment_id):
     if request.method == "POST":
         content = request.POST.get('content')
-        user = request.user
+        user = User.objects.get(user_id=request.session.get('user_id'))
         comment = get_object_or_404(StockComment, pk=comment_id)
 
         CommentReply.objects.create(content=content, user_id=user, comment_id=comment)
