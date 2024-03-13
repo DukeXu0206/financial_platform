@@ -23,16 +23,39 @@
                 </div>
             </div>
 
-            <h3>Stock Results</h3>
-            <ul>
-                {% for stock, stock_url in filtered_stocks %}
-                <li><a href="{{ stock_url }}"><strong>{{ stock.symbol }} </strong> {{ stock.get_company_info.shortName
-                    }} </a>
-                </li>
-                {% empty %}
-                <li>No matching stocks found.</li>
-                {% endfor %}
-            </ul>
+            <div class="col-xl-12">
+                <!-- Row -->
+                <div class="row">
+                    <div class="text-center mb-4">
+                        <h3 class="text-center mb-2 text-dark">Stock Results</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- Stock Results Start-->
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="profile-news">
+                             {% for stock, stock_url in filtered_stocks %}
+                                <div class="media pt-3 pb-3">
+                                    <div class="media-body">
+                                        <h4 class="m-b-5"><a  href="{{ stock_url }}"
+                                                             class="text-primary">{{ stock.symbol }}</a>
+                                        </h4>
+                                        <p class="mb-0">{{ stock.get_company_info.shortName  }}</p>
+
+                                    </div>
+                                </div>
+                                 <hr>
+                            {% empty %}
+                                <h4>No matching stocks found.</h4>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Stock Results End-->
 
 
             <div class="col-xl-12">
