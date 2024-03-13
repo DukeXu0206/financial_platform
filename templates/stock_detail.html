@@ -68,7 +68,7 @@
                                     <div class="card coin-content">
                                         <div class="card-header border-0 flex-wrap pb-0">
                                             <div class="mb-xl-0 mb-2">
-                                                <h2 class="mb-0">{{ stock.stock_name }}</h2>
+                                                <h2 class="mb-0">{{ stock.symbol }}</h2>
                                             </div>
 
                                         </div>
@@ -76,19 +76,19 @@
                                             <div class="d-flex align-items-center justify-content-between flex-wrap">
                                                 <div class="d-flex align-items-end justify-content-between flex-wrap">
                                                     <div class="price-content">
-                                                        <span class="d-block mb-2">closing_price_y</span>
-                                                        <h4 class="fs-20 font-w600 mb-0">{{ stock.closing_price_y }}</h4>
+                                                        <span class="d-block mb-2">current</span>
+                                                        <h4 class="fs-20 font-w600 mb-0 current_price_number" >{{ stock.get_current_price }}</h4>
                                                     </div>
                                                     <div class="price-content">
 
                                                         {% if stock.change_extent > 0 %}
                                                             <span class="fs-14 d-block mb-2">24h% change</span>
-                                                            <h4 class="font-w600 text-success mb-0">{{ stock.change_extent }}%<i
+                                                            <h4 class="font-w600 text-success mb-0">{{ stock.get_change_extent }}%<i
                                                                     class="fa-solid fa-caret-up ms-1 text-success"></i>
                                                             </h4>
                                                         {% else %}
                                                             <span class="fs-14 d-block mb-2">24h% change</span>
-                                                            <h4 class="font-w600 text-danger mb-0">{{ stock.change_extent }}%<i
+                                                            <h4 class="font-w600 text-danger mb-0">{{ stock.get_change_extent }}%<i
                                                                     class="fa-solid fa-caret-down ms-1 text-danger"></i>
                                                             </h4>
                                                         {% endif %}
@@ -96,20 +96,20 @@
 
                                                     </div>
                                                     <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">open_price_t</span>
-                                                        <h4 class="font-w600 mb-0 text-danger">{{ stock.open_price_t }}</h4>
+                                                        <span class="fs-14 d-block mb-2">open</span>
+                                                        <h4 class="font-w600 mb-0 text-danger">{{ stock.get_open_price | floatformat:2 }}</h4>
                                                     </div>
                                                     <div class="price-content">
                                                         <span class="fs-14 d-block mb-2">stock_type</span>
                                                         <h4 class="font-w600 mb-0 text-primary">{{ stock.stock_type }}</h4>
                                                     </div>
                                                     <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">block</span>
-                                                        <h4 class="font-w600 mb-0">{{ stock.block }}</h4>
+                                                        <span class="fs-14 d-block mb-2">exchangeName</span>
+                                                        <h4 class="font-w600 mb-0">{{ stock.exchangeName }}</h4>
                                                     </div>
                                                     <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">issuance_time</span>
-                                                        <h4 class="font-w600 mb-0 text-warning">{{ stock.issuance_time }}</h4>
+                                                        <span class="fs-14 d-block mb-2">regularMarketPrice</span>
+                                                        <h4 class="font-w600 mb-0 text-warning">{{ stock.regularMarketPrice }}</h4>
                                                     </div>
                                                 </div>
 
@@ -757,8 +757,8 @@
                                     <div class="card quick-trade">
                                         <div class="card-header pb-0 border-0 flex-wrap">
                                             <div>
-                                                <h4 class="card-title">{{ stock.exchangeName }} &nbsp; </h4>
-                                                <p class="mb-xl-0 mb-3 fs-12"> {{ stock.closing_price_y }}</p>
+                                                <h4 class="card-title">{{ stock.symbol }} &nbsp; </h4>
+                                                <p class="mb-xl-0 mb-3 fs-12 current_price_number"> {{ stock.get_current_price }}</p>
                                             </div>
                                         </div>
                                         <div class="card-body pb-0">
@@ -770,9 +770,9 @@
                                                            value="{{ stock.symbol }}">
                                                     <div class="input-group mb-3 ">
                                                         <span class="input-group-text">PRICE</span>
-                                                        <input class="form-control form-control text-end"
+                                                        <input class="form-control form-control text-end current_price_number"
                                                                readonly="readonly" type="text"
-                                                               value="{{ stock.closing_price_y }}"
+                                                               value="{{ stock.get_current_price }}"
                                                                placeholder="0,000000">
                                                     </div>
                                                     <div class="input-group mb-3 ">
@@ -864,8 +864,8 @@
                                     <div class="card quick-trade">
                                         <div class="card-header pb-0 border-0 flex-wrap">
                                             <div>
-                                                <h4 class="card-title">{{ stock.stock_name }} &nbsp; </h4>
-                                                <p class="mb-xl-0 mb-3 fs-12"> {{ stock.closing_price_y }}</p>
+                                                <h4 class="card-title">{{ stock.symbol }} &nbsp; </h4>
+                                                <p class="mb-xl-0 mb-3 fs-12"> {{ stock.get_current_price }}</p>
                                             </div>
                                         </div>
                                         <div class="card-body pb-0">
@@ -879,9 +879,9 @@
 
                                                     <div class="input-group mb-3 ">
                                                         <span class="input-group-text">PRICE</span>
-                                                        <input class="form-control form-control text-end"
+                                                        <input class="form-control form-control text-end current_price_number"
                                                                readonly="readonly" type="text"
-                                                               value="{{ stock.closing_price_y }}"
+                                                               value="{{ stock.get_current_price }}"
                                                                placeholder="0,000000">
                                                     </div>
                                                     <div class="input-group mb-3 ">
@@ -1087,6 +1087,9 @@
                     </div>
                 </div>
             </div>
+
+
+            <input type="hidden" id="csrfmiddlewaretoken" class="form-control mb-3"  name="csrfmiddlewaretoken" value="{% csrf_token %}" >
         </div>
     </div>
     <!--**********************************
@@ -1101,6 +1104,9 @@
 
             //监听回复按钮
             replay_handler()
+            // 每隔 10 秒发送一次请求
+            setInterval(get_current_price, 3000);
+
 
             var start = moment().subtract(29, 'days');
             var end = moment();
@@ -1422,6 +1428,28 @@
                 console.log("asdasd",comment_id)
                 // 将 comment_id 的值设置为输入框的值
                 $("#comment_id_input").val(comment_id);
+            });
+
+        }
+
+        //定时请求数据
+        function get_current_price(){
+
+            var stockSymbol = "{{ stock.symbol }}";
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+            $.ajax({
+                url: '/stock_current_price/',
+                method: 'POST',
+                type:"JSON",
+                data: { 'stock_symbol': stockSymbol,'csrfmiddlewaretoken': csrfToken },
+                success: function(response) {
+                    console.log(response);
+                    // 在这里处理返回的 JSON 数据
+                    $(".current_price_number").html(response['get_current_price'])
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
             });
 
         }

@@ -1,5 +1,9 @@
+import json
 import pprint
 
+from django.core.serializers import serialize
+from django.forms import model_to_dict
+from django.http import JsonResponse
 from yfinance import Ticker
 
 from django.urls import reverse
@@ -489,6 +493,15 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
     }
 
     return render(request, 'stock_detail.html', context)
+
+def stock_current_price(request,):
+    historical_data_period = "1mo"
+    stock_symbol = request.POST.get('stock_symbol')
+    stock = get_object_or_404(Stock, symbol=stock_symbol)
+    data = {
+        "get_current_price":stock.get_current_price()
+    }
+    return JsonResponse(data)
 
 
 def trade(request, stock_symbol, message=None):
