@@ -1,122 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        {% load static custom_tags %}
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="{{ dz_array.public.description }}" />
-        <meta property="og:title" content="{{ dz_array.public.og_title }}" />
-        <meta property="og:description" content="{{ dz_array.public.og_description }}" />
-        <meta name="format-detection" content="telephone=no">
+<head>
+    {% load static custom_tags %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ dz_array.public.description }}"/>
+    <meta property="og:title" content="{{ dz_array.public.og_title }}"/>
+    <meta property="og:description" content="{{ dz_array.public.og_description }}"/>
+    <meta name="format-detection" content="telephone=no">
 
 
+    <!-- PAGE TITLE HERE -->
+    {% block title %}
+        <title>{{ dz_array.public.title }}</title>
+    {% endblock %}
 
-        <!-- PAGE TITLE HERE -->
-        {% block title %}
-            <title>{{ dz_array.public.title }}</title>
-        {% endblock %}
 
+    {% for cssurl in dz_array.pagelevel.financial.financial_views.css|getdata:request.path %}
+        <link rel="stylesheet" href="{% static cssurl %}">
+    {% endfor %}
+    {% for cssurl in dz_array.global.css %}
+        <link rel="stylesheet" href="{% static cssurl %}">
+    {% endfor %}
+    {% block additional_css %}
+    {% endblock %}
 
-        {% for cssurl in dz_array.pagelevel.financial.financial_views.css|getdata:request.path %}
-            <link rel="stylesheet" href="{% static cssurl %}" >
-        {% endfor %}
-        {% for cssurl in dz_array.global.css %}
-            <link rel="stylesheet" href="{% static cssurl %}">
-        {% endfor %}
-        {% block additional_css %}
-        {% endblock %}
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0">
 
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0">
-
-    </head>
+</head>
 <body>
 
-    <!--*******************
-        Preloader start
-    ********************-->
-	<div id="preloader">
-		<div class="lds-ripple">
-			<div></div>
-			<div></div>
-		</div>
+<!--*******************
+    Preloader start
+********************-->
+<div id="preloader">
+    <div class="lds-ripple">
+        <div></div>
+        <div></div>
     </div>
-    <!--*******************
-        Preloader end
-    ********************-->
+</div>
+<!--*******************
+    Preloader end
+********************-->
+
+<!--**********************************
+    Main wrapper start
+***********************************-->
+<div id="main-wrapper">
 
     <!--**********************************
-        Main wrapper start
+        Header start
     ***********************************-->
-    <div id="main-wrapper">
 
-		<!--**********************************
-            Header start
-        ***********************************-->
+    {% include 'elements/header.html' %}
 
-        {% include 'elements/header.html' %}
+    <!--**********************************
+        Header end
+    ***********************************-->
 
-        <!--**********************************
-            Header end
-        ***********************************-->
+    {% block message %}
+        {% if message %}
+            <div class="tips-box" style="padding:1rem 2rem 1rem 2rem;">
 
-        {% block message %}
-            {% if message %}
-                <div class="alert alert-danger alert-dismissible fade show">
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor"
-                         stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                         class="me-2 alert-icon">
+                <div class="alert alert-danger solid alert-dismissible fade show">
+                    <svg viewBox="0 0 24 24" width="24 " height="24" stroke="currentColor" stroke-width="2" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round" class="me-2 alert-icon">
                         <polygon
                                 points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
                         <line x1="15" y1="9" x2="9" y2="15"></line>
                         <line x1="9" y1="9" x2="15" y2="15"></line>
                     </svg>
                     <strong>Error!</strong> {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                            aria-label="btn-close">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
                     </button>
                 </div>
-            {% endif %}
-        {% endblock %}
-
-        {% block content %}
-        {% endblock %}
+            </div>
 
 
-        <!--**********************************
-            Footer start
-        ***********************************-->
 
-        {% include 'elements/footer.html' %}
-        <!--**********************************
-            Footer end
-        ***********************************-->
-
-
-	</div>
-    <!--**********************************
-        Main wrapper end
-    ***********************************-->
-
-    <!--**********************************
-        Scripts
-    ***********************************-->
-    <!-- Required vendors -->
-
-    {% for jsurl in dz_array.global.js.top %}
-    <script src="{% static jsurl %}"></script>
-    {% endfor %}
-
-    {% for jsurl in dz_array.pagelevel.financial.financial_views.js|getdata:request.path %}
-    <script src="{% static jsurl %}"></script>
-    {% endfor %}
-
-    {% for jsurl in dz_array.global.js.bottom %}
-    <script src="{% static jsurl %}"></script>
-    {% endfor %}
-
-    {% block additional_js %}
+        {% endif %}
     {% endblock %}
-    {% block javascript %}{% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+
+    <!--**********************************
+        Footer start
+    ***********************************-->
+
+    {% include 'elements/footer.html' %}
+    <!--**********************************
+        Footer end
+    ***********************************-->
+
+
+</div>
+<!--**********************************
+    Main wrapper end
+***********************************-->
+
+<!--**********************************
+    Scripts
+***********************************-->
+<!-- Required vendors -->
+
+{% for jsurl in dz_array.global.js.top %}
+    <script src="{% static jsurl %}"></script>
+{% endfor %}
+
+{% for jsurl in dz_array.pagelevel.financial.financial_views.js|getdata:request.path %}
+    <script src="{% static jsurl %}"></script>
+{% endfor %}
+
+{% for jsurl in dz_array.global.js.bottom %}
+    <script src="{% static jsurl %}"></script>
+{% endfor %}
+
+{% block additional_js %}
+{% endblock %}
+{% block javascript %}{% endblock %}
 </body>
 </html>

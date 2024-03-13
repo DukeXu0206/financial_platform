@@ -97,7 +97,6 @@ def populate_manager():
     # print(Manager.objects.all())
 
 
-
 def populate_watchlist(users, stocks):
     # Add 10 Watchlist entries for the first 2 users, 2 for the rest
     for i, user in enumerate(users):
@@ -106,7 +105,6 @@ def populate_watchlist(users, stocks):
             Watchlist.objects.create(user_id=user, stock_symbol=stock)
 
     print(Watchlist.objects.all())
-
 
 
 def create_trades_for_user(user, symbols):

@@ -985,12 +985,18 @@
                             {% for comment in comments %}
                                 <div class="media pt-3 pb-3">
                                     <div class="media-body">
-                                        <h5 class="m-b-5"><a href="#" class="text-dark">Title:{{ comment.title }}</a></h5>
+                                        <h5 class="m-b-5"><a href="#" class="text-dark">Title:{{ comment.title }}</a>
+                                        </h5>
                                         <p class="mb-0">Content:{{ comment.content }}</p>
                                         <small>By: {{ comment.user_id.username }}
                                             at {{ comment.comment_time }}</small>
                                     </div>
-                                    <div class="media-action">Reply</div>
+                                    <div class="media-action">
+                                        <button type="button" comment_id="{{ comment.comment_id }}" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal1"
+                                                class="reply-btn btn tp-btn-light btn-secondary">Reply
+                                        </button>
+                                    </div>
                                 </div>
                             {% empty %}
                                 <h4>No comments yet.</h4>
@@ -1008,7 +1014,8 @@
                         <div class="card-body">
                             <div class="profile-news">
                                 <div class="comment-respond" id="respond">
-                                    <h4 class="comment-reply-title text-primary mb-3" id="reply-title">Leave a Reply </h4>
+                                    <h4 class="comment-reply-title text-primary mb-3" id="reply-title">Leave a
+                                        Comment </h4>
                                     <form class="comment-form"
                                           action="{{ add_comment_url }}"
                                           method="post">
@@ -1049,6 +1056,37 @@
                     </div>
                 </div>
             {% endif %}
+
+            <!-- 回复 -->
+            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="{% url 'financial_system:add_reply'  %}">
+                            {% csrf_token %}
+                            <div class="modal-header ">
+                                <h5 class="modal-title">Reply</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            <input type="hidden" id="comment_id_input" class="form-control mb-3"  name="comment_id" value="" >
+
+                            <div class="modal-body">
+
+                                <label class="form-label">Content</label>
+                                <input type="text" class="form-control mb-3" id="content" name="content"
+                                       placeholder="content">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close
+                                </button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!--**********************************
@@ -1060,6 +1098,10 @@
 {% block additional_js %}
     <script>
         $(function () {
+
+            //监听回复按钮
+            replay_handler()
+
             var start = moment().subtract(29, 'days');
             var end = moment();
 
@@ -1368,5 +1410,21 @@
             chart.render();
 
         });
+
+        function replay_handler() {
+
+
+            // 监听按钮的点击事件
+            $(".reply-btn").click(function () {
+
+                // 获取 comment_id 属性的值
+                var comment_id = $(this).attr("comment_id");
+                console.log("asdasd",comment_id)
+                // 将 comment_id 的值设置为输入框的值
+                $("#comment_id_input").val(comment_id);
+            });
+
+        }
+
     </script>
 {% endblock %}

@@ -21,8 +21,9 @@ urlpatterns = [
     path('trade/<str:stock_symbol>', views.trade, name='trade'),
     path('buy_stock/', views.buy_stock, name='buy_stock'),
     path('sell_stock/', views.sell_stock, name='sell_stock'),
+
     path('stock/<str:stock_symbol>/add_comment/', views.add_comment, name='add_comment'),
-    path('comments/<int:comment_id>/add_reply/', views.add_reply, name='add_reply'),
+    path('comments/add_reply/', views.add_reply, name='add_reply'),
 
 
     path('notifications/', views.user_notification_view, name='user_notification'),

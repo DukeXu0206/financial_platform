@@ -586,9 +586,10 @@ def add_comment(request, stock_symbol):
     return redirect('financial_system:stock_detail', stock_symbol=stock_symbol)
 
 
-def add_reply(request, comment_id):
+def add_reply(request, ):
     if request.method == "POST":
         content = request.POST.get('content')
+        comment_id = request.POST.get('comment_id')
         user = User.objects.get(user_id=request.session.get('user_id'))
         comment = get_object_or_404(StockComment, pk=comment_id)
 
