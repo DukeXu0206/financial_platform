@@ -44,7 +44,7 @@
                                                 <div class="d-flex align-items-end justify-content-between flex-wrap">
                                                     <div class="price-content">
                                                         <span class="d-block mb-2">current</span>
-                                                        <h4 class="fs-20 font-w600 mb-0 current_price_number">
+                                                        <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
                                                             ${{ stock.get_current_price }}</h4>
                                                     </div>
                                                     <div class="price-content">
@@ -674,6 +674,18 @@
 {% endblock %}
 
 {% block additional_js %}
+     <style>
+
+    @keyframes blink {
+        0% { background-color: transparent; }
+        50% { background-color: rgba(204, 30, 30, 0.5); }
+        100% { background-color: transparent; }
+    }
+
+    .blink-effect {
+        animation: blink 1s infinite; /* 使用1秒的动画，并持续无限循环 */
+    }
+    </style>
     <script>
 
 
