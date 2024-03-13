@@ -350,7 +350,6 @@ def user_watchlist_view(request, stock_symbol=None):
             'current_watch_stock': current_watch_stock,
             'periods_list': current_watch_stock.validRanges.split(','),
             'historical_data': historical_data,
-            'historical_data_html': historical_data.to_html(classes='table table-bordered table-responsive-sm'),
             'kline_data': json.dumps(kline_data),
             'all_trades': all_trades,
             'open_positions': open_positions,
