@@ -558,8 +558,8 @@ def add_comment(request, stock_symbol):
         stock = get_object_or_404(Stock, pk=stock_symbol)
 
         StockComment.objects.create(title=title, content=content, user_id=user, stock_symbol=stock)
-        return redirect('stock_comments', stock_symbol=stock_symbol)
-    return redirect('stock_comments', stock_symbol=stock_symbol)
+
+    return redirect('financial_system:stock_detail', stock_symbol=stock_symbol)
 
 
 def add_reply(request, comment_id):
@@ -569,7 +569,8 @@ def add_reply(request, comment_id):
         comment = get_object_or_404(StockComment, pk=comment_id)
 
         CommentReply.objects.create(content=content, user_id=user, comment_id=comment)
-        return redirect('stock_comments', stock_symbol=comment.stock_symbol.pk)
+
+        return redirect('financial_system:stock_detail', stock_symbol=comment.stock_symbol)
 
     # return redirect('stock_comments', stock_symbol=comment_id.stock_symbol.pk)
 
