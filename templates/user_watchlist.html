@@ -20,7 +20,7 @@
         <div class="row">
 
             {% include 'elements/nav-tool.html' %}
-
+            {% csrf_token %}
             <div class="col-xl-12">
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
@@ -53,7 +53,7 @@
                                             <div class="d-flex align-items-end justify-content-between flex-wrap">
                                                 <div class="price-content">
                                                     <span class="d-block mb-2">Current Price</span>
-                                                    <h4 class="fs-20 font-w600 mb-0">
+                                                    <h4 class="fs-20 font-w600 mb-0 current_price_number">
                                                         {{current_watch_stock.get_current_price }}</h4>
                                                     {% if current_watch_stock.get_change_extent > 0 %}
                                                         <span class="font-w600 text-success mb-0">
@@ -125,9 +125,9 @@
                                                 <thead>
                                                 <tr>
                                                     <th class="border-bottom">
-
+                                                        #
                                                     </th>
-                                                    <th class="text-start border-bottom">Stock Name</th>
+                                                    <th class="text-center border-bottom">Stock Name</th>
                                                     <th class="text-center border-bottom">Current Price</th>
                                                     <th class="text-end border-bottom">Open Price</th>
                                                 </tr>
@@ -151,10 +151,10 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <button onclick="goToStockDetailPage('{{ stock.symbol }}')"
+                                                        <a href="javascript:void(0);" onclick="goToStockDetailPage('{{ stock.symbol }}')"
                                                                 class="text-info">
                                                             {{ stock.get_company_name }}
-                                                        </button>
+                                                        </a>
                                                     </td>
                                                     <td>{{ stock.get_current_price }}</td>
                                                     <td>{{ stock.get_open_price | floatformat:2 }}</td>
@@ -221,6 +221,7 @@
                                                             <th>Stock Name</th>
                                                             <th>Bought</th>
                                                             <th>Sold</th>
+                                                            <th>Action</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -228,13 +229,19 @@
                                                         {% for trade in all_trades %}
                                                         <tr>
                                                             <td>
-                                                                <button onclick="goToStockDetailPage('{{trade.stock_symbol}}')"
+                                                                <a href="javascript:void(0);" onclick="goToStockDetailPage('{{trade.stock_symbol}}')"
                                                                         class="market-title d-flex align-items-center">
                                                                     <h5 class="mb-0 ms-2">{{ trade.stock_symbol }}</h5>
-                                                                </button>
+                                                                </a>
+
+                                                            </a>
                                                             </td>
                                                             <td>{{ trade.total_bought }}</td>
                                                             <td class="text-success">{{ trade.total_sold }}</td>
+                                                            <td class="text-success">
+                                                                <button type="button" onclick="goToTradePage('{{trade.stock_symbol}}')" class="btn btn-primary btn-sm">Buy</button>
+                                                                <button type="button" onclick="goToTradePage('{{trade.stock_symbol}}')" class="btn btn-warning btn-sm">Sell</button>
+                                                            </td>
                                                         </tr>
                                                         {% endfor %}
                                                         {% else %}
@@ -261,21 +268,26 @@
                                                             <th>Stock Name</th>
                                                             <th>Bought</th>
                                                             <th>Sold</th>
+                                                              <th>Action</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                         {% for position in open_positions %}
                                                         <tr>
                                                             <td>
-                                                                <button onclick="goToStockDetailPage('{{position.stock_symbol}}')"
+                                                                <a href="javascript:void(0);" onclick="goToStockDetailPage('{{position.stock_symbol}}')"
                                                                         class="market-title d-flex align-items-center">
                                                                     <h5 class="mb-0 ms-2">
                                                                         {{ position.stock_symbol}}
                                                                     </h5>
-                                                                </button>
+                                                                </a>
                                                             </td>
                                                             <td>{{ position.total_bought }}</td>
                                                             <td class="text-success">{{ position.total_sold }}</td>
+                                                            <td class="text-success">
+                                                                <button type="button" onclick="goToTradePage('{{position.stock_symbol}}')" class="btn btn-primary btn-sm">Buy</button>
+                                                                <button type="button" onclick="goToTradePage('{{position.stock_symbol}}')" class="btn btn-warning btn-sm">Sell</button>
+                                                            </td>
                                                         </tr>
 
                                                         {% empty %}
@@ -300,6 +312,7 @@
                                                             <th>Stock Name</th>
                                                             <th>Bought</th>
                                                             <th>Sold</th>
+                                                              <th>Action</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -307,15 +320,19 @@
                                                         {% for position in closed_positions %}
                                                         <tr>
                                                             <td>
-                                                                <button onclick="goToStockDetailPage('{{position.stock_symbol}}')"
+                                                                <a href="javascript:void(0);"  onclick="goToStockDetailPage('{{position.stock_symbol}}')"
                                                                         class="market-title d-flex align-items-center">
                                                                     <h5 class="mb-0 ms-2">
                                                                         {{ position.stock_symbol}}
                                                                     </h5>
-                                                                </button>
+                                                                </a>
                                                             </td>
                                                             <td>{{ position.total_bought }}</td>
                                                             <td class="text-success">{{ position.total_sold }}</td>
+                                                        <td class="text-success">
+                                                                <button type="button" onclick="goToTradePage('{{trade.stock_symbol}}')" class="btn btn-primary btn-sm">Buy</button>
+                                                                <button type="button" onclick="goToTradePage('{{trade.stock_symbol}}')" class="btn btn-warning btn-sm">Sell</button>
+                                                            </td>
                                                         </tr>
                                                         {% endfor %}
                                                         {% else %}
@@ -414,7 +431,34 @@
         window.location.href = stockDetailUrl;
     }
 
+    //定时请求数据
+    function get_current_price() {
+
+        var stockSymbol = "{{ current_watch_stock.symbol }}";
+        var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+        $.ajax({
+            url: '/stock_current_price/',
+            method: 'POST',
+            type: "JSON",
+            data: {'stock_symbol': stockSymbol, 'csrfmiddlewaretoken': csrfToken},
+            success: function (response) {
+                console.log(response);
+                // 在这里处理返回的 JSON 数据
+                $(".current_price_number").html(response['get_current_price'])
+
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+
+    }
+
     $(function () {
+
+
+        setInterval(get_current_price, 3000);
+
         var start = moment().subtract(29, 'days');
         var end = moment();
 
@@ -734,6 +778,14 @@
                 window.location.href = '/watchlist/' + stock_symbol;
             }
         });
+
+
+
+
     });
+
+
+
+
 </script>
 {% endblock %}

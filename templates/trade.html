@@ -29,8 +29,8 @@
                                     <div class="card quick-trade">
                                         <div class="card-header pb-0 border-0 flex-wrap">
                                             <div>
-                                                <h4 class="card-title">{{ stock.stock_name }} &nbsp; </h4>
-                                                <p class="mb-xl-0 mb-3 fs-12"> {{ stock.get_current_price }}</p>
+                                                <h4 class="card-title">{{ stock.symbol }} &nbsp; </h4>
+                                                <p class="mb-xl-0 mb-3 fs-12 current_price_number"> {{ stock.get_current_price }}</p>
                                             </div>
                                         </div>
                                         <div class="card-body pb-0">
@@ -41,7 +41,7 @@
                                                     <input type="hidden" name="stock_symbol" value="{{ stock.symbol }}">
                                                     <div class="input-group mb-3 ">
                                                         <span class="input-group-text">PRICE</span>
-                                                        <input class="form-control form-control text-end"
+                                                        <input class="form-control form-control text-end current_price_text"
                                                                readonly="readonly" type="text"
                                                                value="{{ stock.get_current_price }}"
                                                                placeholder="0,000000">
@@ -74,68 +74,12 @@
                                 </div>
 
 
-{#                                <div class="col-xl-6 col-sm-12">#}
-{#                                    <div class="card price-list">#}
-{#                                        <div class="card-header border-0 p-3">#}
-{#                                            <div>#}
-{#                                                <h4 class="text-primary card-title">Buy 5</h4>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="card-body px-3 py-0">#}
-{#                                            <div class="table-responsive">#}
-{#                                                <table class="table text-center bg-primary-hover tr-rounded order-tbl mt-2 ">#}
-{#                                                    <thead>#}
-{#                                                    <tr>#}
-{#                                                        <th class="text-start">Price</th>#}
-{#                                                        <th class="text-center">Amount</th>#}
-{#                                                        <th class="text-end">Total</th>#}
-{#                                                    </tr>#}
-{#                                                    </thead>#}
-{#                                                    <tbody>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">82.3</td>#}
-{#                                                        <td>0.15</td>#}
-{#                                                        <td class="text-end">$134,12</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">83.9</td>#}
-{#                                                        <td>0.18</td>#}
-{#                                                        <td class="text-end">$237,31</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">84.2</td>#}
-{#                                                        <td>0.25</td>#}
-{#                                                        <td class="text-end">$252,58</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">86.2</td>#}
-{#                                                        <td>0.35</td>#}
-{#                                                        <td class="text-end">$126,26</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">91.6</td>#}
-{#                                                        <td>0.75</td>#}
-{#                                                        <td class="text-end">$46,92</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">92.6</td>#}
-{#                                                        <td>0.21</td>#}
-{#                                                        <td class="text-end">$123,27</td>#}
-{#                                                    </tr>#}
-{#                                                    </tbody>#}
-{#                                                </table>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-
-
                                 <div class="col-xl-6 col-sm-12">
                                     <div class="card quick-trade">
                                         <div class="card-header pb-0 border-0 flex-wrap">
                                             <div>
-                                                <h4 class="card-title">{{ stock.stock_name }} &nbsp; </h4>
-                                                <p class="mb-xl-0 mb-3 fs-12"> {{ stock.closing_price_y }}</p>
+                                                <h4 class="card-title">{{ stock.symbol }} &nbsp; </h4>
+                                                <p class="mb-xl-0 mb-3 fs-12 current_price_number"> {{ stock.get_current_price }}</p>
                                             </div>
                                         </div>
                                         <div class="card-body pb-0">
@@ -148,7 +92,7 @@
 
                                                     <div class="input-group mb-3 ">
                                                         <span class="input-group-text">PRICE</span>
-                                                        <input class="form-control form-control text-end"
+                                                        <input class="form-control form-control text-end current_price_text"
                                                                readonly="readonly" type="text"
                                                                value="{{ stock.get_current_price }}"
                                                                placeholder="0,000000">
@@ -181,62 +125,6 @@
                                 </div>
 
 
-{#                                <div class="col-xl-6 col-sm-12">#}
-{#                                    <div class="card price-list">#}
-{#                                        <div class="card-header border-0 p-3">#}
-{#                                            <div>#}
-{#                                                <h4 class="card-title text-danger">Sell 5</h4>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="card-body p-3 py-0">#}
-{#                                            <div class="table-responsive">#}
-{#                                                <table class="table text-center bg-warning-hover tr-rounded order-tbl mt-2">#}
-{#                                                    <thead>#}
-{#                                                    <tr>#}
-{#                                                        <th class="text-start">Price</th>#}
-{#                                                        <th class="text-center">Amount</th>#}
-{#                                                        <th class="text-end">Total</th>#}
-{#                                                    </tr>#}
-{#                                                    </thead>#}
-{#                                                    <tbody>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">82.3</td>#}
-{#                                                        <td>0.15</td>#}
-{#                                                        <td class="text-end">$134,12</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">83.9</td>#}
-{#                                                        <td>0.18</td>#}
-{#                                                        <td class="text-end">$237,31</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">84.2</td>#}
-{#                                                        <td>0.25</td>#}
-{#                                                        <td class="text-end">$252,58</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">86.2</td>#}
-{#                                                        <td>0.35</td>#}
-{#                                                        <td class="text-end">$126,26</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">91.6</td>#}
-{#                                                        <td>0.75</td>#}
-{#                                                        <td class="text-end">$46,92</td>#}
-{#                                                    </tr>#}
-{#                                                    <tr>#}
-{#                                                        <td class="text-start">92.6</td>#}
-{#                                                        <td>0.21</td>#}
-{#                                                        <td class="text-end">$123,27</td>#}
-{#                                                    </tr>#}
-{#                                                    </tbody>#}
-{#                                                </table>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-
-
                             </div>
                         </div>
                     </div>
@@ -252,7 +140,33 @@
 
 {% block additional_js %}
     <script>
+        //定时请求数据
+        function get_current_price() {
+
+            var stockSymbol = "{{ stock.symbol }}";
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+            $.ajax({
+                url: '/stock_current_price/',
+                method: 'POST',
+                type: "JSON",
+                data: {'stock_symbol': stockSymbol, 'csrfmiddlewaretoken': csrfToken},
+                success: function (response) {
+                    console.log(response);
+                    // 在这里处理返回的 JSON 数据
+                    $(".current_price_number").html(response['get_current_price'])
+                    $(".current_price_text").val(response['get_current_price'])
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        }
+
         $(function () {
+
+            setInterval(get_current_price, 3000);
+
             var start = moment().subtract(29, 'days');
             var end = moment();
 
@@ -277,5 +191,7 @@
 
 
         });
+
+
     </script>
 {% endblock %}
