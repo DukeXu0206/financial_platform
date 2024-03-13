@@ -535,9 +535,10 @@ def stock_current_price(request):
 
 def trade(request, stock_symbol, message=None):
     stock = get_object_or_404(Stock, symbol=stock_symbol)
-
+    user = User.objects.get(user_id=request.session.get('user_id'))
     context = {
-        'stock': stock
+        'stock': stock,
+        "user": user
     }
 
     if message:
