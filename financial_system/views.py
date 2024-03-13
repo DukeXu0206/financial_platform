@@ -275,22 +275,52 @@ def balance(request):
 
 
 def calculate_pnl(user_id):
-    # Aggregate the total spent on buys and the total earned from sells
-    trades = HistoryTrade.objects.filter(user_id=user_id).values('stock_symbol') \
-        .annotate(
-        total_spent=Sum(
-            Case(When(trade_type='BUY', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(),
-                 default=0)),
-        total_earned=Sum(
-            Case(When(trade_type='SELL', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(),
-                 default=0)),
-    )
+    # Fetch all BUY and SELL trades for the user, ordered by date or another criterion
+    buys = HistoryTrade.objects.filter(user_id=user_id, trade_type='BUY').order_by('trade_dateTime')
+    sells = HistoryTrade.objects.filter(user_id=user_id, trade_type='SELL').order_by('trade_dateTime')
 
-    # Calculate P&L for each stock
-    pnl_per_stock = [{**trade, 'pnl': trade['total_earned'] - trade['total_spent']} for trade in trades]
+    # Initialize a dictionary to keep track of P&L for each stock symbol
+    pnl_per_stock = {}
+
+    for sell in sells:
+        stock_symbol = sell.stock_symbol_id
+        sell_quantity = sell.trade_quantity
+        sell_price = sell.trade_price
+
+        if stock_symbol not in pnl_per_stock:
+            pnl_per_stock[stock_symbol] = {'total_spent': 0, 'total_earned': 0, 'pnl': 0}
+
+        # Match the sell trade with corresponding buy trades
+        matched_quantity = 0
+        for buy in buys.filter(stock_symbol=stock_symbol):
+            if matched_quantity < sell_quantity:
+                buy_quantity = buy.trade_quantity
+                buy_price = buy.trade_price
+
+                # Determine how much of this buy can be matched with the sell
+                matchable_quantity = min(buy_quantity, sell_quantity - matched_quantity)
+                matched_quantity += matchable_quantity
+
+                # Update P&L calculations
+                pnl_per_stock[stock_symbol]['total_spent'] += matchable_quantity * buy_price
+                pnl_per_stock[stock_symbol]['total_earned'] += matchable_quantity * sell_price
+
+                # Update the buy trade quantity in case it was partially matched
+                buy.trade_quantity -= matchable_quantity
+                if buy.trade_quantity == 0:
+                    # This buy trade is fully matched, it can be removed or marked as such
+                    buys = buys.exclude(id=buy.id)
+
+                if matched_quantity == sell_quantity:
+                    # This sell trade is fully matched
+                    break
+
+        # Update the P&L for the stock symbol after matching this sell trade
+        pnl_per_stock[stock_symbol]['pnl'] = pnl_per_stock[stock_symbol]['total_earned'] - pnl_per_stock[stock_symbol][
+            'total_spent']
 
     # Calculate overall Gross P&L
-    gross_pnl = sum([trade['pnl'] for trade in pnl_per_stock])
+    gross_pnl = sum(stock['pnl'] for stock in pnl_per_stock.values())
 
     return pnl_per_stock, gross_pnl
 
@@ -552,36 +582,41 @@ def trade(request, stock_symbol, message=None):
 def buy_stock(request):
     if request.method == "POST":
         stock_symbol = request.POST.get('stock_symbol')
-        quantity = int(request.POST.get('quantity'))
-        current_price = float(request.POST.get('current_price'))
+        try:
+            quantity = int(request.POST.get('buy_quantity'))
+            current_price = float(request.POST.get('current_price'))
 
-        stock = get_object_or_404(Stock, pk=stock_symbol)
-        user = User.objects.get(user_id=request.session.get('user_id'))
+            stock = get_object_or_404(Stock, pk=stock_symbol)
+            user = User.objects.get(user_id=request.session.get('user_id'))
 
-        total_cost = current_price * quantity
+            total_cost = current_price * quantity
 
-        if user.account_balance >= total_cost:
-            user.account_balance -= total_cost
-            user.save()
-            # Record the transaction
-            HistoryTrade.objects.create(
-                user_id=user,
-                stock_symbol=stock,
-                trade_price=current_price,
-                trade_quantity=quantity,
-                trade_type='BUY',
-            )
-            return redirect('financial_system:user_watchlist_view')
-        else:
-            message = "Insufficient balance, please deposit."
-            messages.error(request, message)
+            if user.account_balance >= total_cost:
+                user.account_balance -= total_cost
+                user.save()
+                # Record the transaction
+                HistoryTrade.objects.create(
+                    user_id=user,
+                    stock_symbol=stock,
+                    trade_price=current_price,
+                    trade_quantity=quantity,
+                    trade_type='BUY',
+                )
+                return redirect('financial_system:user_watchlist_view')
+            else:
+                message = "Insufficient balance, please deposit."
+                messages.error(request, message)
+                return redirect('financial_system:trade', stock_symbol, message)
+
+        except ValueError:
+            message = "Invalid input."
             return redirect('financial_system:trade', stock_symbol, message)
 
 
 def sell_stock(request):
     if request.method == "POST":
         stock_symbol = request.POST.get('stock_symbol')
-        quantity = int(request.POST.get('quantity'))
+        quantity = int(request.POST.get('sell_quantity'))
         current_price = float(request.POST.get('current_price'))
 
         stock = get_object_or_404(Stock, pk=stock_symbol)
