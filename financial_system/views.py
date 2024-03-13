@@ -426,10 +426,6 @@ def news_detail_view(request, news_id):
     return render(request, 'news_detail.html', {'news_item': news_item})
 
 
-from django.shortcuts import render
-from django.urls import reverse
-from .models import Stock
-
 
 def stock_list_view(request):
     # Query all stocks
@@ -566,9 +562,16 @@ def stock_current_price(request):
 def trade(request, stock_symbol, message=None):
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     user = User.objects.get(user_id=request.session.get('user_id'))
+    average_buy_price, buy_trades = HistoryTrade.get_all_buy_trades(user, stock)
+    average_sell_price, sell_trades = HistoryTrade.get_all_sell_trades(user, stock)
+
     context = {
         'stock': stock,
-        "user": user
+        'user': user,
+        'buy_trades': buy_trades,
+        'average_buy_price': average_buy_price,
+        'sell_trades': sell_trades,
+        'average_sell_price': average_sell_price,
     }
 
     if message:
@@ -616,39 +619,44 @@ def buy_stock(request):
 def sell_stock(request):
     if request.method == "POST":
         stock_symbol = request.POST.get('stock_symbol')
-        quantity = int(request.POST.get('sell_quantity'))
-        current_price = float(request.POST.get('current_price'))
+        try:
+            quantity = int(request.POST.get('sell_quantity'))
+            current_price = float(request.POST.get('current_price'))
 
-        stock = get_object_or_404(Stock, pk=stock_symbol)
-        user = User.objects.get(user_id=request.session.get('user_id'))
+            stock = get_object_or_404(Stock, pk=stock_symbol)
+            user = User.objects.get(user_id=request.session.get('user_id'))
 
-        trades = HistoryTrade.objects.filter(user_id=user.user_id, stock_symbol=stock.symbol).aggregate(
-            total_bought=Sum(
-                Case(When(trade_type='BUY', then='trade_quantity'), output_field=models.IntegerField(), default=0)),
-            total_sold=Sum(
-                Case(When(trade_type='SELL', then='trade_quantity'), output_field=models.IntegerField(), default=0))
-        )
-
-        total_owned = trades['total_bought'] - trades['total_sold']
-
-        if total_owned >= quantity:
-            total_revenue = current_price * quantity
-
-            user.account_balance += total_revenue
-            user.save()
-            HistoryTrade.objects.create(
-                user_id=request.user,
-                stock_symbol=stock,
-                trade_price=current_price,
-                trade_quantity=quantity,
-                trade_type='SELL',
-                trade_dateTime=now()
+            trades = HistoryTrade.objects.filter(user_id=user.user_id, stock_symbol=stock.symbol).aggregate(
+                total_bought=Sum(
+                    Case(When(trade_type='BUY', then='trade_quantity'), output_field=models.IntegerField(), default=0)),
+                total_sold=Sum(
+                    Case(When(trade_type='SELL', then='trade_quantity'), output_field=models.IntegerField(), default=0))
             )
 
-            return redirect('financial_system:user_watchlist_view')
-        else:
-            message = "Insufficient stock to sell."
-            messages.error(request, message)
+            total_owned = trades['total_bought'] - trades['total_sold']
+
+            if total_owned >= quantity:
+                total_revenue = current_price * quantity
+
+                user.account_balance += total_revenue
+                user.save()
+                HistoryTrade.objects.create(
+                    user_id=request.user,
+                    stock_symbol=stock,
+                    trade_price=current_price,
+                    trade_quantity=quantity,
+                    trade_type='SELL',
+                    trade_dateTime=now()
+                )
+
+                return redirect('financial_system:user_watchlist_view')
+            else:
+                message = "Insufficient stock to sell."
+                messages.error(request, message)
+                return redirect('financial_system:trade', stock_symbol, message)
+
+        except ValueError:
+            message = "Invalid input."
             return redirect('financial_system:trade', stock_symbol, message)
 
 

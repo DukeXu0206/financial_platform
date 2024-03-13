@@ -6,6 +6,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
 import json
 import yfinance as yf
+from django.db.models import Sum
+
 
 # from mptt.models import MPTTModel, TreeForeignKey
 
@@ -226,6 +228,55 @@ class HistoryTrade(models.Model):
 
     class Meta:
         db_table = 'history_trade'
+
+    @staticmethod
+    def get_all_buy_trades(user, stock=None):
+        if stock:
+            buy_trades = HistoryTrade.objects.filter(
+                user_id=user, trade_type='BUY', stock_symbol=stock
+            ).aggregate(
+                total_spent=Sum(F('trade_quantity') * F('trade_price'), output_field=FloatField()),
+                total_quantity_bought=Sum('trade_quantity')
+            )
+        else:
+            buy_trades = HistoryTrade.objects.filter(
+                user_id=user, trade_type='BUY'
+            ).aggregate(
+                total_spent=Sum(F('trade_quantity') * F('trade_price'), output_field=FloatField()),
+                total_quantity_bought=Sum('trade_quantity')
+            )
+        return buy_trades
+
+    @staticmethod
+    def get_all_sell_trades(user, stock=None):
+        if stock:
+            sell_trades = HistoryTrade.objects.filter(
+                user_id=user, trade_type='SELL', stock_symbol=stock
+            ).aggregate(
+                total_earned=Sum(F('trade_quantity') * F('trade_price'), output_field=FloatField()),
+                total_quantity_sold=Sum('trade_quantity')
+            )
+        else:
+            sell_trades = HistoryTrade.objects.filter(
+                user_id=user, trade_type='SELL'
+            ).aggregate(
+                total_earned=Sum(F('trade_quantity') * F('trade_price'), output_field=FloatField()),
+                total_quantity_sold=Sum('trade_quantity')
+            )
+        return sell_trades
+
+    @classmethod
+    def get_average_buy_price(cls, user, stock):
+        buy_trades = cls.get_all_buy_trades(user, stock)
+        average_buy_price = (buy_trades['total_spent'] / buy_trades['total_quantity_bought']) if buy_trades['total_quantity_bought'] else 0
+        return average_buy_price, buy_trades
+
+    @classmethod
+    def get_average_sell_price(cls, user, stock):
+        sell_trades = cls.get_all_sell_trades(user, stock)
+        average_sell_price = (sell_trades['total_earned'] / sell_trades['total_quantity_sold']) if sell_trades[
+            'total_quantity_sold'] else 0
+        return average_sell_price, sell_trades
 
 
 def default_provider_publish_time():
