@@ -276,11 +276,15 @@ def balance(request):
 
 def calculate_pnl(user_id):
     # Aggregate the total spent on buys and the total earned from sells
-    trades = HistoryTrade.objects.filter(user_id=user_id).values('stock_symbol')\
+    trades = HistoryTrade.objects.filter(user_id=user_id).values('stock_symbol') \
         .annotate(
-            total_spent=Sum(Case(When(trade_type='BUY', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
-            total_earned=Sum(Case(When(trade_type='SELL', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
-        )
+        total_spent=Sum(
+            Case(When(trade_type='BUY', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(),
+                 default=0)),
+        total_earned=Sum(
+            Case(When(trade_type='SELL', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(),
+                 default=0)),
+    )
 
     # Calculate P&L for each stock
     pnl_per_stock = [{**trade, 'pnl': trade['total_earned'] - trade['total_spent']} for trade in trades]
@@ -307,15 +311,15 @@ def user_watchlist_view(request, stock_symbol=None):
 
         ticker = Ticker(current_watch_stock.symbol)
 
-        historical_data_period = request.GET.get("preiod") if request.GET.get("preiod") is not None else "1mo"
+        historical_data_period = request.GET.get("period") if request.GET.get("period") is not None else "1mo"
         # Historical data for a given period
         historical_data = ticker.history(period=historical_data_period)
         historical_data = historical_data.reset_index()
 
         print(historical_data)
         historical_data['Date'] = historical_data['Date'].dt.strftime('%Y/%m/%d %H:%M:%S')
-        #KLine data 整理
-        kline_data = historical_data[['Date', 'Open','Close', 'Low','High']].values.tolist()
+        # KLine data 整理
+        kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
         print(kline_data)
 
         all_trades = HistoryTrade.objects.filter(user_id=user) \
@@ -333,7 +337,7 @@ def user_watchlist_view(request, stock_symbol=None):
 
         pnl_per_stock, gross_pnl = calculate_pnl(user_id)
 
-        print("all_trades:" + "*"*30)
+        print("all_trades:" + "*" * 30)
         print(all_trades)
         print("open_positions:" + "*" * 30)
         print(open_positions)
@@ -344,10 +348,10 @@ def user_watchlist_view(request, stock_symbol=None):
             'user': user,
             'stocks_in_watchlist': stocks_in_watchlist,
             'current_watch_stock': current_watch_stock,
-            'periods_list':current_watch_stock.validRanges.split(','),
-            'historical_data':historical_data,
+            'periods_list': current_watch_stock.validRanges.split(','),
+            'historical_data': historical_data,
             'historical_data_html': historical_data.to_html(classes='table table-bordered table-responsive-sm'),
-            'kline_data': json.dumps( kline_data ),
+            'kline_data': json.dumps(kline_data),
             'all_trades': all_trades,
             'open_positions': open_positions,
             'closed_positions': closed_positions,
@@ -397,6 +401,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import Stock
 
+
 def stock_list_view(request):
     # Query all stocks
     stocks = Stock.objects.all()
@@ -429,7 +434,6 @@ def stock_list_view(request):
     return render(request, 'stock_list.html', context)
 
 
-
 def stock_detail_view(request, stock_symbol):
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     comments = StockComment.objects.filter(stock_symbol=stock.symbol).order_by('-comment_time')
@@ -438,8 +442,8 @@ def stock_detail_view(request, stock_symbol):
 
     # Historical data for a given period
 
-
-    historical_data_period = request.GET.get("preiod") if request.GET.get("preiod") is not None else "1mo"
+    historical_data_period = request.GET.get("period") if request.GET.get("period") is not None else "1mo"
+    print("historical_data_period", historical_data_period)
     historical_data = ticker.history(period=historical_data_period)
     company_info = ticker.info
     historical_data = historical_data.reset_index()
@@ -448,7 +452,7 @@ def stock_detail_view(request, stock_symbol):
     # KLine data 整理
     kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
     print(kline_data)
-    #print(json.dumps(company_info))
+    # print(json.dumps(company_info))
     # print(ticker.recommendations)
 
     # Fetch additional data
@@ -489,7 +493,6 @@ def stock_detail_view(request, stock_symbol):
 
     add_comment_url = reverse('financial_system:add_comment', kwargs={'stock_symbol': stock.symbol})
 
-
     context = {
         'stock': stock,
         'comments': comments,
@@ -502,7 +505,8 @@ def stock_detail_view(request, stock_symbol):
         'splits': splits,
         'share_count': share_count,
         'income_statement': income_statement.to_html(classes='table table-bordered table-responsive-sm'),
-        'quarterly_income_statement': quarterly_income_statement.to_html(classes='table table-bordered table-responsive-sm'),
+        'quarterly_income_statement': quarterly_income_statement.to_html(
+            classes='table table-bordered table-responsive-sm'),
         'balance_sheet': balance_sheet.to_html(classes='table table-bordered table-responsive-sm'),
         'quarterly_balance_sheet': quarterly_balance_sheet.to_html(classes='table table-bordered table-responsive-sm'),
         'cashflow': cashflow.to_html(classes='table table-bordered table-responsive-sm'),
@@ -516,17 +520,18 @@ def stock_detail_view(request, stock_symbol):
         'upgrades_downgrades': upgrades_downgrades,
         'earnings_dates': earnings_dates,
         'news': news,
-        "kline_data":kline_data
+        "kline_data": kline_data
     }
 
     return render(request, 'stock_detail.html', context)
 
-def stock_current_price(request,):
+
+def stock_current_price(request, ):
     historical_data_period = "1mo"
     stock_symbol = request.POST.get('stock_symbol')
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     data = {
-        "get_current_price":stock.get_current_price()
+        "get_current_price": stock.get_current_price()
     }
     return JsonResponse(data)
 
