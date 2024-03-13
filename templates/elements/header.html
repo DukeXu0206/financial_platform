@@ -1,0 +1,111 @@
+{% load static %}
+<div class="header">
+    <div class="header-content">
+        <nav class="navbar navbar-expand">
+            <div class="collapse navbar-collapse justify-content-between">
+                <div class="header-left">
+                    <a href="{% url 'financial_system:user_watchlist_view' %}" class="brand-logo">
+                        <img src="{% static 'financial/images/logo-white.png' %}" alt="">
+
+                    </a>
+                </div>
+                <ul class="navbar-nav header-right">
+
+
+                    {% if current_user %}
+                        <li class="nav-item dropdown notification_dropdown">
+                            <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     width="32px" height="32px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <path d="M17,12 L18.5,12 C19.3284271,12 20,12.6715729 20,13.5 C20,14.3284271 19.3284271,15 18.5,15 L5.5,15 C4.67157288,15 4,14.3284271 4,13.5 C4,12.6715729 4.67157288,12 5.5,12 L7,12 L7.5582739,6.97553494 C7.80974924,4.71225688 9.72279394,3 12,3 C14.2772061,3 16.1902508,4.71225688 16.4417261,6.97553494 L17,12 Z"
+                                              fill="#fff"/>
+                                        <rect fill="#fff" opacity="0.3" x="10" y="16" width="4" height="4" rx="2"/>
+                                    </g>
+                                </svg>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <div id="DZ_W_Notification3" class="widget-media dlab-scroll p-3" style="min-height:100px;max-height: 300px;">
+                                    <ul class="timeline">
+                                        {% if cur_notifications %}
+                                            {% for notification in cur_notifications %}
+                                                <li>
+                                                    <div class="timeline-panel">
+
+                                                        <div class="media-body">
+                                                            <h4 class="mb-1">Title:{{ notification.title }}</h4>
+                                                            <h6 class="mb-1">Message:{{ notification.message|linebreaks }}</h6>
+                                                            <small class="d-block">Date: {{ notification.created_at|date:"Y-m-d H:i:s" }}</small>
+                                                            <small class="d-block">Status:{% if notification.read %}Read{% else %}Unread{% endif %}</small>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+                                        {% else %}
+                                            <h5>You have no notifications.</h5>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                <a class="all-notification" href="{% url 'financial_system:user_notification' %}">See all notifications <i
+                                        class="ti-arrow-end"></i></a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown header-profile2">
+                                <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    <div class="header-info2 d-flex align-items-center">
+                                        <div class="d-flex align-items-center sidebar-info">
+                                            <div>
+                                                <h4 class="text-white mb-1">{{ current_user.user_name }}</h4>
+                                                <span class="d-block text-end">{{ current_user.user_email }}</span>
+                                            </div>
+                                        </div>
+                                        <img src="{% static 'financial/images/user.jpg' %}" alt="">
+                                    </div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end" style="">
+                                    <a href="{% url 'financial_system:user_profile' %}" class="dropdown-item ai-icon ">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             xmlns:xlink="http://www.w3.org/1999/xlink"
+                                             width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
+                                             class="svg-main-icon">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <polygon points="0 0 24 0 24 24 0 24"/>
+                                                <path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z"
+                                                      fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+                                                <path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z"
+                                                      fill="var(--primary)" fill-rule="nonzero"/>
+                                            </g>
+                                        </svg>
+                                        <span class="ms-2">Profile </span>
+                                    </a>
+                                    <a href="{% url 'financial_system:logout' %}" class="dropdown-item ai-icon">
+                                        <svg class="logout" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                             viewBox="0 0 24 24" fill="none" stroke="#fd5353" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                            <polyline points="16 17 21 12 16 7"></polyline>
+                                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                                        </svg>
+                                        <span class="ms-2 text-danger">Logout </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    {% else %}
+                        <!-- Show login and registration buttons -->
+
+                        <a class="btn tp-btn btn-secondary" href="{% url 'financial_system:login' %}">Login</a>
+                        <a class="btn tp-btn btn-danger" href="{% url 'financial_system:sign_up' %}">Register</a>
+                    {% endif %}
+
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="page-titles" style="padding:0px;">
+
+    </div>
+</div>

@@ -1,0 +1,314 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_css %}
+{% endblock %}
+
+{% block content %}
+
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    <div class="content-body">
+        <!-- row -->
+        <div class="container-fluid">
+            <!-- Row -->
+            <div class="row">
+
+
+                {% include 'elements/nav-tool.html' %}
+
+
+                <!-- notice-->
+                <div class="row">
+                    <div class="col-xl-4 text-center">
+                        <div class="wallet-card">
+                            <div class="wallet-wrapper" style="padding:3rem;">
+                                <div class="mb-3">
+                                    <h2 class="fs-18 font-w400 mb-0 text-white">My Balance</h2><br>
+                                    <h1 class="fs-38 font-w600 text-white">{{ user.account_balance }}</h1>
+                                </div>
+                                <div class="text-end mb-2">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                                             height="24px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
+                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                <rect x="0" y="0" width="24" height="24"/>
+                                                <rect fill="#ffff" opacity="0.3" x="12" y="4" width="3" height="13" rx="1.5"/>
+                                                <rect fill="#ffff" opacity="0.3" x="7" y="9" width="3" height="8" rx="1.5"/>
+                                                <path d="M5,19 L20,19 C20.5522847,19 21,19.4477153 21,20 C21,20.5522847 20.5522847,21 20,21 L4,21 C3.44771525,21 3,20.5522847 3,20 L3,4 C3,3.44771525 3.44771525,3 4,3 C4.55228475,3 5,3.44771525 5,4 L5,19 Z"
+                                                      fill="#ffff" fill-rule="nonzero"/>
+                                                <rect fill="#ffff" opacity="0.3" x="17" y="11" width="3" height="6" rx="1.5"/>
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <span class="fs-14 d-block">  </span>
+                                </div>
+                            </div>
+                            <div class="change-btn-1">
+                                <a href="javascript:void(0);" class="btn btn-lg" data-bs-toggle="modal"
+                                   data-bs-target="#exampleModal1">
+                                    <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
+                                         xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px"
+                                         viewBox="0 0 24 24" version="1.1">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"/>
+                                            <path d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z"
+                                                  fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+                                            <rect fill="#000000" opacity="0.3"
+                                                  transform="translate(12.000000, 8.000000) rotate(-180.000000) translate(-12.000000, -8.000000) "
+                                                  x="11" y="1" width="2" height="14" rx="1"/>
+                                            <path d="M7.70710678,15.7071068 C7.31658249,16.0976311 6.68341751,16.0976311 6.29289322,15.7071068 C5.90236893,15.3165825 5.90236893,14.6834175 6.29289322,14.2928932 L11.2928932,9.29289322 C11.6689749,8.91681153 12.2736364,8.90091039 12.6689647,9.25670585 L17.6689647,13.7567059 C18.0794748,14.1261649 18.1127532,14.7584547 17.7432941,15.1689647 C17.3738351,15.5794748 16.7415453,15.6127532 16.3310353,15.2432941 L12.0362375,11.3779761 L7.70710678,15.7071068 Z"
+                                                  fill="#000000" fill-rule="nonzero"
+                                                  transform="translate(12.000004, 12.499999) rotate(-180.000000) translate(-12.000004, -12.499999) "/>
+                                        </g>
+                                    </svg>
+                                    Deposit</a>
+                                <a href="javascript:void(0);" class="btn  btn-lg" data-bs-toggle="modal"
+                                   data-bs-target="#exampleModal2">
+                                    <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
+                                         xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px"
+                                         viewBox="0 0 24 24" version="1.1">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"/>
+                                            <path d="M2,13 C2,12.5 2.5,12 3,12 C3.5,12 4,12.5 4,13 C4,13.3333333 4,15 4,18 C4,19.1045695 4.8954305,20 6,20 L18,20 C19.1045695,20 20,19.1045695 20,18 L20,13 C20,12.4477153 20.4477153,12 21,12 C21.5522847,12 22,12.4477153 22,13 L22,18 C22,20.209139 20.209139,22 18,22 L6,22 C3.790861,22 2,20.209139 2,18 C2,15 2,13.3333333 2,13 Z"
+                                                  fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+                                            <rect fill="#000000" opacity="0.3" x="11" y="2" width="2" height="14" rx="1"/>
+                                            <path d="M12.0362375,3.37797611 L7.70710678,7.70710678 C7.31658249,8.09763107 6.68341751,8.09763107 6.29289322,7.70710678 C5.90236893,7.31658249 5.90236893,6.68341751 6.29289322,6.29289322 L11.2928932,1.29289322 C11.6689749,0.916811528 12.2736364,0.900910387 12.6689647,1.25670585 L17.6689647,5.75670585 C18.0794748,6.12616487 18.1127532,6.75845471 17.7432941,7.16896473 C17.3738351,7.57947475 16.7415453,7.61275317 16.3310353,7.24329415 L12.0362375,3.37797611 Z"
+                                                  fill="#000000" fill-rule="nonzero"/>
+                                        </g>
+                                    </svg>
+                                    Withdraw</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- notice end-->
+
+                <div class="col-xl-12">
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
+                            <div class="row">
+
+
+                                <div class="col-xl-6 col-sm-12">
+                                    <div class="card quick-trade">
+                                        <div class="card-header pb-0 border-0 flex-wrap">
+                                            <div>
+                                                <h4 class="card-title">{{ stock.symbol }}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pb-0">
+                                            <div class="basic-form">
+                                                <form action="{% url 'financial_system:buy_stock' %}" method="post"
+                                                      class="form-wrapper trade-form">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="stock_symbol" value="{{ stock.symbol }}">
+                                                    <div class="input-group mb-3 ">
+                                                        <span class="input-group-text">PRICE</span>
+                                                        <input class="form-control form-control text-end current_price_text"
+                                                               name="current_price"
+                                                               readonly="readonly" type="text"
+                                                               value="{{ stock.get_current_price }}">
+                                                    </div>
+                                                    <div class="input-group mb-3 ">
+                                                        <span class="input-group-text">Quantity</span>
+                                                        <input name="buy_quantity"
+                                                               class="form-control form-control text-end" type="number"
+                                                               placeholder="0" min="1" step="1">
+                                                    </div>
+
+                                                    <div class="input-group mb-3 ">
+                                                        <button type="submit"
+                                                                class="btn d-flex  btn-success justify-content-between align-items-center w-100">
+                                                            BUY
+                                                            <svg width="16" height="16" viewBox="0 0 21 21"
+                                                                 fill="none"
+                                                                 xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M16.9638 11.5104L16.9721 14.9391L3.78954 1.7565C3.22815 1.19511 2.31799 1.19511 1.75661 1.7565C1.19522 2.31789 1.19522 3.22805 1.75661 3.78943L14.9392 16.972L11.5105 16.9637L11.5105 16.9637C10.7166 16.9619 10.0715 17.6039 10.0696 18.3978C10.0677 19.1919 10.7099 19.8369 11.5036 19.8388L11.5049 19.3388L11.5036 19.8388L18.3976 19.8554L18.4146 19.8555L18.4159 19.8555C18.418 19.8555 18.42 19.8555 18.422 19.8555C19.2131 19.8533 19.8528 19.2114 19.8555 18.4231C19.8556 18.4196 19.8556 18.4158 19.8556 18.4117L19.8389 11.5035L19.8389 11.5035C19.8369 10.7097 19.1919 10.0676 18.3979 10.0695C17.604 10.0713 16.9619 10.7164 16.9638 11.5103L16.9638 11.5104Z"
+                                                                      fill="white" stroke="white"></path>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="col-xl-6 col-sm-12">
+                                    <div class="card quick-trade">
+                                        <div class="card-header pb-0 border-0 flex-wrap">
+                                            <div>
+                                                <h4 class="card-title">{{ stock.symbol }}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pb-0">
+                                            <div class="basic-form">
+                                                <form action="{% url 'financial_system:sell_stock' %}" method="post"
+                                                      class="form-wrapper trade-form">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="stock_symbol" value="{{ stock.symbol }}">
+                                                    <!-- Same assumption as above -->
+
+                                                    <div class="input-group mb-3 ">
+                                                        <span class="input-group-text">PRICE</span>
+                                                        <input class="form-control form-control text-end current_price_text"
+                                                               name="current_price"
+                                                               readonly="readonly" type="text"
+                                                               value="{{ stock.get_current_price }}">
+                                                    </div>
+                                                    <div class="input-group mb-3 ">
+                                                        <span class="input-group-text">Quantity</span>
+                                                        <input name="sell_quantity"
+                                                               class="form-control form-control text-end" type="number"
+                                                               placeholder="0" min="1" step="1">
+                                                    </div>
+
+                                                    <div class="input-group mb-3 ">
+                                                        <button type="submit"
+                                                           class="btn d-flex  btn-danger align-items-center justify-content-between w-100">
+                                                            SELL
+                                                            <svg class="scale3" width="16" height="16"
+                                                                 viewBox="0 0 29 29"
+                                                                 fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M5.35182 13.4965L5.35182 13.4965L5.33512 6.58823C5.33508 6.5844 5.3351 6.58084 5.33514 6.57759M5.35182 13.4965L5.83514 6.58306L5.33514 6.58221C5.33517 6.56908 5.33572 6.55882 5.33597 6.5545L5.33606 6.55298C5.33585 6.55628 5.33533 6.56514 5.33516 6.57648C5.33515 6.57684 5.33514 6.57721 5.33514 6.57759M5.35182 13.4965C5.35375 14.2903 5.99878 14.9324 6.79278 14.9305C7.58669 14.9287 8.22874 14.2836 8.22686 13.4897L8.22686 13.4896L8.21853 10.0609M5.35182 13.4965L8.21853 10.0609M5.33514 6.57759C5.33752 5.789 5.97736 5.14667 6.76872 5.14454C6.77041 5.14452 6.77217 5.14451 6.77397 5.14451L6.77603 5.1445L6.79319 5.14456L13.687 5.16121L13.6858 5.66121L13.687 5.16121C14.4807 5.16314 15.123 5.80809 15.1211 6.6022C15.1192 7.3961 14.4741 8.03814 13.6802 8.03626L13.6802 8.03626L10.2515 8.02798L23.4341 21.2106C23.9955 21.772 23.9955 22.6821 23.4341 23.2435C22.8727 23.8049 21.9625 23.8049 21.4011 23.2435L8.21853 10.0609M5.33514 6.57759C5.33513 6.57959 5.33514 6.58159 5.33514 6.5836L8.21853 10.0609M6.77407 5.14454C6.77472 5.14454 6.77537 5.14454 6.77603 5.14454L6.77407 5.14454Z"
+                                                                      fill="white" stroke="white"></path>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+     <!-- modal-box-strat -->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="post" action="{% url 'financial_system:withdraw_funds' %}">
+                    {% csrf_token %}
+                    <div class="modal-header ">
+                        <h5 class="modal-title">Withdraw</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control mb-3" id="amount" name="amount"
+                               placeholder="Amount">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="post" action="{% url 'financial_system:deposit_funds' %}">
+                    {% csrf_token %}
+                    <div class="modal-header ">
+                        <h5 class="modal-title">Deposit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control mb-3" id="amount" name="amount"
+                               placeholder="Amount">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--**********************************
+        Content body end
+    ***********************************-->
+
+{% endblock %}
+
+{% block additional_js %}
+    <script>
+        //定时请求数据
+        function get_current_price() {
+
+            var stockSymbol = "{{ stock.symbol }}";
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+            $.ajax({
+                url: '/stock_current_price/',
+                method: 'POST',
+                type: "JSON",
+                data: {'stock_symbol': stockSymbol, 'csrfmiddlewaretoken': csrfToken},
+                success: function (response) {
+                    console.log(response);
+                    // 在这里处理返回的 JSON 数据
+                    $(".current_price_number").html(response['get_current_price'])
+                    $(".current_price_text").val(response['get_current_price'])
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        }
+
+        $(function () {
+
+            setInterval(get_current_price, 3000);
+
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span,#reportrange1 span,#reportrange2 span,#reportrange3 span,#reportrange4 span,#reportrange5 span').html(start.format('D MMMM YYYY') + ' &nbsp - &nbsp ' + end.format('D MMMM YYYY'));
+            }
+
+            $('#reportrange , #reportrange1,#reportrange2,#reportrange3,#reportrange4,#reportrange5').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+
+        });
+
+
+    </script>
+{% endblock %}

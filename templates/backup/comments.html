@@ -1,0 +1,22 @@
+<h3>Comments for {{ stock.stock_name }}</h3>
+
+<!-- Display Comments -->
+{% for comment in comments %}
+    <div>
+        <h4>{{ comment.title }}</h4>
+        <p>{{ comment.content }}</p>
+        <small>By: {{ comment.user_id.username }} at {{ comment.comment_time }}</small>
+    </div>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
+
+<!-- Add Comment Form -->
+<form action="{% url 'financial_system:add_comment' stock_id=stock.pk %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="title" placeholder="Title" required>
+    <textarea name="content" placeholder="Your comment" required></textarea>
+    <button type="submit">Add Comment</button>
+</form>
+
+<!-- Add Reply Form -->

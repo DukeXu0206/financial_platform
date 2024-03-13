@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Watchlist{% endblock %}
+
+{% block content %}
+<h1>{{ user.user_name }}'s Watchlist</h1>
+
+{% if stocks_in_watchlist %}
+    <h2>Stocks in Watchlist</h2>
+    <ul>
+        {% for stock in stocks_in_watchlist %}
+            <li>
+                <a href="{% url 'stock_detail' stock_id=stock.stock_id %}">{{ stock.stock_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no stocks in your watchlist.</p>
+{% endif %}
+
+<h2>All Trades</h2>
+{% if all_trades %}
+    <ul>
+        {% for trade in all_trades %}
+            <li>{{ trade.stock_name }} - Bought: {{ trade.total_bought }} - Sold: {{ trade.total_sold }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No trade history available.</p>
+{% endif %}
+
+<h2>Open Positions</h2>
+{% if open_positions %}
+    <ul>
+        {% for position in open_positions %}
+            <li>{{ position.stock_name }} - Bought: {{ position.total_bought }} - Sold: {{ position.total_sold }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No open positions.</p>
+{% endif %}
+
+<h2>Closed Positions</h2>
+{% if closed_positions %}
+    <ul>
+        {% for position in closed_positions %}
+            <li>{{ position.stock_name }} - Bought: {{ position.total_bought }} - Sold: {{ position.total_sold }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No closed positions.</p>
+{% endif %}
+
+<h2>Profit and Loss</h2>
+
+<h3>By Stock</h3>
+<ul>
+    {% for trade in pnl_per_stock %}
+    <li>{{ trade.stock_id }}: {{ trade.pnl }}</li>
+    {% endfor %}
+</ul>
+
+<h3>Overall Gross P&L: {{ gross_pnl }}</h3>
+
+{% endblock %}

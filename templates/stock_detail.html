@@ -1,0 +1,1015 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_css %}
+{% endblock %}
+
+{% block content %}
+
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    <div class="content-body">
+        <!-- row -->
+        <div class="container-fluid">
+
+            {#            <div class="row">#}
+            {#                <div class="previews-info-list">#}
+            {#                    <div class="ms-2">#}
+            {#                        <h1 class="mb-0">{{ stock.stock_name }}</h1>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {##}
+            {#            </div>#}
+            <!-- Row -->
+            <div class="row">
+
+                {% include 'elements/nav-tool.html' %}
+
+                <div class="col-xl-12">
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
+                            <div class="row">
+                                <!-- 图表 -->
+                                <div class="col-xl-12">
+                                    <div class="card coin-content">
+                                        <div class="card-header border-0 flex-wrap pb-0">
+                                            <div class="mb-xl-0 mb-2">
+                                                <h2 class="mb-0">{{ stock.symbol }}</h2>
+                                            </div>
+
+                                            <div class="mb-xl-0 mb-2">
+                                            {% if is_in_watchlist %}
+                                                <a class="watchlist-btn" onclick="removeFromWatchlist('{{ stock.symbol }}')">
+                                                    <i class="fa-solid fa-star"></i>
+                                                </a>
+                                            {% else %}
+                                                <a class="watchlist-btn" onclick="addToWatchlist('{{ stock.symbol }}')">
+                                                    <i class="fa-regular fa-star"></i>
+                                                </a>
+                                            {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                                <div class="d-flex align-items-end justify-content-between flex-wrap">
+                                                    <div class="price-content">
+                                                        <span class="d-block mb-2">Current Price</span>
+                                                        <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
+                                                            ${{ stock.get_current_price | floatformat:4 }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        {% if stock.change_extent > 0 %}
+                                                            <span class="fs-14 d-block mb-2">Change</span>
+                                                            <h4 class="font-w600 text-success mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
+                                                                    class="fa-solid fa-caret-up ms-1 text-success"></i>
+                                                            </h4>
+                                                        {% else %}
+                                                            <span class="fs-14 d-block mb-2">Change</span>
+                                                            <h4 class="font-w600 text-danger mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
+                                                                    class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                                                            </h4>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Open Price</span>
+                                                        <h4 class="font-w600 mb-0 text-danger">{{ stock.get_open_price | floatformat:2 }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Company</span>
+                                                        <h4 class="font-w600 mb-0 text-primary">{{ stock.get_company_name }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Exchange Name</span>
+                                                        <h4 class="font-w600 mb-0">{{ stock.exchangeName }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Regular Market Price</span>
+                                                        <h4 class="font-w600 mb-0 text-warning">
+                                                            ${{ stock.regularMarketPrice }}</h4>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div style="width: 100%; height: 500px;" id="stockhChart"></div>
+
+                                            <div class="col-xs-12">
+                                                <ul class="nav nav-pills">
+                                                    {% for period in periods_list %}
+                                                        <li class="nav-item">
+                                                            <a href="?period={{ period }}"
+                                                                    {% if request.GET.period == period %}
+                                                               class="active nav-link" {% else %}
+                                                               class="nav-link" {% endif %}>{{ period }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- 交易表格 -->
+                                <div class="col-xl-6 col-sm-6">
+                                    <div class="card">
+                                        <div class="card-header flex-wrap border-0">
+                                            <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link active" id="pills-crypto-tab"
+                                                            data-bs-toggle="pill"
+                                                            data-bs-target="#pills-crypto" type="button" role="tab"
+                                                            aria-controls="pills-crypto" aria-selected="true">
+                                                        Company
+
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link" id="pills-spot-tab" data-bs-toggle="pill"
+                                                            data-bs-target="#pills-spot" type="button" role="tab"
+                                                            aria-controls="pills-spot" aria-selected="false">
+                                                        News
+
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link" id="pills-future-tab" data-bs-toggle="pill"
+                                                            data-bs-target="#pills-future" type="button" role="tab"
+                                                            aria-controls="pills-future" aria-selected="false">
+                                                        Income
+
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link me-0" id="pills-listing-tab"
+                                                            data-bs-toggle="pill"
+                                                            data-bs-target="#pills-listing-2" type="button" role="tab"
+                                                            aria-controls="pills-listing-2" aria-selected="false">
+                                                        Balance
+
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link me-0" id="pills-listing-tab"
+                                                            data-bs-toggle="pill"
+                                                            data-bs-target="#pills-listing-3" type="button" role="tab"
+                                                            aria-controls="pills-listing-3" aria-selected="false">
+                                                        Major Holders
+
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-body pt-0">
+                                            <div class="tab-content" id="pills-tabContent">
+                                                <div class="tab-pane fade show active" id="pills-crypto" role="tabpanel"
+                                                     aria-labelledby="pills-crypto-tab">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+
+                                                            <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">address</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.address1 }}</td>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">city</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.city }}</td>
+
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">country</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.country }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">website</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td><a class="btn tp-btn-light btn-secondary"
+                                                                       target="_blank"
+                                                                       href="{{ company_info.website }}">{{ company_info.website }}</a>
+                                                                </td>
+
+                                                            </tr>
+                                                             <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">open</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.open }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">dayLow</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.dayLow }}</td>
+
+
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">dayHigh</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.dayHigh }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">trailingPE</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.trailingPE }}</td>
+
+
+                                                            </tr>
+
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">targetHighPrice</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.targetHighPrice }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">totalCash</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.totalCash }}</td>
+
+
+                                                            </tr>
+
+
+                                                             <tr>
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">earningsGrowth</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.earningsGrowth }}</td>
+
+                                                                <td>
+                                                                    <div class="ms-3">
+                                                                        <h5 class="mb-0"><a
+                                                                                href="#">revenueGrowth</a></h5>
+                                                                    </div>
+                                                                </td>
+                                                                <td>{{ company_info.revenueGrowth }}</td>
+
+
+                                                            </tr>
+
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="pills-spot" role="tabpanel"
+                                                     aria-labelledby="pills-spot-tab">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+
+                                                            <tbody>
+                                                            {% for new in news %}
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="ms-3">
+                                                                            <h5 class="mb-0"><a class="link-primary" target="_blank"
+                                                                                                href="{{ new.link }}">{{ new.title }}</a>
+                                                                            </h5>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>{{ new.providerPublishTime }}</td>
+
+                                                                </tr>
+                                                            {% endfor %}
+
+
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="pills-future" role="tabpanel"
+                                                     aria-labelledby="pills-future-tab">
+                                                    <div class="table-responsive">
+                                                        {{ income_statement|safe }}
+
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="pills-listing" role="tabpanel"
+                                                     aria-labelledby="pills-listing-tab">
+                                                    <div class="table-responsive">
+                                                        {{ quarterly_income_statement|safe }}
+
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="pills-listing-2" role="tabpanel"
+                                                     aria-labelledby="pills-listing-tab">
+                                                    <div class="table-responsive">
+                                                        {{ balance_sheet|safe }}
+
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="pills-listing-3" role="tabpanel"
+                                                     aria-labelledby="pills-listing-tab">
+                                                    <div class="table-responsive">
+                                                        {{ major_holders|safe }}
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 col-sm-6">
+                                    <div class="card">
+                                        <div class="card-header flex-wrap border-0">
+                                            <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link " id="pills-crypto-tab"
+                                                            data-bs-toggle="pill"
+                                                            data-bs-target="#pills-crypto-1" type="button" role="tab"
+                                                            aria-controls="pills-crypto-1" aria-selected="true">Cashflow
+
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link " id="pills-crypto-tab"
+                                                            data-bs-toggle="pill"
+                                                            data-bs-target="#pills-crypto-2" type="button" role="tab"
+                                                            aria-controls="pills-crypto-2" aria-selected="true">
+                                                        Quarterly Cashflow
+
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link active" id="pills-crypto-tab"
+                                                            data-bs-toggle="pill"
+                                                            data-bs-target="#pills-crypto-3" type="button" role="tab"
+                                                            aria-controls="pills-crypto-3" aria-selected="true">
+                                                        Recommendations
+
+                                                    </button>
+                                                </li>
+                                                <li class="nav-item my-1" role="presentation">
+                                                    <button class="nav-link " id="pills-crypto-tab"
+                                                            data-bs-toggle="pill"
+                                                            data-bs-target="#pills-crypto-4" type="button" role="tab"
+                                                            aria-controls="pills-crypto-4" aria-selected="true">
+                                                        Recommendations Summary
+
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-body pt-0">
+                                            <div class="tab-content" id="pills-tabContent">
+                                                <div class="tab-pane fade show " id="pills-crypto-1"
+                                                     role="tabpanel"
+                                                     aria-labelledby="pills-crypto-tab">
+                                                    <div class="table-responsive">
+                                                        {{ cashflow|safe }}
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade show " id="pills-crypto-2" role="tabpanel"
+                                                     aria-labelledby="pills-crypto-tab">
+                                                    <div class="table-responsive">
+                                                        {{ quarterly_cashflow|safe }}
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade show active" id="pills-crypto-3"
+                                                     role="tabpanel"
+                                                     aria-labelledby="pills-crypto-tab">
+                                                    <div class="table-responsive">
+                                                        {{ recommendations|safe }}
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade show " id="pills-crypto-4" role="tabpanel"
+                                                     aria-labelledby="pills-crypto-tab">
+                                                    <div class="table-responsive">
+                                                        {{ recommendations_summary|safe }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                {% if current_user %}
+                    <div class="col-xl-12">
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
+                                <div class="row">
+
+
+                                    <div class="col-xl-6 col-sm-12">
+                                        <div class="card quick-trade">
+                                            <div class="card-header pb-0 border-0 flex-wrap">
+                                                <div>
+                                                    <h4 class="card-title">{{ stock.symbol }}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="card-body pb-0">
+                                                <div class="basic-form">
+                                                    <form action="{% url 'financial_system:buy_stock' %}" method="post"
+                                                          class="form-wrapper trade-form">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="stock_symbol"
+                                                               value="{{ stock.symbol }}">
+                                                        <div class="input-group mb-3 ">
+                                                            <span class="input-group-text">PRICE</span>
+                                                            <input class="form-control form-control text-end current_price_text"
+                                                                   readonly="readonly" type="text"
+                                                                   name="current_price"
+                                                                   value="{{ stock.get_current_price }}"
+                                                                   placeholder="0">
+                                                        </div>
+                                                        <div class="input-group mb-3 ">
+                                                            <span class="input-group-text">Quantity</span>
+                                                            <input name="buy_quantity"
+                                                                   class="form-control form-control text-end"
+                                                                   type="number"
+                                                                   placeholder="0" min="1" step="1">
+                                                        </div>
+
+                                                        <div class="input-group mb-3">
+                                                            <button type="submit"
+                                                                    class="btn d-flex  btn-success justify-content-between align-items-center w-100">
+                                                                BUY
+                                                                <svg width="16" height="16" viewBox="0 0 21 21"
+                                                                     fill="none"
+                                                                     xmlns="http://www.w3.org/2000/svg">
+                                                                    <path d="M16.9638 11.5104L16.9721 14.9391L3.78954 1.7565C3.22815 1.19511 2.31799 1.19511 1.75661 1.7565C1.19522 2.31789 1.19522 3.22805 1.75661 3.78943L14.9392 16.972L11.5105 16.9637L11.5105 16.9637C10.7166 16.9619 10.0715 17.6039 10.0696 18.3978C10.0677 19.1919 10.7099 19.8369 11.5036 19.8388L11.5049 19.3388L11.5036 19.8388L18.3976 19.8554L18.4146 19.8555L18.4159 19.8555C18.418 19.8555 18.42 19.8555 18.422 19.8555C19.2131 19.8533 19.8528 19.2114 19.8555 18.4231C19.8556 18.4196 19.8556 18.4158 19.8556 18.4117L19.8389 11.5035L19.8389 11.5035C19.8369 10.7097 19.1919 10.0676 18.3979 10.0695C17.604 10.0713 16.9619 10.7164 16.9638 11.5103L16.9638 11.5104Z"
+                                                                          fill="white" stroke="white"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-xl-6 col-sm-12">
+                                        <div class="card quick-trade">
+                                            <div class="card-header pb-0 border-0 flex-wrap">
+                                                <div>
+                                                    <h4 class="card-title">{{ stock.symbol }}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="card-body pb-0">
+                                                <div class="basic-form">
+                                                    <form action="{% url 'financial_system:sell_stock' %}" method="post"
+                                                          class="form-wrapper trade-form">
+                                                        {% csrf_token %}
+                                                        <input type="hidden"
+                                                               name="stock_symbol"
+                                                               value="{{ stock.symbol }}">
+                                                        <!-- Same assumption as above -->
+
+                                                        <div class="input-group mb-3 ">
+                                                            <span class="input-group-text">PRICE</span>
+                                                            <input class="form-control form-control text-end current_price_text"
+                                                                   readonly="readonly" type="text"
+                                                                   name="current_price"
+                                                                   value="{{ stock.get_current_price }}"
+                                                                   placeholder="0">
+                                                        </div>
+                                                        <div class="input-group mb-3 ">
+                                                            <span class="input-group-text">Quantity</span>
+                                                            <input name="sell_quantity"
+                                                                   class="form-control form-control text-end"
+                                                                   type="number"
+                                                                   placeholder="0" min="1" step="1">
+                                                        </div>
+
+                                                        <div class="input-group mb-3 ">
+                                                             <button type="submit"
+                                                               class="btn d-flex  btn-danger align-items-center justify-content-between w-100">
+                                                                SELL
+                                                                <svg class="scale3" width="16" height="16"
+                                                                     viewBox="0 0 29 29"
+                                                                     fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path d="M5.35182 13.4965L5.35182 13.4965L5.33512 6.58823C5.33508 6.5844 5.3351 6.58084 5.33514 6.57759M5.35182 13.4965L5.83514 6.58306L5.33514 6.58221C5.33517 6.56908 5.33572 6.55882 5.33597 6.5545L5.33606 6.55298C5.33585 6.55628 5.33533 6.56514 5.33516 6.57648C5.33515 6.57684 5.33514 6.57721 5.33514 6.57759M5.35182 13.4965C5.35375 14.2903 5.99878 14.9324 6.79278 14.9305C7.58669 14.9287 8.22874 14.2836 8.22686 13.4897L8.22686 13.4896L8.21853 10.0609M5.35182 13.4965L8.21853 10.0609M5.33514 6.57759C5.33752 5.789 5.97736 5.14667 6.76872 5.14454C6.77041 5.14452 6.77217 5.14451 6.77397 5.14451L6.77603 5.1445L6.79319 5.14456L13.687 5.16121L13.6858 5.66121L13.687 5.16121C14.4807 5.16314 15.123 5.80809 15.1211 6.6022C15.1192 7.3961 14.4741 8.03814 13.6802 8.03626L13.6802 8.03626L10.2515 8.02798L23.4341 21.2106C23.9955 21.772 23.9955 22.6821 23.4341 23.2435C22.8727 23.8049 21.9625 23.8049 21.4011 23.2435L8.21853 10.0609M5.33514 6.57759C5.33513 6.57959 5.33514 6.58159 5.33514 6.5836L8.21853 10.0609M6.77407 5.14454C6.77472 5.14454 6.77537 5.14454 6.77603 5.14454L6.77407 5.14454Z"
+                                                                          fill="white" stroke="white"></path>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- 评论区-->
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="profile-news">
+                                <h5 class="text-primary d-inline">Latest Comments</h5>
+                                {% for comment in comments %}
+                                    <div class="media pt-3 pb-3">
+                                        <div class="media-body">
+                                            <h5 class="m-b-5"><a href="#"
+                                                                 class="text-dark">{{ comment.title }}</a>
+                                            </h5>
+                                            <p class="mb-0">{{ comment.content }}</p>
+                                            <small>By {{ comment.user_id.user_name }}
+                                                at {{ comment.comment_time }}</small>
+                                        </div>
+                                        <div class="media-action">
+                                            <button type="button" comment_id="{{ comment.comment_id }}"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#exampleModal1"
+                                                    class="reply-btn btn tp-btn-light btn-secondary">Reply
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <h4>No comments yet.</h4>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 评论区 end-->
+                <!-- 发布评论-->
+                {% if current_user %}
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="profile-news">
+                                    <div class="comment-respond" id="respond">
+                                        <h4 class="comment-reply-title text-primary mb-3" id="reply-title">Leave a
+                                            Comment </h4>
+                                        <form class="comment-form"
+                                              action="{{ add_comment_url }}"
+                                              method="post">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="mb-3">
+                                                        <label for="title"
+                                                               class="text-dark font-w600 form-label required">Title</label>
+                                                        <input type="text" class="form-control" value=""
+                                                               name="title"
+                                                               placeholder="" id="title" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12">
+                                                    <div class="mb-3">
+                                                        <label for="content"
+                                                               class="text-dark font-w600 form-label">Comment</label>
+                                                        <textarea rows="5" class="form-control" name="content"
+                                                                  placeholder="Comment" id="content"
+                                                                  required></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="mb-3">
+                                                        <input type="submit" value="Post Comment"
+                                                               class="submit btn btn-primary" id="submit" name="submit">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- 回复 -->
+                <div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <form method="post" action="{% url 'financial_system:add_reply' %}">
+                                {% csrf_token %}
+                                <div class="modal-header ">
+                                    <h5 class="modal-title">Reply</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+
+                                <input type="hidden" id="comment_id_input" class="form-control mb-3" name="comment_id"
+                                       value="">
+
+                                <div class="modal-body">
+
+                                    <label class="form-label">Content</label>
+                                    <input type="text" class="form-control mb-3" id="content" name="content"
+                                           placeholder="content">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                {% csrf_token %}
+
+            </div>
+        </div>
+    </div>
+
+    <!--**********************************
+        Content body end
+    ***********************************-->
+
+{% endblock %}
+
+{% block additional_js %}
+     <style>
+
+    @keyframes blink {
+        0% { background-color: transparent; }
+        50% { background-color: rgba(204, 30, 30, 0.5); }
+        100% { background-color: transparent; }
+    }
+
+    .blink-effect {
+        animation: blink 1s infinite; /* 使用1秒的动画，并持续无限循环 */
+    }
+    </style>
+    <script>
+        // CSRF token setup for AJAX requests
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        function addToWatchlist(stockSymbol) {
+            $.ajax({
+                type: "POST",
+                url: `/add_to_watchlist/${stockSymbol}/`,
+                data: {
+                    csrfmiddlewaretoken: getCSRFToken(),
+                    'stock_symbol': stockSymbol
+                },
+                success: function(response) {
+                    // Update the icon to filled star
+                    // Assuming you have a way to select the specific star icon for this stock
+                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-regular').addClass('fa-solid');
+                    // Optionally, show a message to the user
+                    alert(`${stockSymbol} added to watchlist.`);
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('Error adding to watchlist.');
+                }
+            });
+        }
+
+        function removeFromWatchlist(stockSymbol) {
+            $.ajax({
+                type: "POST",
+                url: `/remove_from_watchlist/${stockSymbol}/`,
+                data: {
+                    csrfmiddlewaretoken: getCSRFToken(),
+                    'stock_symbol': stockSymbol
+                },
+                success: function(response) {
+                    // Update the icon to unfilled star
+                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-solid').addClass('fa-regular');
+                    // Optionally, show a message to the user
+                    alert(`${stockSymbol} removed from watchlist.`);
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('Error removing from watchlist.');
+                }
+            });
+        }
+
+
+        //draw k line
+        function render_stock_kline() {
+            var myChart = echarts.init(document.getElementById('stockhChart'));
+
+            const upColor = '#30d94c';
+            const upBorderColor = '#30d94c';
+            const downColor = '#ff4238';
+            const downBorderColor = '#ff4238';
+            // Each item: open，close，lowest，highest
+
+            var testData =
+            {{ kline_data|safe }}
+
+            const data0 = splitData(testData);
+
+            function splitData(rawData) {
+                const categoryData = [];
+                const values = [];
+                for (var i = 0; i < rawData.length; i++) {
+                    categoryData.push(rawData[i].splice(0, 1)[0]);
+                    values.push(rawData[i]);
+                }
+                return {
+                    categoryData: categoryData,
+                    values: values
+                };
+            }
+
+            function calculateMA(dayCount) {
+                var result = [];
+                for (var i = 0, len = data0.values.length; i < len; i++) {
+                    if (i < dayCount) {
+                        result.push('-');
+                        continue;
+                    }
+                    var sum = 0;
+                    for (var j = 0; j < dayCount; j++) {
+                        sum += +data0.values[i - j][1];
+                    }
+                    result.push(sum / dayCount);
+                }
+                return result;
+            }
+
+            var option = {
+                title: {
+                    text: '{{ current_watch_stock.symbol }}',
+                    left: 0
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    }
+                },
+                legend: {
+                    data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
+                },
+                grid: {
+                    left: '10%',
+                    right: '10%',
+                    bottom: '15%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: data0.categoryData,
+                    boundaryGap: false,
+                    axisLine: {onZero: false},
+                    splitLine: {show: false},
+                    min: 'dataMin',
+                    max: 'dataMax'
+                },
+                yAxis: {
+                    scale: true,
+                    splitArea: {
+                        show: true
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    },
+                    {
+                        show: true,
+                        type: 'slider',
+                        top: '90%',
+                        start: 50,
+                        end: 100
+                    }
+                ],
+                series: [
+                    {
+                        name: 'daily',
+                        type: 'candlestick',
+                        data: data0.values,
+                        itemStyle: {
+                            color: upColor,
+                            color0: downColor,
+                            borderColor: upBorderColor,
+                            borderColor0: downBorderColor
+                        },
+                        markPoint: {
+                            label: {
+                                formatter: function (param) {
+                                    return param != null ? Math.round(param.value) + '' : '';
+                                }
+                            },
+                            data: [
+                                {
+                                    name: 'highest value',
+                                    type: 'max',
+                                    valueDim: 'highest'
+                                },
+                                {
+                                    name: 'lowest value',
+                                    type: 'min',
+                                    valueDim: 'lowest'
+                                },
+                                {
+                                    name: 'average value on close',
+                                    type: 'average',
+                                    valueDim: 'close'
+                                }
+                            ],
+                            tooltip: {
+                                formatter: function (param) {
+                                    return param.name + '<br>' + (param.data.coord || '');
+                                }
+                            }
+                        },
+                        markLine: {
+                            symbol: ['none', 'none'],
+                            data: [
+                                [
+                                    {
+                                        name: 'from lowest to highest',
+                                        type: 'min',
+                                        valueDim: 'lowest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            show: false
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                show: false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        type: 'max',
+                                        valueDim: 'highest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            show: false
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                show: false
+                                            }
+                                        }
+                                    }
+                                ],
+                                {
+                                    name: 'min line on close',
+                                    type: 'min',
+                                    valueDim: 'close'
+                                },
+                                {
+                                    name: 'max line on close',
+                                    type: 'max',
+                                    valueDim: 'close'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'MA5',
+                        type: 'line',
+                        data: calculateMA(5),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: calculateMA(10),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    },
+                    {
+                        name: 'MA20',
+                        type: 'line',
+                        data: calculateMA(20),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    },
+                    {
+                        name: 'MA30',
+                        type: 'line',
+                        data: calculateMA(30),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+
+        function replay_handler() {
+
+
+            // 监听按钮的点击事件
+            $(".reply-btn").click(function () {
+
+                // 获取 comment_id 属性的值
+                var comment_id = $(this).attr("comment_id");
+                console.log("asdasd", comment_id)
+                // 将 comment_id 的值设置为输入框的值
+                $("#comment_id_input").val(comment_id);
+            });
+
+        }
+
+        //定时请求数据
+        function get_current_price() {
+
+            var stockSymbol = "{{ stock.symbol }}";
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+            $.ajax({
+                url: '/stock_current_price/',
+                method: 'POST',
+                type: "JSON",
+                data: {'stock_symbol': stockSymbol, 'csrfmiddlewaretoken': csrfToken},
+                success: function (response) {
+                    console.log(response);
+                    // 在这里处理返回的 JSON 数据
+                    $(".current_price_number").html(response['get_current_price'])
+                    $(".current_price_text").val(response['get_current_price'])
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        }
+
+        $(function () {
+
+            //监听回复按钮
+            replay_handler()
+            setInterval(get_current_price, 3000);
+
+            render_stock_kline()
+
+        });
+
+
+    </script>
+{% endblock %}

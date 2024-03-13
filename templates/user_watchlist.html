@@ -1,0 +1,722 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_css %}
+{% endblock %}
+
+{% block title %}
+    <title>Trading & WatchList</title>
+{% endblock %}
+
+{% block content %}
+    {% if current_user %}
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <!-- Row -->
+                <div class="row">
+
+                    {% include 'elements/nav-tool.html' %}
+                    {% csrf_token %}
+                    <div class="col-xl-12">
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
+                                <div class="row">
+                                    <!-- 图表 -->
+                                    <div class="col-xl-8">
+                                        <div class="card coin-content">
+                                            <div class="card-header border-0 flex-wrap pb-0">
+                                                <div class="mb-xl-0 mb-2">
+                                                    <a href="javascript:void(0);"
+                                                           onclick="goToStockDetailPage('{{ current_watch_stock.symbol }}')"
+                                                           class="text-info">
+                                                        <h2>{{ current_watch_stock.symbol }}</h2>
+                                                        <h4>{{ current_watch_stock.get_company_name }}</h4>
+                                                    </a>
+                                                </div>
+
+
+                                                <div class="d-flex align-items-center">
+                                                    <button onclick="goToTradePage('{{ current_watch_stock.symbol }}')"
+                                                            class="me-4 font-w600 mb-0 btn btn-outline-success fs-18"
+                                                    ><span class="me-2">Trade</span></button>
+                                                    <!--<button onclick="goToTradePage('{{ current_watch_stock.symbol }}')"
+                                                            class="font-w600 mb-0 btn btn-outline-danger fs-18"><span
+                                                            class="me-2">SELL</span></button>-->
+                                                </div>
+                                            </div>
+
+                                            <div class="card-body">
+
+
+                                                {% if current_watch_stock %}
+
+                                                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                                        <div class="d-flex align-items-end justify-content-between flex-wrap">
+                                                            <div class="price-content">
+                                                                <span class="d-block mb-2">Current Price</span>
+                                                                <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
+                                                                    {{ current_watch_stock.get_current_price | floatformat:4 }}</h4>
+                                                                {% if current_watch_stock.get_change_extent > 0 %}
+                                                                    <span class="font-w600 text-success mb-0">
+                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}%
+                                                            <i class="fa-solid fa-caret-up ms-1 text-success"></i>
+                                                        </span>
+                                                                {% else %}
+                                                                    <span class="font-w600 text-danger mb-0">
+                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}%
+                                                            <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                                                        </span>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="price-content">
+                                                                <span class="d-block mb-2">Open Price</span>
+                                                                <h4 class="fs-20 font-w600 mb-0">
+                                                                    {{ current_watch_stock.get_open_price | floatformat:2 }}</h4>
+                                                                <span class="font-w600 mb-0"><br></span>
+
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div style="width: 100%; height: 500px;" id="stockhChart"></div>
+
+
+                                                    <div class="col-xs-12">
+                                                        <ul class="nav nav-pills">
+                                                            {% for period in periods_list %}
+                                                                <li class="nav-item">
+                                                                    <a href="?period={{ period }}"
+                                                                            {% if request.GET.period == period %}
+                                                                       class="active nav-link" {% else %}
+                                                                       class="nav-link" {% endif %}>{{ period }}
+                                                                    </a>
+                                                                </li>
+                                                            {% endfor %}
+
+                                                        </ul>
+                                                    </div>
+                                                {% else %}
+                                                    <h2>No Watch Stock</h2>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!--监控列表start-->
+                                    <div class="col-xl-4 col-sm-12">
+                                        <div class="card price-list-1 mb-0">
+                                            <div class="card-header border-0 pb-2 px-3">
+                                                <h4 class="text-primary card-title mb-2">Watchlist</h4>
+                                            </div>
+                                            <div class="card-body p-3 py-0 height370 dlab-scroll">
+                                                <div class="table-responsive">
+                                                    <table class="table text-center bg-primary-hover tr-rounded order-tbl mt-2 ">
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="border-bottom">
+                                                                #
+                                                            </th>
+                                                            <th class="text-center border-bottom">Stock Name</th>
+                                                            <th class="text-center border-bottom">Current Price</th>
+                                                            <th class="text-end border-bottom">Open Price</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for stock in stocks_in_watchlist %}
+                                                            <tr>
+                                                                <td>
+                                                                    <div class="radio me-0 align-self-center">
+                                                                        <div class="custom-control form-check ">
+                                                                            <input type="radio"
+                                                                                   class="form-check-input stock-watch"
+                                                                                   id="stock-{{ stock.symbol }}"
+                                                                                   symbol="{{ stock.symbol }}"
+                                                                                   required
+                                                                                    {% if stock.symbol == current_watch_stock.symbol %}
+                                                                                   checked="checked"{% endif %}>
+                                                                            <label class="custom-control-label"
+                                                                                   for="check8"></label>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <a href="javascript:void(0);"
+                                                                       onclick="goToStockDetailPage('{{ stock.symbol }}')"
+                                                                       class="text-info">
+                                                                        {{ stock.get_company_name }}
+                                                                    </a>
+                                                                </td>
+                                                                <td>{{ stock.get_current_price }}</td>
+                                                                <td>{{ stock.get_open_price | floatformat:2 }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer text-center py-2">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--监控列表end-->
+
+                                    <!-- 交易表格 -->
+                                    <div class="col-xl-5 col-sm-12">
+                                        <div class="card">
+                                            <div class="card-header flex-wrap border-0">
+                                                <h4 class="card-title mb-lg-0 mb-2">Trading History</h4>
+                                                <ul class=" nav nav-pills light" id="pills-tab" role="tablist">
+                                                    <li class="nav-item my-1" role="presentation">
+                                                        <button class="nav-link active" id="pills-crypto-tab"
+                                                                data-bs-toggle="pill"
+                                                                data-bs-target="#pills-crypto" type="button" role="tab"
+                                                                aria-controls="pills-crypto" aria-selected="true">
+                                                            All Trades
+
+                                                        </button>
+                                                    </li>
+
+                                                    <li class="nav-item my-1" role="presentation">
+                                                        <button class="nav-link" id="pills-future-tab"
+                                                                data-bs-toggle="pill"
+                                                                data-bs-target="#pills-future" type="button" role="tab"
+                                                                aria-controls="pills-future" aria-selected="false">
+                                                            Open Positions
+
+                                                        </button>
+                                                    </li>
+                                                    <li class="nav-item my-1" role="presentation">
+                                                        <button class="nav-link me-0" id="pills-listing-tab"
+                                                                data-bs-toggle="pill"
+                                                                data-bs-target="#pills-listing" type="button" role="tab"
+                                                                aria-controls="pills-listing" aria-selected="false">
+                                                            Closed Positions
+
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="card-body pt-0">
+                                                <div class="tab-content" id="pills-tabContent">
+                                                    <div class="tab-pane fade show active" id="pills-crypto"
+                                                         role="tabpanel"
+                                                         aria-labelledby="pills-crypto-tab">
+                                                        <div class="table-responsive dataTabletrade">
+                                                            <table id="example-history"
+                                                                   class="table shadow-hover centered display"
+                                                                   >
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Stock Name</th>
+                                                                    <th>Bought</th>
+                                                                    <th>Sold</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% if all_trades %}
+                                                                    {% for trade in all_trades %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a href="javascript:void(0);"
+                                                                                   onclick="goToStockDetailPage('{{ trade.stock_symbol }}')"
+                                                                                   class="market-title d-flex align-items-center">
+                                                                                    <h5 class="mb-0 ms-2">{{ trade.stock_symbol }}</h5>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>{{ trade.total_bought }}</td>
+                                                                            <td class="text-success">{{ trade.total_sold }}</td>
+                                                                            <td class="text-success">
+                                                                                <button type="button"
+                                                                                        onclick="goToTradePage('{{ trade.stock_symbol }}')"
+                                                                                        class="btn btn-primary btn-sm">
+                                                                                    Trade
+                                                                                </button>
+                                                                               <!-- <button type="button"
+                                                                                        onclick="goToTradePage('{{ trade.stock_symbol }}')"
+                                                                                        class="btn btn-warning btn-sm">
+                                                                                    Sell
+                                                                                </button>-->
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td colspan="3"
+                                                                            class="text-success text-center">
+                                                                            No trade history available.
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="tab-pane fade" id="pills-future" role="tabpanel"
+                                                         aria-labelledby="pills-future-tab">
+                                                        <div class="table-responsive dataTabletrade">
+                                                            <table id="example-history-2"
+                                                                   class="table shadow-hover centered display"
+                                                                   >
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Stock Name</th>
+                                                                    <th>Bought</th>
+                                                                    <th>Sold</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% for position in open_positions %}
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a href="javascript:void(0);"
+                                                                               onclick="goToStockDetailPage('{{ position.stock_symbol }}')"
+                                                                               class="market-title d-flex align-items-center">
+                                                                                <h5 class="mb-0 ms-2">
+                                                                                    {{ position.stock_symbol }}
+                                                                                </h5>
+                                                                            </a>
+                                                                        </td>
+                                                                        <td>{{ position.total_bought }}</td>
+                                                                        <td class="text-success">{{ position.total_sold }}</td>
+                                                                        <td class="text-success">
+                                                                            <button type="button"
+                                                                                    onclick="goToTradePage('{{ position.stock_symbol }}')"
+                                                                                    class="btn btn-primary btn-sm">Trade
+                                                                            </button>
+                                                                            <!--<button type="button"
+                                                                                    onclick="goToTradePage('{{ position.stock_symbol }}')"
+                                                                                    class="btn btn-warning btn-sm">Sell
+                                                                            </button>-->
+                                                                        </td>
+                                                                    </tr>
+
+                                                                {% empty %}
+                                                                    <tr>
+                                                                        <td colspan="3"
+                                                                            class="text-success text-center">No open
+                                                                            positions.
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tab-pane fade" id="pills-listing" role="tabpanel"
+                                                         aria-labelledby="pills-listing-tab">
+                                                        <div class="table-responsive dataTabletrade">
+                                                            <table id="example-history-3"
+                                                                   class="table shadow-hover centered display  "
+                                                                   >
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Stock Name</th>
+                                                                    <th>Bought</th>
+                                                                    <th>Sold</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% if closed_positions %}
+                                                                    {% for position in closed_positions %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a href="javascript:void(0);"
+                                                                                   onclick="goToStockDetailPage('{{ position.stock_symbol }}')"
+                                                                                   class="market-title d-flex align-items-center">
+                                                                                    <h5 class="mb-0 ms-2">
+                                                                                        {{ position.stock_symbol }}
+                                                                                    </h5>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>{{ position.total_bought }}</td>
+                                                                            <td class="text-success">{{ position.total_sold }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-center">No closed
+                                                                            positions.
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!--详细信息-->
+                                    <div class="col-xl-7 col-sm-12">
+                                        <div class="card overflow-hidden h-auto">
+                                            <div class="card-body pb-4">
+                                                <div class="row">
+                                                    <div class="col-xl-12 col-md-12">
+                                                        <h3 class="card-title font-w500 mb-0 center">Profit and Loss</h3>
+                                                        <br>
+                                                        <h5 class="font-w500 mb-0">Overall Gross
+                                                            P&L: {{ gross_pnl }}</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="market-coin flex-wrap">
+                                                            <h4 class="font-w500 mb-0">P&L By Stock</h4>
+                                                            {% for trade in pnl_per_stock %}
+                                                                <div class="mb-1">
+                                                                    <span class="fs-14 font-w400">{{ trade.stock_symbol }}</span>
+                                                                    <h5 class="font-w600 m-0 text-danger">{{ trade.pnl }}</h5>
+                                                                </div>
+                                                            {% endfor %}
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+    {% else %}
+        <div class="authincation fix-wrapper">
+            <div class="container">
+                <div class="row justify-content-center h-100 align-items-center">
+                    <div class="col-md-6">
+                        <div class="error-page">
+                            <div class="error-inner text-center">
+                                <!--{#
+                                <div class="dz-error" data-text="LOGIN">PLEASE LOGIN</div>
+                                #}-->
+                                <h2 class="error-head mb-0"><i
+                                        class="fa fa-exclamation-triangle text-warning me-2"></i>{{ tips }}</h2>
+                                <a href="{% url 'financial_system:login' %}" class="btn btn-secondary">GO TO LOGIN</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block additional_js %}
+    <style>
+
+    @keyframes blink {
+        0% { background-color: transparent; }
+        50% { background-color: rgba(204, 30, 30, 0.5); }
+        100% { background-color: transparent; }
+    }
+
+    .blink-effect {
+        animation: blink 1s infinite; /* 使用1秒的动画，并持续无限循环 */
+    }
+    </style>
+    <script type="text/javascript">
+        function goToTradePage(stockSymbol) {
+            // Construct the URL using the stockSymbol parameter
+            var tradeUrl = '/trade/' + encodeURIComponent(stockSymbol);
+
+            // Navigate to the constructed URL
+            window.location.href = tradeUrl;
+        }
+
+        function goToStockDetailPage(stockSymbol) {
+            // Construct the URL using the stockSymbol parameter
+            var stockDetailUrl = '/stock/' + encodeURIComponent(stockSymbol);
+
+            // Navigate to the constructed URL
+            window.location.href = stockDetailUrl;
+        }
+
+        //定时请求数据
+        function get_current_price() {
+
+            var stockSymbol = "{{ current_watch_stock.symbol }}";
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+            $.ajax({
+                url: '/stock_current_price/',
+                method: 'POST',
+                type: "JSON",
+                data: {'stock_symbol': stockSymbol, 'csrfmiddlewaretoken': csrfToken},
+                success: function (response) {
+                    console.log(response);
+                    // 在这里处理返回的 JSON 数据
+                    $(".current_price_number").html(response['get_current_price'])
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        }
+
+
+        //draw k line
+        function render_stock_kline() {
+            var myChart = echarts.init(document.getElementById('stockhChart'));
+
+            const upColor = '#30d94c';
+            const upBorderColor = '#30d94c';
+            const downColor = '#ff4238';
+            const downBorderColor = '#ff4238';
+
+            // Each item: open，close，lowest，highest
+
+            var testData ={{ kline_data|safe }}
+
+            const data0 = splitData(testData);
+
+            function splitData(rawData) {
+                const categoryData = [];
+                const values = [];
+                for (var i = 0; i < rawData.length; i++) {
+                    categoryData.push(rawData[i].splice(0, 1)[0]);
+                    values.push(rawData[i]);
+                }
+                return {
+                    categoryData: categoryData,
+                    values: values
+                };
+            }
+
+            function calculateMA(dayCount) {
+                var result = [];
+                for (var i = 0, len = data0.values.length; i < len; i++) {
+                    if (i < dayCount) {
+                        result.push('-');
+                        continue;
+                    }
+                    var sum = 0;
+                    for (var j = 0; j < dayCount; j++) {
+                        sum += +data0.values[i - j][1];
+                    }
+                    result.push(sum / dayCount);
+                }
+                return result;
+            }
+
+            var option = {
+                title: {
+                    left: 0
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    }
+                },
+                legend: {
+                    data: ['Daily K', 'MA5', 'MA10', 'MA20', 'MA30']
+                },
+                grid: {
+                    left: '13%',
+                    right: '13%',
+                    bottom: '15%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: data0.categoryData,
+                    boundaryGap: false,
+                    axisLine: {onZero: false},
+                    splitLine: {show: false},
+                    min: 'dataMin',
+                    max: 'dataMax'
+                },
+                yAxis: {
+                    scale: true,
+                    splitArea: {
+                        show: true
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    },
+                    {
+                        show: true,
+                        type: 'slider',
+                        top: '90%',
+                        start: 50,
+                        end: 100
+                    }
+                ],
+                series: [
+                    {
+                        name: 'daily',
+                        type: 'candlestick',
+                        data: data0.values,
+                        itemStyle: {
+                            color: upColor,
+                            color0: downColor,
+                            borderColor: upBorderColor,
+                            borderColor0: downBorderColor
+                        },
+                        markPoint: {
+                            label: {
+                                formatter: function (param) {
+                                    return param != null ? Math.round(param.value) + '' : '';
+                                }
+                            },
+                            data: [
+                                {
+                                    name: 'highest value',
+                                    type: 'max',
+                                    valueDim: 'highest'
+                                },
+                                {
+                                    name: 'lowest value',
+                                    type: 'min',
+                                    valueDim: 'lowest'
+                                },
+                                {
+                                    name: 'average value on close',
+                                    type: 'average',
+                                    valueDim: 'close'
+                                }
+                            ],
+                            tooltip: {
+                                formatter: function (param) {
+                                    return param.name + '<br>' + (param.data.coord || '');
+                                }
+                            }
+                        },
+                        markLine: {
+                            symbol: ['none', 'none'],
+                            data: [
+                                [
+                                    {
+                                        name: 'from lowest to highest',
+                                        type: 'min',
+                                        valueDim: 'lowest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            show: false
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                show: false
+                                            }
+                                        }
+                                    },
+                                    {
+                                        type: 'max',
+                                        valueDim: 'highest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            show: false
+                                        },
+                                        emphasis: {
+                                            label: {
+                                                show: false
+                                            }
+                                        }
+                                    }
+                                ],
+                                {
+                                    name: 'min line on close',
+                                    type: 'min',
+                                    valueDim: 'close'
+                                },
+                                {
+                                    name: 'max line on close',
+                                    type: 'max',
+                                    valueDim: 'close'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        name: 'MA5',
+                        type: 'line',
+                        data: calculateMA(5),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: calculateMA(10),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    },
+                    {
+                        name: 'MA20',
+                        type: 'line',
+                        data: calculateMA(20),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    },
+                    {
+                        name: 'MA30',
+                        type: 'line',
+                        data: calculateMA(30),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+        }
+
+        $(function () {
+
+
+            setInterval(get_current_price, 3000);
+
+            //点击watch list
+            $('.stock-watch').change(function () {
+                // Check if the checkbox is checked
+                if ($(this).prop('checked')) {
+                    // Get the stock_symbol from the 'stock_symbol' attribute
+                    var stock_symbol = $(this).attr('symbol');
+
+                    // Redirect to the watchlist page with the stock_symbol parameter
+                    window.location.href = '/watchlist/' + stock_symbol;
+                }
+            });
+
+            render_stock_kline()
+        });
+
+
+
+
+    </script>
+{% endblock %}

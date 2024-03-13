@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>{{ news_item.title }}</title>
+{% endblock %}
+
+{% block additional_css %}
+{% endblock %}
+
+{% block content %}
+
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    <div class="content-body">
+        <!-- row -->
+        <div class="container-fluid">
+            <!-- Row -->
+            <div class="row">
+
+               {% include 'elements/nav-tool.html' %}
+
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="post-details">
+                                <h3 class="mb-2 text-dark">{{ news_item.title }}</h3>
+                                <ul class="mb-4 post-meta d-flex flex-wrap">
+                                    <li class="post-author me-3">{{ news_item.source }}</li>
+                                    <li class="post-date me-3"><i class="far fa-calendar-plus me-2"></i> {{ news_item.news_dataTime|date:"Y-m-d" }}</li>
+                                </ul>
+
+                                <p>{{ news_item.content|linebreaks }}</p>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--**********************************
+        Content body end
+    ***********************************-->
+
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}

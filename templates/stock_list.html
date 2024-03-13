@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_css %}
+{% endblock %}
+
+{% block content %}
+
+    <!--**********************************
+        Content body start
+    ***********************************-->
+    <div class="content-body">
+        <!-- row -->
+        <div class="container-fluid">
+            <!-- Row -->
+            <div class="row">
+
+                {% include 'elements/nav-tool.html' %}
+
+                <div class="col-xl-12">
+                    <!-- Row -->
+                    <div class="row">
+                        <div class="text-center mb-4">
+                            <h2 class="text-center mb-2 text-dark">Stock Market</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!--<div class="row">
+                    <div class="mb-4">
+                        <h3 class="text-center mb-2 text-dark">Higest volume stocks</h3>
+                    </div>
+                </div>-->
+                <!-- Row -->
+                <div class="row">
+                {% for exchange, stocks in stock_groups.items %}
+                    <h3 class="text-center">{{ exchange }}</h3>
+                    {% for stock, detail_url in stocks %}
+                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                            <a href="{{ detail_url }}">
+                                <div class="card pull-up">
+                                    <div class="card-body align-items-center flex-wrap">
+                                        <div class="d-flex align-items-center mb-4">
+                                            <!--{#                                            <a href="{% url 'financial_system:stock_detail'  stock_id=stock_data.stock_id %}" class="ico-icon">#}
+                                            {#                                                <img src="{% static 'financial/images/svg/ripple-1.svg' %}" alt="">#}
+                                            {#                                            </a>#}-->
+                                            <div class="ms-0">
+                                                <h4 class="card-title mb-0">{{ stock.symbol }}</h4>
+                                                <span>{{ stock.get_company_name }}</span>
+                                                <span>Sector: {{stock.get_company_info.sector}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="mb-0 fs-14 text-dark font-w600">{{ stock.get_current_price }}</P>
+                                                <span class="fs-12">current</span>
+                                            </div>
+                                            <div>
+                                                <p class="mb-0 fs-14 text-dark font-w600">{{ stock.get_open_price | floatformat:2 }}</P>
+                                                <span class="fs-12">open</span>
+                                            </div>
+                                            <!--<div>
+                                                <p class="mb-0 fs-14 text-success font-w600">{{ stock.stock_type }}</P>
+                                                <span class="fs-12">type</span>
+                                            </div>-->
+                                            <!--{#                                      <div>#}
+                                            {#                                            <p class="mb-0 fs-14 text-success font-w600">{{ stock.block }}</P>#}
+                                            {#                                            <span class="fs-12">block</span>#}
+                                            {#                                        </div>#}-->
+                                            {% if stock.get_change_extent > 0 %}
+                                                <div>
+                                                    <p class="mb-0 fs-14 text-success font-w600">{{ stock.get_change_extent | floatformat:2 }}%</P>
+                                                    <span class="fs-12">change</span>
+                                                </div>
+                                            {% else %}
+                                                <div>
+                                                    <p class="mb-0 fs-14 text-danger font-w600">{{ stock.get_change_extent | floatformat:2 }}%</P>
+                                                    <span class="fs-12">change</span>
+                                                </div>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    <!--**********************************
+        Content body end
+    ***********************************-->
+
+{% endblock %}
+
+{% block additional_js %}
+    <script>
+        var swipercard = function () {
+
+            function carouselDir() {
+                if ($('body').attr('direction') == "rtl") {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            if (jQuery(".mySwiper-counter").length > 0) {
+                var swiper = new Swiper('.mySwiper-counter', {
+
+
+                    speed: 1500,
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                    rtl: true,
+                    parallax: true,
+                    loop: false,
+                    autoplay: {
+                        delay: 5000,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    breakpoints: {
+
+                        300: {
+                            slidesPerView: 1,
+                            spaceBetween: 30,
+                        },
+                        480: {
+                            slidesPerView: 2,
+                            spaceBetween: 30,
+                        },
+                        768: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                        991: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                        1200: {
+                            slidesPerView: 4,
+                            spaceBetween: 30,
+                        },
+
+                    },
+                });
+            }
+        }
+
+        swipercard();
+    </script>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}<title>Search Results</title>{% endblock %}
+{% block additional_css %}
+{% endblock %}
+
+{% block content %}
+
+<!--**********************************
+    Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+            {% include 'elements/nav-tool.html' %}
+            <div class="col-xl-12">
+                <!-- Row -->
+                <div class="row">
+                    <div class="text-center mb-4">
+                        <h2 class="text-center mb-2 text-dark">Search Results for "{{ query }}"</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-12">
+                <!-- Row -->
+                <div class="row">
+                    <div class="text-center mb-4">
+                        <h3 class="text-center mb-2 text-dark">Stock Results</h3>
+                    </div>
+                </div>
+            </div>
+             <!-- Stock Results Start-->
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="profile-news">
+                             {% for stock, stock_url in filtered_stocks %}
+                                <div class="media " style="border-bottom: 1px solid #e6e6e6;">
+                                    <div class="media-body">
+                                        <h4 class="m-b-5">
+                                            <a  href="{{ stock_url }}"
+                                                             class="text-primary">{{ stock.symbol }}  </a>
+                                            <p class="mb-0">{{ stock.get_current_price  }}</p>
+                                        </h4>
+                                        <p class="mb-0">{{ stock.get_company_info.shortName  }}</p>
+
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <h4>No matching stocks found.</h4>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Stock Results End-->
+
+
+            <div class="col-xl-12">
+                <div class="tab-content" id="nav-tabContent">
+
+                    <div class="tab-pane fade show active" id="nav-recommend" role="tabpanel">
+                        <h3 class="text-center">News Results</h3>
+
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="my-post-content pt-3">
+                                            <!-- 循环输出news  tab1-->
+                                            {% for item in filtered_news %}
+                                            <div class="media profile-uoloaded-post border-bottom-1 pb-5 ">
+                                                <a class="me-3"
+                                                   href="{{ item.link }}"
+                                                   style="height: 20rem;">
+                                                    <img src="{% if item.photo_url %}{{ item.photo_url }}{% else %}{% static 'financial/images/profile/1.webp' %}{% endif %}"
+                                                         alt="" style="height: 20rem; width: 35vw;"
+                                                         class="img-fluid  rounded ">
+                                                </a>
+
+                                                <div class="media-body">
+                                                    <a class="post-title" href="{{ item.link }}">
+                                                        <h3 class="text-dark">{{ item.title }}</h3></a>
+                                                    <p><strong>Source: </strong>{{ item.publisher }}</p>
+                                                    <p><strong>Posted on: </strong>{{ item.providerPublishTime }}</p>
+                                                    <br><br>
+                                                    {% if item.relatedTickerURLs %}
+                                                    <h5>Related Stocks</h5>
+                                                    <ul>
+                                                        {% for ticker, url in item.relatedTickerURLs %}
+                                                        <li><a href="{{ url }}">{{ ticker }}</a></li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% empty %}
+                                            <h4>No matching news found.</h4>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--**********************************
+    Content body end
+***********************************-->
+
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}
