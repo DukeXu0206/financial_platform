@@ -270,13 +270,13 @@ def balance(request):
         return render(request, 'user_watchlist.html', context)
 
 
-def calculate_pnl(trades):
+def calculate_pnl(user_id):
     # Aggregate the total spent on buys and the total earned from sells
-    # trades = HistoryTrade.objects.filter(user_id=user_id).values('stock_symbol')\
-    #     .annotate(
-    #         total_spent=Sum(Case(When(trade_type='BUY', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
-    #         total_earned=Sum(Case(When(trade_type='SELL', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
-    #     )
+    trades = HistoryTrade.objects.filter(user_id=user_id).values('stock_symbol')\
+        .annotate(
+            total_spent=Sum(Case(When(trade_type='BUY', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
+            total_earned=Sum(Case(When(trade_type='SELL', then=F('trade_quantity') * F('trade_price')), output_field=FloatField(), default=0)),
+        )
 
     # Calculate P&L for each stock
     pnl_per_stock = [{**trade, 'pnl': trade['total_earned'] - trade['total_spent']} for trade in trades]
@@ -289,7 +289,8 @@ def calculate_pnl(trades):
 
 def user_watchlist_view(request, stock_symbol=None):
     try:
-        user = User.objects.get(user_id=request.session.get('user_id'))
+        user_id = request.session.get('user_id')
+        user = User.objects.get(user_id=user_id)
         stocks_in_watchlist = Stock.objects.filter(
             symbol__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_symbol', flat=True)
         )
@@ -313,7 +314,14 @@ def user_watchlist_view(request, stock_symbol=None):
         closed_positions = [trade for trade in all_trades if
                             trade['total_bought'] == trade['total_sold'] and trade['total_bought'] > 0]
 
-        pnl_per_stock, gross_pnl = calculate_pnl(all_trades)
+        pnl_per_stock, gross_pnl = calculate_pnl(user_id)
+
+        print("all_trades:" + "*"*30)
+        print(all_trades)
+        print("open_positions:" + "*" * 30)
+        print(open_positions)
+        print("closed_positions:" + "*" * 30)
+        print(closed_positions)
 
         context = {
             'user': user,
@@ -324,7 +332,6 @@ def user_watchlist_view(request, stock_symbol=None):
             'closed_positions': closed_positions,
             'pnl_per_stock': pnl_per_stock,
             'gross_pnl': gross_pnl,
-            "page_title": "user watchlist",
         }
 
         return render(request, 'user_watchlist.html', context)
@@ -365,26 +372,41 @@ def news_detail_view(request, news_id):
     return render(request, 'news_detail.html', {'news_item': news_item})
 
 
+from django.shortcuts import render
+from django.urls import reverse
+from .models import Stock
+
 def stock_list_view(request):
     # Query all stocks
     stocks = Stock.objects.all()
 
-    # Group stocks by 'exchangeName'
+    # Dictionary to map exchange abbreviations to full names
+    exchange_names_mapping = {
+        'NMS': 'NASDAQ Market Site',
+        'NYQ': 'New York Stock Exchange',
+        # Add more mappings as needed
+    }
+
+    # Group stocks by 'exchangeName', using full names
     stock_groups = {}
     for stock in stocks:
         # Generate the URL for the stock detail view
         detail_url = reverse('financial_system:stock_detail', kwargs={'stock_symbol': stock.symbol})
 
-        if stock.exchangeName in stock_groups:
-            stock_groups[stock.exchangeName].append((stock, detail_url))
+        # Get the full name of the exchange, falling back to the abbreviation if not found
+        full_exchange_name = exchange_names_mapping.get(stock.exchangeName, stock.exchangeName)
+
+        if full_exchange_name in stock_groups:
+            stock_groups[full_exchange_name].append((stock, detail_url))
         else:
-            stock_groups[stock.exchangeName] = [(stock, detail_url)]
+            stock_groups[full_exchange_name] = [(stock, detail_url)]
 
     context = {
         'stock_groups': stock_groups
     }
 
     return render(request, 'stock_list.html', context)
+
 
 
 def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
