@@ -48,18 +48,10 @@ dz_array = {
                     },
                     "js":{
                         "user_watchlist_view": [
-                            f"{folder_name}/vendor/chart-js/chart.bundle.min.js",
-                            f"{folder_name}/vendor/apexchart/apexchart.js",
-                            f"{folder_name}/vendor/peity/jquery.peity.min.js",
-                            f"{folder_name}/vendor/bootstrap-datetimepicker/js/moment.js",
-                            f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.js",
+                            f"{folder_name}/vendor/echarts/echarts.js",
                         ],
                         "stock_detail_view":[
-                            f"{folder_name}/vendor/chart-js/chart.bundle.min.js",
                             f"{folder_name}/vendor/apexchart/apexchart.js",
-                            f"{folder_name}/vendor/peity/jquery.peity.min.js",
-                            f"{folder_name}/vendor/bootstrap-datetimepicker/js/moment.js",
-                            f"{folder_name}/vendor/bootstrap-daterangepicker/daterangepicker.js",
                         ],
                         "news_view": [
                             f"{folder_name}/vendor/swiper/js/swiper-bundle.min.js",

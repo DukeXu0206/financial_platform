@@ -305,6 +305,19 @@ def user_watchlist_view(request, stock_symbol=None):
         else:
             current_watch_stock = stocks_in_watchlist[0] if stocks_in_watchlist else None
 
+        ticker = Ticker(current_watch_stock.symbol)
+
+        historical_data_period = request.GET.get("preiod") if request.GET.get("preiod") is not None else "1mo"
+        # Historical data for a given period
+        historical_data = ticker.history(period=historical_data_period)
+        historical_data = historical_data.reset_index()
+
+        print(historical_data)
+        historical_data['Date'] = historical_data['Date'].dt.strftime('%Y/%m/%d %H:%M:%S')
+        #KLine data 整理
+        kline_data = historical_data[['Date', 'Open','Close', 'Low','High']].values.tolist()
+        print(kline_data)
+
         all_trades = HistoryTrade.objects.filter(user_id=user) \
             .values('stock_symbol') \
             .annotate(
@@ -331,6 +344,10 @@ def user_watchlist_view(request, stock_symbol=None):
             'user': user,
             'stocks_in_watchlist': stocks_in_watchlist,
             'current_watch_stock': current_watch_stock,
+            'periods_list':current_watch_stock.validRanges.split(','),
+            'historical_data':historical_data,
+            'historical_data_html': historical_data.to_html(classes='table table-bordered table-responsive-sm'),
+            'kline_data': json.dumps( kline_data ),
             'all_trades': all_trades,
             'open_positions': open_positions,
             'closed_positions': closed_positions,
@@ -413,16 +430,24 @@ def stock_list_view(request):
 
 
 
-def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
+def stock_detail_view(request, stock_symbol):
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     comments = StockComment.objects.filter(stock_symbol=stock.symbol).order_by('-comment_time')
 
     ticker = Ticker(stock.symbol)
 
     # Historical data for a given period
+
+
+    historical_data_period = request.GET.get("preiod") if request.GET.get("preiod") is not None else "1mo"
     historical_data = ticker.history(period=historical_data_period)
     company_info = ticker.info
-
+    historical_data = historical_data.reset_index()
+    print(historical_data)
+    historical_data['Date'] = historical_data['Date'].dt.strftime('%Y/%m/%d %H:%M:%S')
+    # KLine data 整理
+    kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
+    print(kline_data)
     #print(json.dumps(company_info))
     # print(ticker.recommendations)
 
@@ -469,7 +494,7 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
         'stock': stock,
         'comments': comments,
         'add_comment_url': add_comment_url,
-
+        'periods_list': stock.validRanges.split(','),
         'historical_data': historical_data,
         'company_info': company_info,
         'actions': actions,
@@ -491,6 +516,7 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
         'upgrades_downgrades': upgrades_downgrades,
         'earnings_dates': earnings_dates,
         'news': news,
+        "kline_data":kline_data
     }
 
     return render(request, 'stock_detail.html', context)
