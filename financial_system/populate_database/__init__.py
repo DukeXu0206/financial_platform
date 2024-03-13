@@ -15,7 +15,6 @@ def print_results(table_name, results):
 
 
 # DATA
-
 dow_30_symbols = [
     'BA', 'AXP', 'MSFT', 'GSHD', 'CSCO', 'MRK', 'AMGN', 'CRM', 'PG',
     'TRV', 'MMM', 'AMZN', 'CVX', 'KO', 'AAPL', 'DIS', 'CAT', 'DOW',

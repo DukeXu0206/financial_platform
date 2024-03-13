@@ -105,19 +105,31 @@ class Stock(models.Model):
     def __str__(self):
         return self.symbol
 
-    def get_current_price(self):
-        # ticker = ticker.history(period='1d')
-        # return ticker['Close'][0]
-        return self.ticker.info['currentPrice']
-
     def get_company_info(self):
         return self.ticker.info
 
     def get_company_name(self):
         return self.ticker.info.get('shortName', self.symbol)
 
+    def get_current_price(self):
+        # ticker = ticker.history(period='1d')
+        # return ticker['Close'][0]
+        return self.ticker.info['currentPrice']
+
+
     def get_open_price(self):
-        return self.ticker.history(period='1d')['Open']
+        open = self.ticker.history(period='1d')['Open']
+        open_price = open.iloc[0]
+        return open_price
+
+    def get_change_extent(self):
+        return self.get_current_price() - self.get_open_price()
+
+    def get_trading_time(self):
+        open = self.ticker.history(period='1d')['Open']
+        date = open.index[0]
+        return date
+
 
 
     @classmethod
