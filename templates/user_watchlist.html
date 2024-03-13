@@ -53,7 +53,7 @@
                                                         <div class="d-flex align-items-end justify-content-between flex-wrap">
                                                             <div class="price-content">
                                                                 <span class="d-block mb-2">Current Price</span>
-                                                                <h4 class="fs-20 font-w600 mb-0 current_price_number">
+                                                                <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
                                                                     {{ current_watch_stock.get_current_price }}</h4>
                                                                 {% if current_watch_stock.get_change_extent > 0 %}
                                                                     <span class="font-w600 text-success mb-0">
@@ -434,6 +434,18 @@
 {% endblock %}
 
 {% block additional_js %}
+    <style>
+
+    @keyframes blink {
+        0% { background-color: transparent; }
+        50% { background-color: rgba(204, 30, 30, 0.5); }
+        100% { background-color: transparent; }
+    }
+
+    .blink-effect {
+        animation: blink 1s infinite; /* 使用1秒的动画，并持续无限循环 */
+    }
+    </style>
     <script type="text/javascript">
         function goToTradePage(stockSymbol) {
             // Construct the URL using the stockSymbol parameter
@@ -465,7 +477,6 @@
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
                     $(".current_price_number").html(response['get_current_price'])
-
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
