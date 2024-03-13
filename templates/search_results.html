@@ -37,16 +37,17 @@
                     <div class="card-body">
                         <div class="profile-news">
                              {% for stock, stock_url in filtered_stocks %}
-                                <div class="media pt-3 pb-3">
+                                <div class="media " style="border-bottom: 1px solid #e6e6e6;">
                                     <div class="media-body">
-                                        <h4 class="m-b-5"><a  href="{{ stock_url }}"
-                                                             class="text-primary">{{ stock.symbol }}</a>
+                                        <h4 class="m-b-5">
+                                            <a  href="{{ stock_url }}"
+                                                             class="text-primary">{{ stock.symbol }}  </a>
+                                            <p class="mb-0">{{ stock.get_current_price  }}</p>
                                         </h4>
                                         <p class="mb-0">{{ stock.get_company_info.shortName  }}</p>
 
                                     </div>
                                 </div>
-                                 <hr>
                             {% empty %}
                                 <h4>No matching stocks found.</h4>
                             {% endfor %}

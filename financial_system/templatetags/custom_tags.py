@@ -12,14 +12,14 @@ def getdata(json_data, args):
     try:
         myfunc, myargs, mykwargs = resolve(args)
         if myfunc:
-            logger.success("*"*50)
+            # logger.success("*"*50)
             print()
-            logger.debug("Function Name:> {} ",myfunc.__name__,feature="f-strings")
-            logger.debug("Module Name:> {} ",myfunc.__module__,feature="f-strings")
-            logger.debug("URL_Path:> {} ",args,feature="f-strings")
+            # logger.debug("Function Name:> {} ",myfunc.__name__,feature="f-strings")
+            # logger.debug("Module Name:> {} ",myfunc.__module__,feature="f-strings")
+            # logger.debug("URL_Path:> {} ",args,feature="f-strings")
             func_name=myfunc.__name__
             print(func_name)
-            logger.success("*"*50)
+            # logger.success("*"*50)
     except Resolver404:
         logger.debug("something went wrong",feature="f-strings")
         pass
