@@ -695,9 +695,12 @@ def search_view(request):
 
     print(filtered_stocks)
 
-    filtered_news = []
-    filtered_news.append(
-        news for news in News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
+    # filtered_news = []
+    # filtered_news.append(
+    #     news for news in News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
+
+    filtered_news = list(News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
+
 
     for news_item in News.objects.all():
         related_tickers_list = [ticker.strip().upper() for ticker in
