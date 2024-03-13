@@ -423,7 +423,7 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
     historical_data = ticker.history(period=historical_data_period)
     company_info = ticker.info
 
-    print(company_info)
+    #print(json.dumps(company_info))
     # print(ticker.recommendations)
 
     # Fetch additional data
@@ -464,6 +464,8 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
 
     add_comment_url = reverse('financial_system:add_comment', kwargs={'stock_symbol': stock.symbol})
 
+    print( income_statement )
+
     context = {
         'stock': stock,
         'comments': comments,
@@ -475,18 +477,18 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
         'dividends': dividends,
         'splits': splits,
         'share_count': share_count,
-        'income_statement': income_statement,
-        'quarterly_income_statement': quarterly_income_statement,
-        'balance_sheet': balance_sheet,
-        'quarterly_balance_sheet': quarterly_balance_sheet,
-        'cashflow': cashflow,
-        'quarterly_cashflow': quarterly_cashflow,
+        'income_statement': income_statement.to_html(classes='table'),
+        'quarterly_income_statement': quarterly_income_statement.to_html(classes='table'),
+        'balance_sheet': balance_sheet.to_html(classes='table'),
+        'quarterly_balance_sheet': quarterly_balance_sheet.to_html(classes='table table-bordered table-responsive-sm'),
+        'cashflow': cashflow.to_html(classes='table'),
+        'quarterly_cashflow': quarterly_cashflow.to_html(classes='table table-bordered table-responsive-sm'),
         'major_holders': major_holders,
         'institutional_holders': institutional_holders,
         'mutualfund_holders': mutualfund_holders,
         'insider_transactions': insider_transactions,
-        'recommendations': recommendations,
-        'recommendations_summary': recommendations_summary,
+        'recommendations': recommendations.to_html(classes='table table-bordered table-responsive-sm'),
+        'recommendations_summary': recommendations_summary.to_html(classes='table table-bordered table-responsive-sm'),
         'upgrades_downgrades': upgrades_downgrades,
         'earnings_dates': earnings_dates,
         'news': news,
