@@ -34,6 +34,8 @@ urlpatterns = [
     path('news/', views.news_view, name='news'),
     path('news/<int:news_id>/', views.news_detail_view, name='news_detail'),
 
+    path('search_results/', views.search_view, name='search'),
+
     path('submit_feedback/', views.submit_feedback, name='submit_feedback'),
 
 

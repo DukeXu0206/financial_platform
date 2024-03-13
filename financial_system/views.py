@@ -11,6 +11,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
 
 from financial_system.models import *
+
+
 # from financial_system.tests.yfinance_api import load
 
 
@@ -302,7 +304,7 @@ def user_watchlist_view(request, stock_symbol=None):
             total_bought=Sum(
                 Case(When(trade_type='BUY', then='trade_quantity'), output_field=IntegerField(), default=0)),
             total_sold=Sum(Case(When(trade_type='SELL', then='trade_quantity'), output_field=IntegerField(), default=0))
-            ).order_by('stock_symbol')
+        ).order_by('stock_symbol')
 
         open_positions = [trade for trade in all_trades if trade['total_bought'] > trade['total_sold']]
 
@@ -597,21 +599,46 @@ def submit_feedback(request):
     return render(request, 'submit_feedback.html')
 
 
-# def search_results(request):
-#     query = request.GET.get('query', '')
-#
-#     if query:
-#         # Filter News and Stock objects containing the query in their fields
-#         news_results = News.objects.filter(title__icontains=query) | News.objects.filter(publisher__icontains=query) \
-#                        |  News.objects.filter(title__relatedTickers
-#         stock_results = Stock.objects.filter(symbol__icontains=query) | Stock.objects.filter(name__icontains=query)
-#     else:
-#         news_results = News.objects.none()  # Return no results if query is empty
-#         stock_results = Stock.objects.none()
-#
-#     context = {
-#         'query': query,
-#         'news_results': news_results,
-#         'stock_results': stock_results,
-#     }
-#     return render(request, 'search_results.html', context)
+def search_view(request):
+    query = request.GET.get('query', '').strip()
+    query_tokens = query.split()
+
+    print(query)
+    print(query_tokens)
+
+    filtered_stocks = []
+    stock_symbols = []
+
+    for stock in Stock.objects.all():
+        info = stock.get_company_info()  # This needs to be optimized for performance.
+        shortName = info.get('shortName', '').lower()
+
+        # Check if any token matches.
+        symbol_match = any(token.upper() in stock.symbol for token in query_tokens)
+        shortName_match = any(token.lower() in shortName for token in query_tokens)
+        sector_match = any(query_token.lower() in info.get('sector', '').lower() for query_token in query_tokens)
+
+        if symbol_match or shortName_match or sector_match:
+            stock_url = reverse('financial_system:stock_detail', kwargs={'stock_symbol': stock.symbol})
+            filtered_stocks.append((stock, stock_url))
+            stock_symbols.append(stock.symbol.upper())
+
+    print(filtered_stocks)
+
+    filtered_news = []
+    filtered_news.append(
+        news for news in News.objects.filter(Q(title__icontains=query) | Q(publisher__icontains=query)))
+
+    for news_item in News.objects.all():
+        related_tickers_list = [ticker.strip().upper() for ticker in
+                                news_item.relatedTickers.split(',')] if news_item.relatedTickers else []
+        if set(related_tickers_list) & set(stock_symbols):  # Intersection of related tickers and filtered stock symbols
+            if news_item not in filtered_news:  # Avoid duplicating news items
+                filtered_news.append(news_item)
+
+    context = {
+        'query': query,
+        'filtered_news': filtered_news,
+        'filtered_stocks': filtered_stocks,
+    }
+    return render(request, 'search_results.html', context)

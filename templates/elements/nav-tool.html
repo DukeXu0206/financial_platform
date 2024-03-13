@@ -38,9 +38,11 @@
 
             </ul>
         </div>
-        <div class="input-group search-area w-auto coin-tab-search mt-xl-0 mt-2">
-            <input type="text" class="form-control" placeholder="">
-            <span class="input-group-text"><a href="javascript:void(0)">
+        <form id="searchForm" action="{% url 'financial_system:search' %}" method="get"
+              class="input-group search-area w-auto coin-tab-search mt-xl-0 mt-2">
+            <input type="text" name="query" class="form-control" placeholder="">
+            <span class="input-group-text"><a href="javascript:;"
+                                              onclick="document.getElementById('searchForm').submit();">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                  width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -52,6 +54,7 @@
                                 </g>
                             </svg>
                         </a></span>
-        </div>
+        </form>
     </div>
+</div>
 </div>

@@ -158,40 +158,18 @@ class Stock(models.Model):
 
             return stock
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ticker = yf.Ticker(self.symbol)
+
     def get_current_price(self):
-        ticker = yf.Ticker(self.symbol)
-        ticker = ticker.history(period='1d')
-        return ticker['Close'][0]
+        # ticker = ticker.history(period='1d')
+        # return ticker['Close'][0]
+        return self.ticker.info['currentPrice']
 
     def get_company_info(self):
         ticker = yf.Ticker(self.symbol)
-        return ticker.info
-
-
-# class StockInfo(models.Model):
-#     # 股票信息表，记录股票系统中的股票信息
-#     # 股票ID，固定6位，PK
-#     stock_id = models.AutoField(primary_key=True)
-#     # 股票名称
-#     stock_name = models.CharField(max_length=45)
-#     # 股票发行时间
-#     issuance_time = models.CharField(max_length=45)
-#     # 股票昨日收盘价
-#     closing_price_y = models.FloatField(null=True)
-#     # 股票今日开盘价
-#     open_price_t = models.FloatField(null=True)
-#     # 股票类型，上证/深证
-#     stock_type = models.CharField(max_length=15, null=True)
-#     # 股票所在版块，科创、金融。。
-#     block = models.CharField(max_length=45, null=True)
-#     # 涨跌幅，用于筛选牛股推荐
-#     change_extent = models.FloatField(null=True)
-#
-#     def __str__(self):
-#         return '-'.join([self.stock_id, self.stock_name])
-#
-#     class Meta:
-#         db_table = 'stock_info'
+        return self.ticker.info
 
 
 class Watchlist(models.Model):
