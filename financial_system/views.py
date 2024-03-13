@@ -464,7 +464,6 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
 
     add_comment_url = reverse('financial_system:add_comment', kwargs={'stock_symbol': stock.symbol})
 
-    print( income_statement )
 
     context = {
         'stock': stock,
@@ -477,11 +476,11 @@ def stock_detail_view(request, stock_symbol, historical_data_period="1mo"):
         'dividends': dividends,
         'splits': splits,
         'share_count': share_count,
-        'income_statement': income_statement.to_html(classes='table'),
-        'quarterly_income_statement': quarterly_income_statement.to_html(classes='table'),
-        'balance_sheet': balance_sheet.to_html(classes='table'),
+        'income_statement': income_statement.to_html(classes='table table-bordered table-responsive-sm'),
+        'quarterly_income_statement': quarterly_income_statement.to_html(classes='table table-bordered table-responsive-sm'),
+        'balance_sheet': balance_sheet.to_html(classes='table table-bordered table-responsive-sm'),
         'quarterly_balance_sheet': quarterly_balance_sheet.to_html(classes='table table-bordered table-responsive-sm'),
-        'cashflow': cashflow.to_html(classes='table'),
+        'cashflow': cashflow.to_html(classes='table table-bordered table-responsive-sm'),
         'quarterly_cashflow': quarterly_cashflow.to_html(classes='table table-bordered table-responsive-sm'),
         'major_holders': major_holders,
         'institutional_holders': institutional_holders,
@@ -507,7 +506,7 @@ def stock_current_price(request,):
 
 
 def trade(request, stock_symbol, message=None):
-    stock = get_object_or_404(Stock, stock_symbol=stock_symbol)
+    stock = get_object_or_404(Stock, symbol=stock_symbol)
 
     context = {
         'stock': stock
