@@ -529,7 +529,8 @@ def stock_current_price(request):
     stock_symbol = request.POST.get('stock_symbol')
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     data = {
-        "get_current_price": stock.get_current_price()
+        "get_current_price": stock.get_current_price(),
+        "get_change_extent": stock.get_change_extent(),
     }
     return JsonResponse(data)
 
