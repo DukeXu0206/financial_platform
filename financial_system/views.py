@@ -1,9 +1,6 @@
 import json
-import pprint
 
-from django.core.serializers import serialize
 from django.db import IntegrityError
-from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponseRedirect
 from yfinance import Ticker
 
@@ -13,17 +10,12 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db.models import Sum, Case, When, IntegerField, Q, F, FloatField
+from django.db.models import Case, When, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
 
 from financial_system.models import *
 
-
-# from financial_system.tests.yfinance_api import load
-
-
-# from financial_system.yfinance_api import YFinanceApi
 
 
 def base(request):

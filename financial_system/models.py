@@ -1,25 +1,13 @@
 import time
-import uuid
 from datetime import datetime
-
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models, transaction
-import json
 import yfinance as yf
 from django.db.models import Sum, F, FloatField, Min, Max
-
-
-# from mptt.models import MPTTModel, TreeForeignKey
 
 
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
     return 'user_{0}/{1}'.format(instance.user.user_id, filename)
-
-
-# def manager_directory_path(instance, filename):
-#     # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
-#     return 'manager_{0}/{1}'.format(instance.manager.manager_id, filename)
 
 
 class User(models.Model):
@@ -555,46 +543,3 @@ class UserNotification(models.Model):
     class Meta:
         db_table = 'user_notification'
         ordering = ['-created_at']
-
-# 可以用来做树级评论
-# class Comment(MPTTModel):
-#     stock_id = models.ForeignKey(
-#         StockInfo,
-#         on_delete=models.CASCADE,
-#         related_name='comments'
-#     )
-#     user_id = models.ForeignKey(
-#         UserTable,
-#         on_delete=models.CASCADE,
-#         related_name='comments'
-#     )
-#     # mptt树形结构可以参考
-#     parent = TreeForeignKey(
-#         'self',
-#         on_delete=models.CASCADE,
-#         null=True,
-#         blank=True,
-#         related_name='children'
-#     )
-#
-#     # 记录二级评论回复给谁, str
-#     reply_to = models.ForeignKey(
-#         UserTable,
-#         null=True,
-#         blank=True,
-#         on_delete=models.CASCADE,
-#         related_name='replyers'
-#     )
-#
-#     body = models.TextField(null=True)
-#     created = models.DateTimeField(auto_now_add=True)
-#
-#     # 替换 Meta 为 MPTTMeta
-#     # class Meta:
-#     #     ordering = ('created',)
-#
-#     def __str__(self):
-#         return self.body[:20]
-#
-#     class MPTTMeta:
-#         order_insertion_by = ['created']

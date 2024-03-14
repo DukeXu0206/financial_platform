@@ -77,9 +77,8 @@
                                                                 <h4 class="fs-20 font-w600 mb-0">
                                                                     ${{ current_watch_stock.get_open_price | floatformat:2 }}</h4>
                                                                 <span class="font-w600 mb-0"><br></span>
-
-
                                                             </div>
+
 
                                                         </div>
                                                     </div>
@@ -126,6 +125,7 @@
                                                             <th class="text-center border-bottom">Stock Name</th>
                                                             <th class="text-center border-bottom">Current Price</th>
                                                             <th class="text-end border-bottom">Open Price</th>
+                                                            <th></th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -155,6 +155,11 @@
                                                                 </td>
                                                                 <td>${{ stock.get_current_price }}</td>
                                                                 <td>${{ stock.get_open_price | floatformat:2 }}</td>
+                                                                <td>
+                                                                    <button onclick="removeFromWatchlist('{{ stock.symbol }}')">
+
+                                                                    </button>
+                                                                </td>
                                                             </tr>
                                                         {% endfor %}
                                                         </tbody>
@@ -454,6 +459,27 @@
 
             // Navigate to the constructed URL
             window.location.href = stockDetailUrl;
+        }
+
+        function removeFromWatchlist(stockSymbol) {
+            $.ajax({
+                type: "POST",
+                url: `/remove_from_watchlist/${stockSymbol}/`,
+                data: {
+                    csrfmiddlewaretoken: getCSRFToken(),
+                    'stock_symbol': stockSymbol
+                },
+                success: function(response) {
+                    // Update the icon to unfilled star
+                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-solid').addClass('fa-regular');
+                    // Optionally, show a message to the user
+                    alert(`${stockSymbol} removed from watchlist.`);
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('Error removing from watchlist.');
+                }
+            });
         }
 
         //定时请求数据
