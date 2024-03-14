@@ -4,7 +4,7 @@ from financial_system.models import *
 
 user = User.objects.create_user(user_name='testuser', password='12345', phone_number='111', account_balance=1000)
 
-class ViewTestCase(TestCase):
+class SignUpTestCase(TestCase):
 
     def test_register_action_success(self):
         # Simulate valid form submission
@@ -72,6 +72,7 @@ class AddToWatchlistTestCase(TestCase):
         response = self.client.post(reverse('financial_system:add_to_watchlist', args=[self.stock.symbol]))
         self.assertFalse(Watchlist.objects.exists())
         self.assertRedirects(response, reverse('financial_system:user_watchlist_view'))
+
 
 class StockTradeTestCase(TestCase):
     @classmethod
