@@ -59,15 +59,15 @@
                                                         <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
                                                             ${{ stock.get_current_price | floatformat:4 }}</h4>
                                                     </div>
-                                                    <div class="price-content">
+                                                    <div class="price-content change_extent" >
                                                         {% if stock.change_extent > 0 %}
                                                             <span class="fs-14 d-block mb-2">Change</span>
-                                                            <h4 class="font-w600 text-success mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
+                                                            <h4 class="font-w600 text-success mb-0">{{ stock.get_change_extent | floatformat:2 }}<i
                                                                     class="fa-solid fa-caret-up ms-1 text-success"></i>
                                                             </h4>
                                                         {% else %}
                                                             <span class="fs-14 d-block mb-2">Change</span>
-                                                            <h4 class="font-w600 text-danger mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
+                                                            <h4 class="font-w600 text-danger mb-0">{{ stock.get_change_extent | floatformat:2 }}<i
                                                                     class="fa-solid fa-caret-down ms-1 text-danger"></i>
                                                             </h4>
                                                         {% endif %}
@@ -989,8 +989,25 @@
                 success: function (response) {
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
-                    $(".current_price_number").html($response['get_current_price'])
-                    $(".current_price_text").val($response['get_current_price'])
+                    $(".current_price_number").html('$'+response['get_current_price'])
+                    $(".current_price_text").val(response['get_current_price'])
+
+                    var get_change_extent = response['get_change_extent']
+                    var output = ""
+                    if (get_change_extent > 0) {
+                        output = '<span class="fs-14 d-block mb-2">Change</span>' +
+                                  '<h4 class="font-w600 text-success mb-0">' +
+                                    get_change_extent.toFixed(2) +
+                                  '<i class="fa-solid fa-caret-up ms-1 text-success"></i>' +
+                                  '</h4>';
+                    } else {
+                        output = `<span class="fs-14 d-block mb-2">Change</span>
+                               <h4 class="font-w600 text-danger mb-0">${get_change_extent.toFixed(2)}<i
+                                   class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                               </h4>`;
+                    }
+                    // 将输出内容添加到页面中的 #change_extent 元素中
+                    $('.change_extent').html(output);
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);

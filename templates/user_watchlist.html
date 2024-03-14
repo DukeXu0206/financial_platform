@@ -517,22 +517,22 @@
                 success: function (response) {
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
-                    $(".current_price_number").html(response['get_current_price'])
-                    var get_change_extent = response['get_current_price']
+                    $(".current_price_number").html('$'+response['get_current_price'])
+                    var get_change_extent = response['get_change_extent']
                     var output = ""
                     if (get_change_extent > 0) {
                         output = '<span class="font-w600 text-success mb-0">' +
-                                         get_change_extent +
+                                         get_change_extent.toFixed(2) +
                                          '<i class="fa-solid fa-caret-up ms-1 text-success"></i>' +
                                       '</span>';
                     } else {
                         output = '<span class="font-w600 text-danger mb-0">' +
-                                         get_change_extent +
+                                         get_change_extent.toFixed(2) +
                                          '<i class="fa-solid fa-caret-down ms-1 text-danger"></i>' +
                                       '</span>';
                     }
                     // 将输出内容添加到页面中的 #change_extent 元素中
-                    $('#change_extent').html(output);
+                    $('.change_extent').html(output);
 
                 },
                 error: function (xhr, status, error) {
