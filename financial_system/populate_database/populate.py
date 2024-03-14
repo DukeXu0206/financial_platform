@@ -1,9 +1,16 @@
-import yfinance as yf
+import os
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'financial_platform.settings')
+django.setup()
+
 from django.utils import timezone
 import random
 from datetime import timedelta
 
 from financial_system.models import *
+
+
 
 
 def populate_stock(symbols):
