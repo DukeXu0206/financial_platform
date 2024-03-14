@@ -60,8 +60,8 @@
                                                                 <span class="d-block mb-2">Current Price</span>
                                                                 <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
                                                                     ${{ current_watch_stock.get_current_price | floatformat:4 }}</h4>
-                                                                    <div class="change_extent">
-                                                                        {% if current_watch_stock.get_change_extent > 0 %}
+                                                                <div class="change_extent">
+                                                                    {% if current_watch_stock.get_change_extent > 0 %}
                                                                         <span class="font-w600 text-success mb-0">
                                                                             {{ current_watch_stock.get_change_extent | floatformat:2 }}
                                                                         <i class="fa-solid fa-caret-up ms-1 text-success"></i>
@@ -72,7 +72,7 @@
                                                                         <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
                                                                         </span>
                                                                     {% endif %}
-                                                                    </div>
+                                                                </div>
 
                                                             </div>
                                                             <div class="price-content">
@@ -132,7 +132,7 @@
                                                             <th class="text-end border-bottom"></th>
                                                         </tr>
                                                         </thead>
-                                                        <tbody>
+                                                        <tbody id="watchlist_table">
                                                         {% for stock in stocks_in_watchlist %}
                                                             <tr>
                                                                 <td>
@@ -517,19 +517,19 @@
                 success: function (response) {
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
-                    $(".current_price_number").html('$'+response['get_current_price'])
+                    $(".current_price_number").html('$' + response['get_current_price'])
                     var get_change_extent = response['get_change_extent']
                     var output = ""
                     if (get_change_extent > 0) {
                         output = '<span class="font-w600 text-success mb-0">' +
-                                         get_change_extent.toFixed(2) +
-                                         '<i class="fa-solid fa-caret-up ms-1 text-success"></i>' +
-                                      '</span>';
+                            get_change_extent.toFixed(2) +
+                            '<i class="fa-solid fa-caret-up ms-1 text-success"></i>' +
+                            '</span>';
                     } else {
                         output = '<span class="font-w600 text-danger mb-0">' +
-                                         get_change_extent.toFixed(2) +
-                                         '<i class="fa-solid fa-caret-down ms-1 text-danger"></i>' +
-                                      '</span>';
+                            get_change_extent.toFixed(2) +
+                            '<i class="fa-solid fa-caret-down ms-1 text-danger"></i>' +
+                            '</span>';
                     }
                     // 将输出内容添加到页面中的 #change_extent 元素中
                     $('.change_extent').html(output);
@@ -542,6 +542,71 @@
 
         }
 
+
+        function get_watchlist_data() {
+
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+            $.ajax({
+                url: '/watchlist/monitor/',
+                method: 'POST',
+                type: "JSON",
+                data: {'csrfmiddlewaretoken': csrfToken},
+                success: function (response) {
+
+                    var stocks_in_watchlist = response;
+                    // 创建一个空字符串来存储HTML内容
+                    var htmlContent = '';
+                    // 遍历 stocks_in_watchlist 数组
+                    for (var i = 0; i < stocks_in_watchlist.length; i++) {
+                        var stock = stocks_in_watchlist[i];
+                        var current_watch_stock_symbol = "{{ current_watch_stock.symbol }}";
+                        // 将每个股票的信息添加到HTML字符串中
+                        htmlContent += `<tr>
+                                <td>
+                                    <div class="radio me-0 align-self-center">
+                                        <div class="custom-control form-check ">
+                                            <input type="radio" class="form-check-input stock-watch"
+                                                   id="stock-${stock.symbol}" symbol="${stock.symbol}" required
+                                                   ${stock.symbol == current_watch_stock_symbol ? 'checked="checked"' : ''}>
+                                            <label class="custom-control-label" for="check8"></label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0);"
+                                       onclick="goToStockDetailPage('${stock.symbol}')" class="text-info">
+                                        ${stock.get_company_name}
+                                    </a>
+                                </td>
+                                <td>$${stock.get_current_price}</td>
+                                <td>$${stock.get_open_price.toFixed(2)}</td>
+                                <td>
+                                    <button class="watchlist-btn btn btn-danger btn-xs"
+                                            onclick="removeFromWatchlist('${stock.symbol}')">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>`;
+                    }
+                    $("#watchlist_table").html(htmlContent);
+                    $('.stock-watch').change(function () {
+                                // Check if the checkbox is checked
+                                if ($(this).prop('checked')) {
+                                    // Get the stock_symbol from the 'stock_symbol' attribute
+                                    var stock_symbol = $(this).attr('symbol');
+
+                                    // Redirect to the watchlist page with the stock_symbol parameter
+                                    window.location.href = '/watchlist/' + stock_symbol;
+                                }
+                    });
+
+
+                },
+
+            });
+
+
+        }
 
         //draw k line
         function render_stock_kline() {
@@ -765,8 +830,8 @@
 
         $(function () {
 
-
             setInterval(get_current_price, 3000);
+            setInterval(get_watchlist_data, 3000);
 
             //点击watch list
             $('.stock-watch').change(function () {

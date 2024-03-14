@@ -365,6 +365,22 @@ def user_watchlist_view(request, stock_symbol=None):
         return render(request, 'user_watchlist.html', context)
 
 
+def user_watchlist_monitor(request, stock_symbol=None):
+    user_id = request.session.get('user_id')
+    user = User.objects.get(user_id=user_id)
+    stocks_in_watchlist = Stock.objects.filter(
+        symbol__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_symbol', flat=True)
+    )
+    data = list(stocks_in_watchlist.values())
+
+    index =0
+    for item in stocks_in_watchlist:
+        data[index]['get_company_name'] = item.get_company_name()
+        data[index]['get_current_price'] = item.get_current_price()
+        data[index]['get_open_price'] = item.get_current_price()
+        index+=1
+    return JsonResponse(data, safe=False)
+
 def news_view(request):
     news_items = News.objects.all()
 

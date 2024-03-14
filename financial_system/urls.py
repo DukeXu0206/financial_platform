@@ -14,6 +14,9 @@ urlpatterns = [
 
     path('watchlist/', views.user_watchlist_view, name='user_watchlist_view'),
     path('watchlist/<str:stock_symbol>', views.user_watchlist_view, name='user_watchlist_id_view'),
+    #user_watchlist_monitor
+    path('watchlist/monitor/', views.user_watchlist_monitor, name='user_watchlist_monitor'),
+
     path('add_to_watchlist/<str:stock_symbol>/', views.add_to_watchlist, name='add_to_watchlist'),
     path('remove_from_watchlist/<str:stock_symbol>/', views.remove_from_watchlist, name='remove_from_watchlist'),
 
