@@ -254,7 +254,7 @@
                                                                                     <h5 class="mb-0 ms-2">{{ trade.stock_symbol }}</h5>
                                                                                 </a>
                                                                             </td>
-                                                                            <td>{{ trade.quantity }} actions</td>
+                                                                            <td>{{ trade.quantity }} shares</td>
                                                                             {% if trade.total_spent %}
                                                                                 <td><strong>Bought</strong>
                                                                                     ${{ trade.total_spent|floatformat:2 }}
@@ -324,7 +324,7 @@
                                                                             </a>
                                                                         </td>
 
-                                                                        <td>{{ position.quantity }} actions</td>
+                                                                        <td>{{ position.quantity }} shares</td>
                                                                         <td>
                                                                             ${{ position.total_spent|floatformat:2 }}</td>
                                                                         <td class="text-success">{{ position.status }}</td>
@@ -381,7 +381,7 @@
                                                                                     </h5>
                                                                                 </a>
                                                                             </td>
-                                                                            <td>{{ position.quantity }} actions</td>
+                                                                            <td>{{ position.quantity }} shares</td>
                                                                             <td>
                                                                                 ${{ position.total_earned|floatformat:2 }}</td>
                                                                             <td class="text-warning">{{ position.status }}</td>

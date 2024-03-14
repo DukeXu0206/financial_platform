@@ -17,7 +17,6 @@ from django.utils.timezone import now
 from financial_system.models import *
 
 
-
 def base(request):
     return render(request, 'base.html')
 
@@ -30,7 +29,9 @@ def index(request):
         return redirect('financial_system:login')
 
 
-def sign_up_view(request):
+def sign_up_view(request, message=None):
+    # if message:
+    #     return render(request, 'sign_up.html', {'message': message})
     return render(request, 'sign_up.html')
 
 
@@ -40,6 +41,13 @@ def register_action(request):
     user_gender = request.POST.get('user_gender')
     user_email = request.POST.get('user_email')
     password = request.POST.get('password')
+
+    existing_user = User.objects.filter(phone_number=phone_number).first()
+
+    if existing_user:
+        messages.add_message(request, messages.ERROR, "A user with this phone number already exists.")
+        return render(request, 'sign_up.html')
+
     try:
         user = User.objects.create(
             user_name=user_name,
@@ -55,17 +63,21 @@ def register_action(request):
         print(user)
 
         message = "Registration successful!"
+        messages.add_message(request, messages.SUCCESS, message)
 
     except Exception as e:
         print("An exception occurred:", e)
         message = "Registration failed, please check and try again later!"  # Including the message in the context
-        return render(request, 'sign_up.html', {"message": message})
+        messages.add_message(request, messages.ERROR, message)
+        return render(request, 'sign_up.html')
 
     # 跳转到登录
-    return redirect('financial_system:login', {"message": message})
+    return redirect('financial_system:login')
 
 
-def login_view(request):
+def login_view(request, message=None):
+    # if message:
+    #     return render(request, 'login.html', {"message": message})
     return render(request, 'login.html')
 
 
@@ -78,7 +90,7 @@ def login_action(request):
         print(phone_number)
         print(password)
         try:
-            user = User.objects.get(phone_number=phone_number)
+            user = User.objects.get(phone_number=phone_number, password=password)
             login(request, user)
             # user_num = User.objects.count()
             request.session['user_id'] = user.user_id
@@ -97,12 +109,12 @@ def login_action(request):
                     return redirect('financial_system:index')
                 else:
                     message = "Password incorrect."
-                    messages.error(request, message)
+                    messages.add_message(request, messages.ERROR, message)
             except ObjectDoesNotExist:
                 message = "User does not exist."
-                messages.error(request, message)
+                messages.add_message(request, messages.ERROR, message)
 
-        return render(request, 'login.html', {"message": message})
+        return render(request, 'login.html')
 
 
 def log_out(request):
@@ -149,39 +161,43 @@ def edit_user_profile_action(request):
             new_password = request.POST.get('password')
             confirm_password = request.POST.get('confirm_password')
 
-            if confirm_password != new_password:
-                message = "Password mismatched!"
-            else:
+            if confirm_password == new_password:
                 try:
                     user.user_name = user_name
                     user.phone_number = phone_number
                     user.user_gender = user_gender
                     user.user_email = user_email
                     if new_password:
-                        user.set_password(new_password)  # Use set_password to properly hash the password
+                        user.password = new_password  # Use set_password to properly hash the password
 
                     if 'photo' in request.FILES:
                         user.photo = request.FILES['photo']
 
                     user.save()
                     message = "Profile updated successfully."
+                    messages.add_message(request, messages.SUCCESS, message)
 
-                except Exception:
+                except Exception as e:
+                    print(e)
                     message = "Failed to update information, please check carefully or try again later."
+                    messages.add_message(request, messages.ERROR, message)
 
-        context = {
-            'message': message,
-        }
+                else:
+                    message = "Password mismatch!"
+                    messages.add_message(request, messages.ERROR, message)
 
-        return render(request, "user_profile.html", context)
+
+        # context = {
+        #     'message': message,
+        # }
+
+        return redirect('financial_system:user_profile')
 
     except ObjectDoesNotExist:
         message = "User not recognized, please login."
-        context = {
-            'message': message,
-        }
+        messages.add_message(request, messages.ERROR, message)
 
-        return render(request, 'login.html', context)
+        return render(request, 'login.html')
 
 
 def deposit_funds(request):
@@ -193,20 +209,18 @@ def deposit_funds(request):
         user.account_balance += amount
         user.save()
         message = "Successful Deposit"
-        messages.success(request, message)
+        messages.add_message(request, messages.SUCCESS, message)
 
         context = {
             'user': user,
-            'message': message,
         }
 
         return render(request, 'balance.html', context)
     except ValueError:
-        context = {
-            'message': "Please introduce a valid amount (decimal value).",
-        }
+        message = "Please introduce a valid amount (decimal value)."
+        messages.add_message(request, messages.ERROR, message)
 
-        return render(request, 'balance.html', context)
+        return render(request, 'balance.html')
 
 
 def withdraw_funds(request):
@@ -219,24 +233,22 @@ def withdraw_funds(request):
             user.account_balance -= amount
             user.save()
             message = "Successful Withdraw"
-            messages.success(request, message)
+            messages.add_message(request, messages.SUCCESS, message)
         else:
             message = "Insufficient balance, unsuccessful withdraw."
-            messages.error(request, message)
+            messages.add_message(request, messages.ERROR, message)
 
         context = {
             'user': user,
-            'message': message,
         }
 
         return render(request, 'balance.html', context)
 
     except ValueError:
-        context = {
-            'message': "Please introduce a valid amount (decimal value).",
-        }
+        message = "Please introduce a valid amount (decimal value)."
+        messages.add_message(request, messages.ERROR, message)
 
-        return render(request, 'balance.html', context)
+        return render(request, 'balance.html')
 
 
 def balance(request):
@@ -247,7 +259,6 @@ def balance(request):
         }
         return render(request, 'balance.html', context)
     except ObjectDoesNotExist:
-        context = {"message": "User not recognized, please login."}
         # 根据后端意思，继续渲染到user_watchlist ，但是显示未登录界面
         context = {
             'user': None,
@@ -263,14 +274,15 @@ def add_to_watchlist(request, stock_symbol):
         user = User.objects.get(user_id=user_id)
         stock = get_object_or_404(Stock, symbol=stock_symbol)
         Watchlist.objects.create(user_id=user, stock_symbol=stock)
-        messages.success(request, f"{stock_symbol} successfully added to your Watchlist.")
+        messages.add_message(request, messages.SUCCESS, f"{stock_symbol} successfully added to your Watchlist.")
 
     except IntegrityError:
-        messages.info(request, f"{stock_symbol} is already in your Watchlist.")
+        messages.add_message(request, messages.INFO, f"{stock_symbol} is already in your Watchlist.")
+
     except ValidationError as e:
-        messages.error(request, "Failed to add to Watchlist due to invalid data.")
+        messages.add_message(request, messages.ERROR, "Failed to add to Watchlist due to invalid data.")
     except Exception as e:
-        messages.error(request, "An unexpected error occurred. Please try again later.")
+        messages.add_message(request, messages.ERROR, "An unexpected error occurred. Please try again later.")
 
     return HttpResponseRedirect(previous_url)
 
@@ -290,14 +302,14 @@ def remove_from_watchlist(request, stock_symbol):
         watchlist_item.delete()
 
         message = f"{stock_symbol} successfully removed from Watchlist"
-        messages.success(request, message)
+        messages.add_message(request, messages.SUCCESS, message)
     except Watchlist.DoesNotExist:
         message = f"{stock_symbol} is not in your Watchlist"
-        messages.info(request, message)
+        messages.add_message(request, messages.INFO, message)
     except Exception as e:
         print(e)  # Log the error for debugging
         message = "Failed to remove from Watchlist, please try again later."
-        messages.error(request, message)
+        messages.add_message(request, messages.ERROR, message)
 
     return HttpResponseRedirect(previous_url)
 
@@ -309,6 +321,9 @@ def user_watchlist_view(request, stock_symbol=None):
         stocks_in_watchlist = Stock.objects.filter(
             symbol__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_symbol', flat=True)
         )
+
+        context = {}
+
         # all_trades = HistoryTrade.objects.filter(user_id=user).order_by('-trade_dateTime')
         # 获取某个stockid，如果没有就选其一
         if stock_symbol:
@@ -316,18 +331,26 @@ def user_watchlist_view(request, stock_symbol=None):
         else:
             current_watch_stock = stocks_in_watchlist[0] if stocks_in_watchlist else None
 
-        ticker = Ticker(current_watch_stock.symbol)
+        if current_watch_stock:
+            ticker = Ticker(current_watch_stock.symbol)
 
-        historical_data_period = request.GET.get("period") if request.GET.get("period") is not None else "1mo"
-        # Historical data for a given period
-        historical_data = ticker.history(period=historical_data_period)
-        historical_data = historical_data.reset_index()
+            historical_data_period = request.GET.get("period") if request.GET.get("period") is not None else "1mo"
+            # Historical data for a given period
+            historical_data = ticker.history(period=historical_data_period)
+            historical_data = historical_data.reset_index()
 
-        # print(historical_data)
-        historical_data['Date'] = historical_data['Date'].dt.strftime('%Y/%m/%d %H:%M:%S')
-        # KLine data 整理
-        kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
-        print(kline_data)
+            # print(historical_data)
+            historical_data['Date'] = historical_data['Date'].dt.strftime('%Y/%m/%d %H:%M:%S')
+            # KLine data 整理
+            kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
+            print(kline_data)
+
+            context.update({
+                'current_watch_stock': current_watch_stock,
+                'periods_list': current_watch_stock.validRanges.split(','),
+                'historical_data': historical_data,
+                'kline_data': json.dumps(kline_data),
+            })
 
         open_positions, closed_positions, all_positions = HistoryTrade.get_positions_with_pl(user)
 
@@ -340,23 +363,19 @@ def user_watchlist_view(request, stock_symbol=None):
         print("closed_positions:" + "*" * 30)
         print(closed_positions)
 
-        context = {
+        context.update({
             'user': user,
             'stocks_in_watchlist': stocks_in_watchlist,
-            'current_watch_stock': current_watch_stock,
-            'periods_list': current_watch_stock.validRanges.split(','),
-            'historical_data': historical_data,
-            'kline_data': json.dumps(kline_data),
+
             'all_positions': all_positions,
             'open_positions': open_positions,
             'closed_positions': closed_positions,
             'total_pl_closed': total_pl_closed,
-        }
+        })
 
         return render(request, 'user_watchlist.html', context)
 
     except ObjectDoesNotExist:
-        context = {"message": "User not recognized, please login."}
         # 根据后端意思，继续渲染到user_watchlist ，但是显示未登录界面
         context = {
             'user': None,
@@ -373,13 +392,14 @@ def user_watchlist_monitor(request, stock_symbol=None):
     )
     data = list(stocks_in_watchlist.values())
 
-    index =0
+    index = 0
     for item in stocks_in_watchlist:
         data[index]['get_company_name'] = item.get_company_name()
         data[index]['get_current_price'] = item.get_current_price()
         data[index]['get_open_price'] = item.get_current_price()
-        index+=1
+        index += 1
     return JsonResponse(data, safe=False)
+
 
 def news_view(request):
     news_items = News.objects.all()
@@ -596,15 +616,16 @@ def buy_stock(request):
                 return redirect('financial_system:user_watchlist_view')
             else:
                 message = "Insufficient balance, please deposit."
-                messages.error(request, message)
+                messages.add_message(request, messages.ERROR, message)
                 return redirect(
-                    reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
+                    reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol}))
 
 
         except ValueError:
             message = "Invalid input."
+            messages.add_message(request, messages.ERROR, message)
             return redirect(
-                reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
+                reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol}))
 
 
 def sell_stock(request):
@@ -642,12 +663,15 @@ def sell_stock(request):
                 return redirect('financial_system:user_watchlist_view')
             else:
                 message = "Insufficient stock to sell."
-                messages.error(request, message)
-                return redirect('financial_system:trade', stock_symbol, message)
+                messages.add_message(request, messages.ERROR, message)
+                return redirect(
+                    reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol}))
 
         except ValueError:
             message = "Invalid input."
-            return redirect('financial_system:trade', stock_symbol, message)
+            messages.add_message(request, messages.ERROR, message)
+            return redirect(
+                reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol}))
 
 
 def add_comment(request, stock_symbol):
@@ -659,7 +683,7 @@ def add_comment(request, stock_symbol):
 
         StockComment.objects.create(title=title, content=content, user_id=user, stock_symbol=stock)
 
-    return redirect('financial_system:stock_detail', stock_symbol=stock_symbol)
+    return redirect(reverse('financial_system:stock_detail', kwargs={'stock_symbol': stock_symbol}))
 
 
 def add_reply(request):
@@ -671,7 +695,7 @@ def add_reply(request):
 
         CommentReply.objects.create(content=content, user_id=user, comment_id=comment)
 
-        return redirect('financial_system:stock_detail', stock_symbol=comment.stock_symbol)
+        return redirect(reverse('financial_system:stock_detail', kwargs={'stock_symbol': comment.stock_symbol}))
 
     # return redirect('stock_comments', stock_symbol=comment_id.stock_symbol.pk)
 
@@ -696,7 +720,7 @@ def submit_feedback(request):
             if request.session.get('user_id') else None
 
         Feedback.objects.create(user=user, email=email, title=title, content=content)
-        messages.success(request, "Thank you for your feedback!")
+        messages.add_message(request, messages.SUCCESS, "Thank you for your feedback!")
         return redirect('financial_system:index')  # Adjust the redirect as needed
 
     return render(request, 'submit_feedback.html')
