@@ -63,13 +63,13 @@
                                                                 {% if current_watch_stock.get_change_extent > 0 %}
                                                                     <span class="font-w600 text-success mb-0">
                                                             {{ current_watch_stock.get_change_extent | floatformat:2 }}%
-                                                            <i class="fa-solid fa-caret-up ms-1 text-success"></i>
-                                                        </span>
-                                                                {% else %}
-                                                                    <span class="font-w600 text-danger mb-0">
-                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}%
-                                                            <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
-                                                        </span>
+                                                                    <i class="fa-solid fa-caret-up ms-1 text-success"></i>
+                                                                </span>
+                                                                        {% else %}
+                                                                            <span class="font-w600 text-danger mb-0">
+                                                                    {{ current_watch_stock.get_change_extent | floatformat:2 }}%
+                                                                    <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                                                                </span>
                                                                 {% endif %}
                                                             </div>
                                                             <div class="price-content">
