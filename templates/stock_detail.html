@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block additional_css %}
 {% endblock %}
@@ -13,14 +14,14 @@
         <!-- row -->
         <div class="container-fluid">
 
-            {#            <div class="row">#}
+<!--            {#            <div class="row">#}
             {#                <div class="previews-info-list">#}
             {#                    <div class="ms-2">#}
             {#                        <h1 class="mb-0">{{ stock.stock_name }}</h1>#}
             {#                    </div>#}
             {#                </div>#}
             {##}
-            {#            </div>#}
+            {#            </div>#}-->
             <!-- Row -->
             <div class="row">
 
@@ -41,11 +42,11 @@
                                             <div class="mb-xl-0 mb-2">
                                             {% if is_in_watchlist %}
                                                 <a class="watchlist-btn" onclick="removeFromWatchlist('{{ stock.symbol }}')">
-                                                    <i class="fa-solid fa-star"></i>
+                                                    <i class="fa-solid fa-star fa-3x" style="color: gold;"></i>
                                                 </a>
                                             {% else %}
                                                 <a class="watchlist-btn" onclick="addToWatchlist('{{ stock.symbol }}')">
-                                                    <i class="fa-regular fa-star"></i>
+                                                    <i class="fa-regular fa-star fa-3x" style="color: gold;"></i>
                                                 </a>
                                             {% endif %}
                                             </div>
@@ -58,35 +59,35 @@
                                                         <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
                                                             ${{ stock.get_current_price | floatformat:4 }}</h4>
                                                     </div>
-                                                    <div class="price-content">
+                                                    <div class="price-content change_extent" >
                                                         {% if stock.change_extent > 0 %}
                                                             <span class="fs-14 d-block mb-2">Change</span>
-                                                            <h4 class="font-w600 text-success mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
+                                                            <h4 class="font-w600 text-success mb-0">{{ stock.get_change_extent | floatformat:2 }}<i
                                                                     class="fa-solid fa-caret-up ms-1 text-success"></i>
                                                             </h4>
                                                         {% else %}
                                                             <span class="fs-14 d-block mb-2">Change</span>
-                                                            <h4 class="font-w600 text-danger mb-0">{{ stock.get_change_extent | floatformat:2 }}%<i
+                                                            <h4 class="font-w600 text-danger mb-0">{{ stock.get_change_extent | floatformat:2 }}<i
                                                                     class="fa-solid fa-caret-down ms-1 text-danger"></i>
                                                             </h4>
                                                         {% endif %}
                                                     </div>
                                                     <div class="price-content">
                                                         <span class="fs-14 d-block mb-2">Open Price</span>
-                                                        <h4 class="font-w600 mb-0 text-danger">{{ stock.get_open_price | floatformat:2 }}</h4>
-                                                    </div>
-                                                    <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">Company</span>
-                                                        <h4 class="font-w600 mb-0 text-primary">{{ stock.get_company_name }}</h4>
-                                                    </div>
-                                                    <div class="price-content">
-                                                        <span class="fs-14 d-block mb-2">Exchange Name</span>
-                                                        <h4 class="font-w600 mb-0">{{ stock.exchangeName }}</h4>
+                                                        <h4 class="font-w600 mb-0">${{ stock.get_open_price | floatformat:2 }}</h4>
                                                     </div>
                                                     <div class="price-content">
                                                         <span class="fs-14 d-block mb-2">Regular Market Price</span>
                                                         <h4 class="font-w600 mb-0 text-warning">
                                                             ${{ stock.regularMarketPrice }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Company Name</span>
+                                                        <h4 class="font-w600 mb-0 text-primary">{{ stock.get_company_name }}</h4>
+                                                    </div>
+                                                    <div class="price-content">
+                                                        <span class="fs-14 d-block mb-2">Exchange Name</span>
+                                                        <h4 class="font-w600 mb-0">{{ stock.exchangeName }}</h4>
                                                     </div>
                                                 </div>
 
@@ -175,14 +176,14 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">address</a></h5>
+                                                                                href="#">Address</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td>{{ company_info.address1 }}</td>
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">city</a></h5>
+                                                                                href="#">City</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td>{{ company_info.city }}</td>
@@ -193,7 +194,7 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">country</a></h5>
+                                                                                href="#">Country</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td>{{ company_info.country }}</td>
@@ -201,7 +202,7 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">website</a></h5>
+                                                                                href="#">Website</a></h5>
                                                                     </div>
                                                                 </td>
                                                                 <td><a class="btn tp-btn-light btn-secondary"
@@ -214,18 +215,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">open</a></h5>
+                                                                                href="#">Open Price</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.open }}</td>
+                                                                <td>${{ company_info.open }}</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">dayLow</a></h5>
+                                                                                href="#">Day Low</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.dayLow }}</td>
+                                                                <td>${{ company_info.dayLow }}</td>
 
 
                                                             </tr>
@@ -234,18 +235,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">dayHigh</a></h5>
+                                                                                href="#">Day High</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.dayHigh }}</td>
+                                                                <td>${{ company_info.dayHigh }}</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">trailingPE</a></h5>
+                                                                                href="#">Trailing PE</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.trailingPE }}</td>
+                                                                <td>{{ company_info.trailingPE|floatformat:2}}</td>
 
 
                                                             </tr>
@@ -254,18 +255,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">targetHighPrice</a></h5>
+                                                                                href="#">Target High Price</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.targetHighPrice }}</td>
+                                                                <td>${{ company_info.targetHighPrice }}</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">totalCash</a></h5>
+                                                                                href="#">Total Cash</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.totalCash }}</td>
+                                                                <td>${{ company_info.totalCash|format_bigint }}</td>
 
 
                                                             </tr>
@@ -275,18 +276,18 @@
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">earningsGrowth</a></h5>
+                                                                                href="#">Earnings Growth</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.earningsGrowth }}</td>
+                                                                <td>{{ company_info.earningsGrowth|floatformat:2|multiply:100 }}%</td>
 
                                                                 <td>
                                                                     <div class="ms-3">
                                                                         <h5 class="mb-0"><a
-                                                                                href="#">revenueGrowth</a></h5>
+                                                                                href="#">Revenue Growth</a></h5>
                                                                     </div>
                                                                 </td>
-                                                                <td>{{ company_info.revenueGrowth }}</td>
+                                                                <td>{{ company_info.revenueGrowth|floatformat:2|multiply:100 }}%</td>
 
 
                                                             </tr>
@@ -447,6 +448,7 @@
                                             <div class="card-header pb-0 border-0 flex-wrap">
                                                 <div>
                                                     <h4 class="card-title">{{ stock.symbol }}</h4>
+                                                    <p>{{ stock.get_company_name }}</p>
                                                 </div>
                                             </div>
                                             <div class="card-body pb-0">
@@ -498,6 +500,7 @@
                                             <div class="card-header pb-0 border-0 flex-wrap">
                                                 <div>
                                                     <h4 class="card-title">{{ stock.symbol }}</h4>
+                                                    <p>{{ stock.get_company_name }}</p>
                                                 </div>
                                             </div>
                                             <div class="card-body pb-0">
@@ -569,13 +572,13 @@
                                             <small>By {{ comment.user_id.user_name }}
                                                 at {{ comment.comment_time }}</small>
                                         </div>
-                                        <div class="media-action">
+                                        <!--<div class="media-action">
                                             <button type="button" comment_id="{{ comment.comment_id }}"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#exampleModal1"
                                                     class="reply-btn btn tp-btn-light btn-secondary">Reply
                                             </button>
-                                        </div>
+                                        </div>-->
                                     </div>
                                 {% empty %}
                                     <h4>No comments yet.</h4>
@@ -635,7 +638,7 @@
                 {% endif %}
 
                 <!-- 回复 -->
-                <div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
+                <!--<div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <form method="post" action="{% url 'financial_system:add_reply' %}">
@@ -667,7 +670,7 @@
                 </div>
 
 
-                {% csrf_token %}
+                {% csrf_token %}-->
 
             </div>
         </div>
@@ -707,10 +710,8 @@
                     'stock_symbol': stockSymbol
                 },
                 success: function(response) {
-                    // Update the icon to filled star
-                    // Assuming you have a way to select the specific star icon for this stock
-                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-regular').addClass('fa-solid');
                     // Optionally, show a message to the user
+                    location.reload(true);
                     alert(`${stockSymbol} added to watchlist.`);
                 },
                 error: function(error) {
@@ -729,8 +730,7 @@
                     'stock_symbol': stockSymbol
                 },
                 success: function(response) {
-                    // Update the icon to unfilled star
-                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-solid').addClass('fa-regular');
+                    location.reload(true);
                     // Optionally, show a message to the user
                     alert(`${stockSymbol} removed from watchlist.`);
                 },
@@ -740,7 +740,6 @@
                 }
             });
         }
-
 
         //draw k line
         function render_stock_kline() {
@@ -801,9 +800,10 @@
                     data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
                 },
                 grid: {
-                    left: '10%',
-                    right: '10%',
-                    bottom: '15%'
+                    left: '5%',
+                    right: '5%',
+                    bottom: '15%',
+                    width:'100%'
                 },
                 xAxis: {
                     type: 'category',
@@ -990,8 +990,25 @@
                 success: function (response) {
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
-                    $(".current_price_number").html(response['get_current_price'])
+                    $(".current_price_number").html('$'+response['get_current_price'])
                     $(".current_price_text").val(response['get_current_price'])
+
+                    var get_change_extent = response['get_change_extent']
+                    var output = ""
+                    if (get_change_extent > 0) {
+                        output = '<span class="fs-14 d-block mb-2">Change</span>' +
+                                  '<h4 class="font-w600 text-success mb-0">' +
+                                    get_change_extent.toFixed(2) +
+                                  '<i class="fa-solid fa-caret-up ms-1 text-success"></i>' +
+                                  '</h4>';
+                    } else {
+                        output = `<span class="fs-14 d-block mb-2">Change</span>
+                               <h4 class="font-w600 text-danger mb-0">${get_change_extent.toFixed(2)}<i
+                                   class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                               </h4>`;
+                    }
+                    // 将输出内容添加到页面中的 #change_extent 元素中
+                    $('.change_extent').html(output);
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
@@ -1009,6 +1026,8 @@
             render_stock_kline()
 
         });
+
+
 
 
     </script>

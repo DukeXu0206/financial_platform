@@ -1,9 +1,6 @@
 import json
-import pprint
 
-from django.core.serializers import serialize
 from django.db import IntegrityError
-from django.forms import model_to_dict
 from django.http import JsonResponse, HttpResponseRedirect
 from yfinance import Ticker
 
@@ -13,17 +10,12 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db.models import Sum, Case, When, IntegerField, Q, F, FloatField
+from django.db.models import Case, When, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.timezone import now
 
 from financial_system.models import *
 
-
-# from financial_system.tests.yfinance_api import load
-
-
-# from financial_system.yfinance_api import YFinanceApi
 
 
 def base(request):
@@ -264,57 +256,6 @@ def balance(request):
         return render(request, 'user_watchlist.html', context)
 
 
-def calculate_pnl(user_id):
-    # Fetch all BUY and SELL trades for the user, ordered by date or another criterion
-    buys = HistoryTrade.objects.filter(user_id=user_id, trade_type='BUY').order_by('trade_dateTime')
-    sells = HistoryTrade.objects.filter(user_id=user_id, trade_type='SELL').order_by('trade_dateTime')
-
-    # Initialize a dictionary to keep track of P&L for each stock symbol
-    pnl_per_stock = {}
-
-    for sell in sells:
-        stock_symbol = sell.stock_symbol_id
-        sell_quantity = sell.trade_quantity
-        sell_price = sell.trade_price
-
-        if stock_symbol not in pnl_per_stock:
-            pnl_per_stock[stock_symbol] = {'total_spent': 0, 'total_earned': 0, 'pnl': 0}
-
-        # Match the sell trade with corresponding buy trades
-        matched_quantity = 0
-        for buy in buys.filter(stock_symbol=stock_symbol):
-            if matched_quantity < sell_quantity:
-                buy_quantity = buy.trade_quantity
-                buy_price = buy.trade_price
-
-                # Determine how much of this buy can be matched with the sell
-                matchable_quantity = min(buy_quantity, sell_quantity - matched_quantity)
-                matched_quantity += matchable_quantity
-
-                # Update P&L calculations
-                pnl_per_stock[stock_symbol]['total_spent'] += matchable_quantity * buy_price
-                pnl_per_stock[stock_symbol]['total_earned'] += matchable_quantity * sell_price
-
-                # Update the buy trade quantity in case it was partially matched
-                buy.trade_quantity -= matchable_quantity
-                if buy.trade_quantity == 0:
-                    # This buy trade is fully matched, it can be removed or marked as such
-                    buys = buys.exclude(id=buy.id)
-
-                if matched_quantity == sell_quantity:
-                    # This sell trade is fully matched
-                    break
-
-        # Update the P&L for the stock symbol after matching this sell trade
-        pnl_per_stock[stock_symbol]['pnl'] = pnl_per_stock[stock_symbol]['total_earned'] - pnl_per_stock[stock_symbol][
-            'total_spent']
-
-    # Calculate overall Gross P&L
-    gross_pnl = sum(stock['pnl'] for stock in pnl_per_stock.values())
-
-    return pnl_per_stock, gross_pnl
-
-
 def add_to_watchlist(request, stock_symbol):
     previous_url = request.META.get('HTTP_REFERER')
     try:
@@ -361,7 +302,6 @@ def remove_from_watchlist(request, stock_symbol):
     return HttpResponseRedirect(previous_url)
 
 
-
 def user_watchlist_view(request, stock_symbol=None):
     try:
         user_id = request.session.get('user_id')
@@ -389,23 +329,12 @@ def user_watchlist_view(request, stock_symbol=None):
         kline_data = historical_data[['Date', 'Open', 'Close', 'Low', 'High']].values.tolist()
         print(kline_data)
 
-        all_trades = HistoryTrade.objects.filter(user_id=user) \
-            .values('stock_symbol') \
-            .annotate(
-            total_bought=Sum(
-                Case(When(trade_type='BUY', then='trade_quantity'), output_field=IntegerField(), default=0)),
-            total_sold=Sum(Case(When(trade_type='SELL', then='trade_quantity'), output_field=IntegerField(), default=0))
-        ).order_by('stock_symbol')
+        open_positions, closed_positions, all_positions = HistoryTrade.get_positions_with_pl(user)
 
-        open_positions = [trade for trade in all_trades if trade['total_bought'] > trade['total_sold']]
+        total_pl_closed = sum(position['pl'] for position in closed_positions if position['pl'] is not None)
 
-        closed_positions = [trade for trade in all_trades if
-                            trade['total_bought'] == trade['total_sold'] and trade['total_bought'] > 0]
-
-        pnl_per_stock, gross_pnl = calculate_pnl(user_id)
-
-        print("all_trades:" + "*" * 30)
-        print(all_trades)
+        print("all_positions:" + "*" * 30)
+        print(all_positions)
         print("open_positions:" + "*" * 30)
         print(open_positions)
         print("closed_positions:" + "*" * 30)
@@ -418,11 +347,10 @@ def user_watchlist_view(request, stock_symbol=None):
             'periods_list': current_watch_stock.validRanges.split(','),
             'historical_data': historical_data,
             'kline_data': json.dumps(kline_data),
-            'all_trades': all_trades,
+            'all_positions': all_positions,
             'open_positions': open_positions,
             'closed_positions': closed_positions,
-            'pnl_per_stock': pnl_per_stock,
-            'gross_pnl': gross_pnl,
+            'total_pl_closed': total_pl_closed,
         }
 
         return render(request, 'user_watchlist.html', context)
@@ -436,6 +364,22 @@ def user_watchlist_view(request, stock_symbol=None):
         }
         return render(request, 'user_watchlist.html', context)
 
+
+def user_watchlist_monitor(request, stock_symbol=None):
+    user_id = request.session.get('user_id')
+    user = User.objects.get(user_id=user_id)
+    stocks_in_watchlist = Stock.objects.filter(
+        symbol__in=Watchlist.objects.filter(user_id=user.user_id).values_list('stock_symbol', flat=True)
+    )
+    data = list(stocks_in_watchlist.values())
+
+    index =0
+    for item in stocks_in_watchlist:
+        data[index]['get_company_name'] = item.get_company_name()
+        data[index]['get_current_price'] = item.get_current_price()
+        data[index]['get_open_price'] = item.get_current_price()
+        index+=1
+    return JsonResponse(data, safe=False)
 
 def news_view(request):
     news_items = News.objects.all()
@@ -552,7 +496,6 @@ def stock_detail_view(request, stock_symbol):
 
     add_comment_url = reverse('financial_system:add_comment', kwargs={'stock_symbol': stock.symbol})
 
-
     context = {
         'stock': stock,
         'comments': comments,
@@ -602,16 +545,17 @@ def stock_current_price(request):
     stock_symbol = request.POST.get('stock_symbol')
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     data = {
-        "get_current_price": stock.get_current_price()
+        "get_current_price": stock.get_current_price(),
+        "get_change_extent": stock.get_change_extent(),
     }
     return JsonResponse(data)
 
 
-def trade(request, stock_symbol, message=None):
+def trade(request, stock_symbol):
     stock = get_object_or_404(Stock, symbol=stock_symbol)
     user = User.objects.get(user_id=request.session.get('user_id'))
-    average_buy_price, buy_trades = HistoryTrade.get_all_buy_trades(user, stock)
-    average_sell_price, sell_trades = HistoryTrade.get_all_sell_trades(user, stock)
+    average_buy_price, buy_trades = HistoryTrade.get_average_buy_price(user, stock)
+    average_sell_price, sell_trades = HistoryTrade.get_average_sell_price(user, stock)
 
     context = {
         'stock': stock,
@@ -621,11 +565,6 @@ def trade(request, stock_symbol, message=None):
         'sell_trades': sell_trades,
         'average_sell_price': average_sell_price,
     }
-
-    if message:
-        context.update({
-            'message': message,
-        })
 
     return render(request, 'trade.html', context)
 
@@ -658,13 +597,14 @@ def buy_stock(request):
             else:
                 message = "Insufficient balance, please deposit."
                 messages.error(request, message)
-                return redirect(reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
+                return redirect(
+                    reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
 
 
         except ValueError:
             message = "Invalid input."
-            return redirect(reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
-
+            return redirect(
+                reverse('financial_system:trade', kwargs={'stock_symbol': stock_symbol, 'message': message}))
 
 
 def sell_stock(request):
@@ -798,7 +738,8 @@ def search_view(request):
         for news_item in News.objects.all():
             related_tickers_list = [ticker.strip().upper() for ticker in
                                     news_item.relatedTickers.split(',')] if news_item.relatedTickers else []
-            if set(related_tickers_list) & set(stock_symbols):  # Intersection of related tickers and filtered stock symbols
+            if set(related_tickers_list) & set(
+                    stock_symbols):  # Intersection of related tickers and filtered stock symbols
                 if news_item not in filtered_news:  # Avoid duplicating news items
                     filtered_news.append(news_item)
 

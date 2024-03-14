@@ -26,13 +26,13 @@
                             <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
                                 <div class="row">
                                     <!-- 图表 -->
-                                    <div class="col-xl-8">
+                                    <div class="col-xl-7">
                                         <div class="card coin-content">
                                             <div class="card-header border-0 flex-wrap pb-0">
                                                 <div class="mb-xl-0 mb-2">
                                                     <a href="javascript:void(0);"
-                                                           onclick="goToStockDetailPage('{{ current_watch_stock.symbol }}')"
-                                                           class="text-info">
+                                                       onclick="goToStockDetailPage('{{ current_watch_stock.symbol }}')"
+                                                       class="text-info">
                                                         <h2>{{ current_watch_stock.symbol }}</h2>
                                                         <h4>{{ current_watch_stock.get_company_name }}</h4>
                                                     </a>
@@ -59,32 +59,35 @@
                                                             <div class="price-content">
                                                                 <span class="d-block mb-2">Current Price</span>
                                                                 <h4 class="fs-24 font-w600 mb-0 current_price_number blink-effect text-center">
-                                                                    {{ current_watch_stock.get_current_price | floatformat:4 }}</h4>
-                                                                {% if current_watch_stock.get_change_extent > 0 %}
-                                                                    <span class="font-w600 text-success mb-0">
-                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}%
-                                                            <i class="fa-solid fa-caret-up ms-1 text-success"></i>
-                                                        </span>
-                                                                {% else %}
-                                                                    <span class="font-w600 text-danger mb-0">
-                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}%
-                                                            <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
-                                                        </span>
-                                                                {% endif %}
+                                                                    ${{ current_watch_stock.get_current_price | floatformat:4 }}</h4>
+                                                                <div class="change_extent">
+                                                                    {% if current_watch_stock.get_change_extent > 0 %}
+                                                                        <span class="font-w600 text-success mb-0">
+                                                                            {{ current_watch_stock.get_change_extent | floatformat:2 }}
+                                                                        <i class="fa-solid fa-caret-up ms-1 text-success"></i>
+                                                                        </span>
+                                                                    {% else %}
+                                                                        <span class="font-w600 text-danger mb-0">
+                                                                        {{ current_watch_stock.get_change_extent | floatformat:2 }}
+                                                                        <i class="fa-solid fa-caret-down ms-1 text-danger"></i>
+                                                                        </span>
+                                                                    {% endif %}
+                                                                </div>
+
                                                             </div>
                                                             <div class="price-content">
                                                                 <span class="d-block mb-2">Open Price</span>
                                                                 <h4 class="fs-20 font-w600 mb-0">
-                                                                    {{ current_watch_stock.get_open_price | floatformat:2 }}</h4>
+                                                                    ${{ current_watch_stock.get_open_price | floatformat:2 }}</h4>
                                                                 <span class="font-w600 mb-0"><br></span>
-
-
                                                             </div>
+
 
                                                         </div>
                                                     </div>
 
-                                                    <div style="width: 100%; height: 500px;" id="stockhChart"></div>
+                                                    <div class="col-xs-12"
+                                                         style="width: 100%; height: 500px;" id="stockhChart"></div>
 
 
                                                     <div class="col-xs-12">
@@ -110,7 +113,7 @@
 
 
                                     <!--监控列表start-->
-                                    <div class="col-xl-4 col-sm-12">
+                                    <div class="col-xl-5 col-sm-12">
                                         <div class="card price-list-1 mb-0">
                                             <div class="card-header border-0 pb-2 px-3">
                                                 <h4 class="text-primary card-title mb-2">Watchlist</h4>
@@ -121,14 +124,15 @@
                                                         <thead>
                                                         <tr>
                                                             <th class="border-bottom">
-                                                                #
+
                                                             </th>
                                                             <th class="text-center border-bottom">Stock Name</th>
                                                             <th class="text-center border-bottom">Current Price</th>
                                                             <th class="text-end border-bottom">Open Price</th>
+                                                            <th class="text-end border-bottom"></th>
                                                         </tr>
                                                         </thead>
-                                                        <tbody>
+                                                        <tbody id="watchlist_table">
                                                         {% for stock in stocks_in_watchlist %}
                                                             <tr>
                                                                 <td>
@@ -153,8 +157,14 @@
                                                                         {{ stock.get_company_name }}
                                                                     </a>
                                                                 </td>
-                                                                <td>{{ stock.get_current_price }}</td>
-                                                                <td>{{ stock.get_open_price | floatformat:2 }}</td>
+                                                                <td>${{ stock.get_current_price }}</td>
+                                                                <td>${{ stock.get_open_price | floatformat:2 }}</td>
+                                                                <td>
+                                                                    <button class="watchlist-btn btn btn-danger btn-xs"
+                                                                            onclick="removeFromWatchlist('{{ stock.symbol }}')">
+                                                                        Remove
+                                                                    </button>
+                                                                </td>
                                                             </tr>
                                                         {% endfor %}
                                                         </tbody>
@@ -169,7 +179,7 @@
                                     <!--监控列表end-->
 
                                     <!-- 交易表格 -->
-                                    <div class="col-xl-5 col-sm-12">
+                                    <div class="col-xl-12 col-sm-12">
                                         <div class="card">
                                             <div class="card-header flex-wrap border-0">
                                                 <h4 class="card-title mb-lg-0 mb-2">Trading History</h4>
@@ -203,7 +213,17 @@
                                                         </button>
                                                     </li>
                                                 </ul>
+                                                <br>
+
+                                                <h5 class="card-title mb-lg-0 mb-2">
+                                                    Total P&L:
+                                                    <span class="{% if total_pl_closed > 0 %}text-success{% else %}text-danger{% endif %}">
+                                                        ${{ total_pl_closed }}
+                                                    </span>
+                                                </h5>
                                             </div>
+
+
                                             <div class="card-body pt-0">
                                                 <div class="tab-content" id="pills-tabContent">
                                                     <div class="tab-pane fade show active" id="pills-crypto"
@@ -212,18 +232,20 @@
                                                         <div class="table-responsive dataTabletrade">
                                                             <table id="example-history"
                                                                    class="table shadow-hover centered display"
-                                                                   >
+                                                            >
                                                                 <thead>
                                                                 <tr>
                                                                     <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Total</th>
+                                                                    <th>Status</th>
+                                                                    <th>Profit & Loss</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                {% if all_trades %}
-                                                                    {% for trade in all_trades %}
+                                                                {% if all_positions %}
+                                                                    {% for trade in all_positions %}
                                                                         <tr>
                                                                             <td>
                                                                                 <a href="javascript:void(0);"
@@ -232,15 +254,27 @@
                                                                                     <h5 class="mb-0 ms-2">{{ trade.stock_symbol }}</h5>
                                                                                 </a>
                                                                             </td>
-                                                                            <td>{{ trade.total_bought }}</td>
-                                                                            <td class="text-success">{{ trade.total_sold }}</td>
+                                                                            <td>{{ trade.quantity }} actions</td>
+                                                                            {% if trade.total_spent %}
+                                                                                <td><strong>Bought</strong>
+                                                                                    ${{ trade.total_spent|floatformat:2 }}
+                                                                                </td>
+                                                                                <td class="text-success">{{ trade.status }}</td>
+                                                                                <td>N/A for open positions.</td>
+                                                                            {% else %}
+                                                                                <td><strong>Sold</strong>
+                                                                                    ${{ trade.total_earned|floatformat:2 }}
+                                                                                </td>
+                                                                                <td class="text-warning">{{ trade.status }}</td>
+                                                                                <td>${{ trade.pl|floatformat:2 }}</td>
+                                                                            {% endif %}
                                                                             <td class="text-success">
                                                                                 <button type="button"
                                                                                         onclick="goToTradePage('{{ trade.stock_symbol }}')"
                                                                                         class="btn btn-primary btn-sm">
                                                                                     Trade
                                                                                 </button>
-                                                                               <!-- <button type="button"
+                                                                                <!-- <button type="button"
                                                                                         onclick="goToTradePage('{{ trade.stock_symbol }}')"
                                                                                         class="btn btn-warning btn-sm">
                                                                                     Sell
@@ -250,7 +284,7 @@
                                                                     {% endfor %}
                                                                 {% else %}
                                                                     <tr>
-                                                                        <td colspan="3"
+                                                                        <td colspan="6"
                                                                             class="text-success text-center">
                                                                             No trade history available.
                                                                         </td>
@@ -266,12 +300,14 @@
                                                         <div class="table-responsive dataTabletrade">
                                                             <table id="example-history-2"
                                                                    class="table shadow-hover centered display"
-                                                                   >
+                                                            >
                                                                 <thead>
                                                                 <tr>
                                                                     <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Total Bought</th>
+                                                                    <th>Status</th>
+                                                                    <th>Profit & Loss</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                                 </thead>
@@ -287,9 +323,13 @@
                                                                                 </h5>
                                                                             </a>
                                                                         </td>
-                                                                        <td>{{ position.total_bought }}</td>
-                                                                        <td class="text-success">{{ position.total_sold }}</td>
-                                                                        <td class="text-success">
+
+                                                                        <td>{{ position.quantity }} actions</td>
+                                                                        <td>
+                                                                            ${{ position.total_spent|floatformat:2 }}</td>
+                                                                        <td class="text-success">{{ position.status }}</td>
+                                                                        <td>N/A for open positions.</td>
+                                                                        <td>
                                                                             <button type="button"
                                                                                     onclick="goToTradePage('{{ position.stock_symbol }}')"
                                                                                     class="btn btn-primary btn-sm">Trade
@@ -303,7 +343,7 @@
 
                                                                 {% empty %}
                                                                     <tr>
-                                                                        <td colspan="3"
+                                                                        <td colspan="6"
                                                                             class="text-success text-center">No open
                                                                             positions.
                                                                         </td>
@@ -318,12 +358,14 @@
                                                         <div class="table-responsive dataTabletrade">
                                                             <table id="example-history-3"
                                                                    class="table shadow-hover centered display  "
-                                                                   >
+                                                            >
                                                                 <thead>
                                                                 <tr>
                                                                     <th>Stock Name</th>
-                                                                    <th>Bought</th>
-                                                                    <th>Sold</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Total Sold</th>
+                                                                    <th>Status</th>
+                                                                    <th>Profit & Loss</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -339,13 +381,22 @@
                                                                                     </h5>
                                                                                 </a>
                                                                             </td>
-                                                                            <td>{{ position.total_bought }}</td>
-                                                                            <td class="text-success">{{ position.total_sold }}</td>
+                                                                            <td>{{ position.quantity }} actions</td>
+                                                                            <td>
+                                                                                ${{ position.total_earned|floatformat:2 }}</td>
+                                                                            <td class="text-warning">{{ position.status }}</td>
+                                                                            {% if position.pl > 0 %}
+                                                                                <td class="text-success">
+                                                                                    ${{ position.pl|floatformat:2 }}</td>
+                                                                            {% else %}
+                                                                                <td class="text-danger">
+                                                                                    ${{ position.pl|floatformat:2 }}</td>
+                                                                            {% endif %}
                                                                         </tr>
                                                                     {% endfor %}
                                                                 {% else %}
                                                                     <tr>
-                                                                        <td colspan="3" class="text-center">No closed
+                                                                        <td colspan="5" class="text-center">No closed
                                                                             positions.
                                                                         </td>
                                                                     </tr>
@@ -358,38 +409,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-
-                                    <!--详细信息-->
-                                    <div class="col-xl-7 col-sm-12">
-                                        <div class="card overflow-hidden h-auto">
-                                            <div class="card-body pb-4">
-                                                <div class="row">
-                                                    <div class="col-xl-12 col-md-12">
-                                                        <h3 class="card-title font-w500 mb-0 center">Profit and Loss</h3>
-                                                        <br>
-                                                        <h5 class="font-w500 mb-0">Overall Gross
-                                                            P&L: {{ gross_pnl }}</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="market-coin flex-wrap">
-                                                            <h4 class="font-w500 mb-0">P&L By Stock</h4>
-                                                            {% for trade in pnl_per_stock %}
-                                                                <div class="mb-1">
-                                                                    <span class="fs-14 font-w400">{{ trade.stock_symbol }}</span>
-                                                                    <h5 class="font-w600 m-0 text-danger">{{ trade.pnl }}</h5>
-                                                                </div>
-                                                            {% endfor %}
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
 
                                 </div>
                             </div>
@@ -413,7 +432,8 @@
                                 #}-->
                                 <h2 class="error-head mb-0"><i
                                         class="fa fa-exclamation-triangle text-warning me-2"></i>{{ tips }}</h2>
-                                <a href="{% url 'financial_system:login' %}" class="btn btn-secondary">GO TO LOGIN</a>
+                                <br><br>
+                                <a href="{% url 'financial_system:login' %}" class="btn btn-secondary"> LOGIN</a>
                             </div>
                         </div>
                     </div>
@@ -426,15 +446,21 @@
 {% block additional_js %}
     <style>
 
-    @keyframes blink {
-        0% { background-color: transparent; }
-        50% { background-color: rgba(204, 30, 30, 0.5); }
-        100% { background-color: transparent; }
-    }
+        @keyframes blink {
+            0% {
+                background-color: transparent;
+            }
+            50% {
+                background-color: rgba(204, 30, 30, 0.5);
+            }
+            100% {
+                background-color: transparent;
+            }
+        }
 
-    .blink-effect {
-        animation: blink 1s infinite; /* 使用1秒的动画，并持续无限循环 */
-    }
+        .blink-effect {
+            animation: blink 1s infinite; /* 使用1秒的动画，并持续无限循环 */
+        }
     </style>
     <script type="text/javascript">
         function goToTradePage(stockSymbol) {
@@ -453,6 +479,31 @@
             window.location.href = stockDetailUrl;
         }
 
+        // CSRF token setup for AJAX requests
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        function removeFromWatchlist(stockSymbol) {
+            $.ajax({
+                type: "POST",
+                url: `/remove_from_watchlist/${stockSymbol}/`,
+                data: {
+                    csrfmiddlewaretoken: getCSRFToken(),
+                    'stock_symbol': stockSymbol
+                },
+                success: function (response) {
+                    // Optionally, show a message to the user
+                    location.reload(true);
+                    alert(`${stockSymbol} removed from watchlist.`);
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert('Error removing from watchlist.');
+                }
+            });
+        }
+
         //定时请求数据
         function get_current_price() {
 
@@ -466,7 +517,23 @@
                 success: function (response) {
                     console.log(response);
                     // 在这里处理返回的 JSON 数据
-                    $(".current_price_number").html(response['get_current_price'])
+                    $(".current_price_number").html('$' + response['get_current_price'])
+                    var get_change_extent = response['get_change_extent']
+                    var output = ""
+                    if (get_change_extent > 0) {
+                        output = '<span class="font-w600 text-success mb-0">' +
+                            get_change_extent.toFixed(2) +
+                            '<i class="fa-solid fa-caret-up ms-1 text-success"></i>' +
+                            '</span>';
+                    } else {
+                        output = '<span class="font-w600 text-danger mb-0">' +
+                            get_change_extent.toFixed(2) +
+                            '<i class="fa-solid fa-caret-down ms-1 text-danger"></i>' +
+                            '</span>';
+                    }
+                    // 将输出内容添加到页面中的 #change_extent 元素中
+                    $('.change_extent').html(output);
+
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
@@ -475,6 +542,71 @@
 
         }
 
+
+        function get_watchlist_data() {
+
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val(); // 获取 CSRF 令牌
+            $.ajax({
+                url: '/watchlist/monitor/',
+                method: 'POST',
+                type: "JSON",
+                data: {'csrfmiddlewaretoken': csrfToken},
+                success: function (response) {
+
+                    var stocks_in_watchlist = response;
+                    // 创建一个空字符串来存储HTML内容
+                    var htmlContent = '';
+                    // 遍历 stocks_in_watchlist 数组
+                    for (var i = 0; i < stocks_in_watchlist.length; i++) {
+                        var stock = stocks_in_watchlist[i];
+                        var current_watch_stock_symbol = "{{ current_watch_stock.symbol }}";
+                        // 将每个股票的信息添加到HTML字符串中
+                        htmlContent += `<tr>
+                                <td>
+                                    <div class="radio me-0 align-self-center">
+                                        <div class="custom-control form-check ">
+                                            <input type="radio" class="form-check-input stock-watch"
+                                                   id="stock-${stock.symbol}" symbol="${stock.symbol}" required
+                                                   ${stock.symbol == current_watch_stock_symbol ? 'checked="checked"' : ''}>
+                                            <label class="custom-control-label" for="check8"></label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0);"
+                                       onclick="goToStockDetailPage('${stock.symbol}')" class="text-info">
+                                        ${stock.get_company_name}
+                                    </a>
+                                </td>
+                                <td>$${stock.get_current_price}</td>
+                                <td>$${stock.get_open_price.toFixed(2)}</td>
+                                <td>
+                                    <button class="watchlist-btn btn btn-danger btn-xs"
+                                            onclick="removeFromWatchlist('${stock.symbol}')">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>`;
+                    }
+                    $("#watchlist_table").html(htmlContent);
+                    $('.stock-watch').change(function () {
+                                // Check if the checkbox is checked
+                                if ($(this).prop('checked')) {
+                                    // Get the stock_symbol from the 'stock_symbol' attribute
+                                    var stock_symbol = $(this).attr('symbol');
+
+                                    // Redirect to the watchlist page with the stock_symbol parameter
+                                    window.location.href = '/watchlist/' + stock_symbol;
+                                }
+                    });
+
+
+                },
+
+            });
+
+
+        }
 
         //draw k line
         function render_stock_kline() {
@@ -487,7 +619,8 @@
 
             // Each item: open，close，lowest，highest
 
-            var testData ={{ kline_data|safe }}
+            var testData =
+            {{ kline_data|safe }}
 
             const data0 = splitData(testData);
 
@@ -534,9 +667,10 @@
                     data: ['Daily K', 'MA5', 'MA10', 'MA20', 'MA30']
                 },
                 grid: {
-                    left: '13%',
-                    right: '13%',
-                    bottom: '15%'
+                    left: '5%',
+                    right: '5%',
+                    bottom: '15%',
+                    width:'100%'
                 },
                 xAxis: {
                     type: 'category',
@@ -697,8 +831,8 @@
 
         $(function () {
 
-
             setInterval(get_current_price, 3000);
+            setInterval(get_watchlist_data, 3000);
 
             //点击watch list
             $('.stock-watch').change(function () {
@@ -714,8 +848,6 @@
 
             render_stock_kline()
         });
-
-
 
 
     </script>

@@ -61,7 +61,7 @@
                                                 <span class="d-block text-end">{{ current_user.user_email }}</span>
                                             </div>
                                         </div>
-                                        <img src="{% static 'financial/images/user.jpg' %}" alt="">
+                                        <img src="{% if current_user.photo_url %}{{ current_user.photo_url }}{% else %}{% static 'financial/images/user.jpg' %}{% endif %}" alt="">
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" style="">

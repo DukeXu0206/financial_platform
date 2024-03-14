@@ -55,15 +55,15 @@ def populate_news(symbols):
 def populate_user():
     users_data = [
         {'user_name': 'Alice', 'password': 'password123', 'user_gender': 'Female', 'phone_number': '1234567890',
-         'user_email': 'alice@example.com'},
+         'user_email': 'alice@example.com', 'account_balance': 10000},
         {'user_name': 'Bob', 'password': 'password123', 'user_gender': 'Male', 'phone_number': '2345678901',
-         'user_email': 'bob@example.com'},
+         'user_email': 'bob@example.com', 'account_balance': 20000},
         {'user_name': 'Charlie', 'password': 'password123', 'user_gender': 'Male', 'phone_number': '3456789012',
-         'user_email': 'charlie@example.com'},
+         'user_email': 'charlie@example.com', 'account_balance': 30000},
         {'user_name': 'Diana', 'password': 'password123', 'user_gender': 'Female', 'phone_number': '4567890123',
-         'user_email': 'diana@example.com'},
+         'user_email': 'diana@example.com', 'account_balance': 40000},
         {'user_name': 'Eve', 'password': 'password123', 'user_gender': 'Female', 'phone_number': '5678901234',
-         'user_email': 'eve@example.com'}
+         'user_email': 'eve@example.com', 'account_balance': 50000}
     ]
 
     for user_data in users_data:
