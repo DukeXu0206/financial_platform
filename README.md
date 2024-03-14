@@ -1,4 +1,4 @@
-# financial_platform
+# Financial Platform
 
 ## Introduction
 Welcome to the Financial Platform! Our platform is tailored for users interested in stocks, providing a rich set of features including personalized news feeds, detailed analyses, trading features, and a community space for sharing insights.
