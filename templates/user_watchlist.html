@@ -26,7 +26,7 @@
                             <div class="tab-pane fade show active" id="nav-bitcoin" role="tabpanel">
                                 <div class="row">
                                     <!-- 图表 -->
-                                    <div class="col-xl-8">
+                                    <div class="col-xl-7">
                                         <div class="card coin-content">
                                             <div class="card-header border-0 flex-wrap pb-0">
                                                 <div class="mb-xl-0 mb-2">
@@ -83,7 +83,8 @@
                                                         </div>
                                                     </div>
 
-                                                    <div style="width: 100%; height: 500px;" id="stockhChart"></div>
+                                                    <div class="col-xs-12"
+                                                            style="width: 100%; height: 500px;" id="stockhChart"></div>
 
 
                                                     <div class="col-xs-12">
@@ -109,7 +110,7 @@
 
 
                                     <!--监控列表start-->
-                                    <div class="col-xl-4 col-sm-12">
+                                    <div class="col-xl-5 col-sm-12">
                                         <div class="card price-list-1 mb-0">
                                             <div class="card-header border-0 pb-2 px-3">
                                                 <h4 class="text-primary card-title mb-2">Watchlist</h4>
@@ -120,12 +121,12 @@
                                                         <thead>
                                                         <tr>
                                                             <th class="border-bottom">
-                                                                #
+
                                                             </th>
                                                             <th class="text-center border-bottom">Stock Name</th>
                                                             <th class="text-center border-bottom">Current Price</th>
                                                             <th class="text-end border-bottom">Open Price</th>
-                                                            <th></th>
+                                                            <th class="text-end border-bottom">  </th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -156,8 +157,9 @@
                                                                 <td>${{ stock.get_current_price }}</td>
                                                                 <td>${{ stock.get_open_price | floatformat:2 }}</td>
                                                                 <td>
-                                                                    <button onclick="removeFromWatchlist('{{ stock.symbol }}')">
-
+                                                                    <button class="watchlist-btn btn btn-danger"
+                                                                            onclick="removeFromWatchlist('{{ stock.symbol }}')">
+                                                                        Remove
                                                                     </button>
                                                                 </td>
                                                             </tr>
@@ -461,6 +463,11 @@
             window.location.href = stockDetailUrl;
         }
 
+        // CSRF token setup for AJAX requests
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
         function removeFromWatchlist(stockSymbol) {
             $.ajax({
                 type: "POST",
@@ -470,9 +477,8 @@
                     'stock_symbol': stockSymbol
                 },
                 success: function(response) {
-                    // Update the icon to unfilled star
-                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-solid').addClass('fa-regular');
                     // Optionally, show a message to the user
+                    location.reload(true);
                     alert(`${stockSymbol} removed from watchlist.`);
                 },
                 error: function(error) {

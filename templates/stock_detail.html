@@ -42,11 +42,11 @@
                                             <div class="mb-xl-0 mb-2">
                                             {% if is_in_watchlist %}
                                                 <a class="watchlist-btn" onclick="removeFromWatchlist('{{ stock.symbol }}')">
-                                                    <i class="fa-solid fa-star"></i>
+                                                    <i class="fa-solid fa-star fa-3x" style="color: gold;"></i>
                                                 </a>
                                             {% else %}
                                                 <a class="watchlist-btn" onclick="addToWatchlist('{{ stock.symbol }}')">
-                                                    <i class="fa-regular fa-star"></i>
+                                                    <i class="fa-regular fa-star fa-3x" style="color: gold;"></i>
                                                 </a>
                                             {% endif %}
                                             </div>
@@ -500,6 +500,7 @@
                                             <div class="card-header pb-0 border-0 flex-wrap">
                                                 <div>
                                                     <h4 class="card-title">{{ stock.symbol }}</h4>
+                                                    <p>{{ stock.get_company_name }}</p>
                                                 </div>
                                             </div>
                                             <div class="card-body pb-0">
@@ -571,13 +572,13 @@
                                             <small>By {{ comment.user_id.user_name }}
                                                 at {{ comment.comment_time }}</small>
                                         </div>
-                                        <div class="media-action">
+                                        <!--<div class="media-action">
                                             <button type="button" comment_id="{{ comment.comment_id }}"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#exampleModal1"
                                                     class="reply-btn btn tp-btn-light btn-secondary">Reply
                                             </button>
-                                        </div>
+                                        </div>-->
                                     </div>
                                 {% empty %}
                                     <h4>No comments yet.</h4>
@@ -637,7 +638,7 @@
                 {% endif %}
 
                 <!-- 回复 -->
-                <div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
+                <!--<div class="modal fade" id="exampleModal1" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <form method="post" action="{% url 'financial_system:add_reply' %}">
@@ -669,7 +670,7 @@
                 </div>
 
 
-                {% csrf_token %}
+                {% csrf_token %}-->
 
             </div>
         </div>
@@ -709,10 +710,8 @@
                     'stock_symbol': stockSymbol
                 },
                 success: function(response) {
-                    // Update the icon to filled star
-                    // Assuming you have a way to select the specific star icon for this stock
-                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-regular').addClass('fa-solid');
                     // Optionally, show a message to the user
+                    location.reload(true);
                     alert(`${stockSymbol} added to watchlist.`);
                 },
                 error: function(error) {
@@ -731,8 +730,7 @@
                     'stock_symbol': stockSymbol
                 },
                 success: function(response) {
-                    // Update the icon to unfilled star
-                    $(`.watchlist-btn[data-symbol='${stockSymbol}'] i`).removeClass('fa-solid').addClass('fa-regular');
+                    location.reload(true);
                     // Optionally, show a message to the user
                     alert(`${stockSymbol} removed from watchlist.`);
                 },
