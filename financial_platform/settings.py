@@ -85,7 +85,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'financial-platform',
+        'NAME': 'financial_platform',
         'HOST': 'financial-platform.crqameyyy4pl.us-east-1.rds.amazonaws.com',
         'POST': 3306,
         'USER': 'root',
